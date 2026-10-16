@@ -6,9 +6,10 @@ marimo-manim brings [Manim](https://github.com/3b1b/manim) animations to
 computes the values. A Manim scene in a Studio view animates them, and Studio
 renders the movie again whenever a value changes.
 
-<p align="center">
-  <img alt="Rotating vectors drawing a heart, rendered from Fourier coefficients a marimo notebook computes" src="docs/public/media/fourier.webp" width="100%">
-</p>
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/public/media/hero-dark.webp">
+  <img alt="A marimo notebook beside its Animation view. The view's Manim movie fills the diagonals of the notebook's joint probability table and places the notebook's matplotlib chart in the scene. Dragging the notebook's bias slider toward six renders the movie again for the new distribution." src="docs/public/media/hero-light.webp" width="100%">
+</picture>
 
 ```python
 import numpy as np

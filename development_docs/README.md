@@ -30,6 +30,7 @@ pixi run check
 | `edit <example>`      | Opens `examples/<example>.py` in Studio                |
 | `build`               | Builds the wheel and sdist into `dist/`                |
 | `docs-dev`, `docs-build` | Serves or builds the VitePress site in `docs/`      |
+| `hero`                | Captures and renders the README hero                   |
 
 ## Where things live
 
@@ -40,9 +41,30 @@ pixi run check
 | `skills/marimo-manim/`, `plugin.json` | The agent skill the wheel ships as an Agent Plugin           |
 | `examples/`                   | Two notebooks with Animation views, used by docs and manual checks      |
 | `docs/`                       | The VitePress documentation site                                       |
+| `scripts/hero/`               | The bun scripts that render the README hero                            |
 | `tests/`                      | Read, inspection, starter, and worker tests                            |
 | `pixi.toml`, `pixi.lock`      | The development environments, one per Python version, and tasks       |
 | `pyproject.toml`              | Package metadata, dependencies, and the build backend                  |
+
+## README hero
+
+The README opens with `docs/public/media/hero-light.webp` and
+`hero-dark.webp`: the `convolution` example's notebook cells beside its
+Animation view, with the bias slider dragged between two rendered movies.
+`pixi run hero` regenerates both from the current notebook, scene, and Studio
+in the `media` environment. [bun](https://bun.sh/) runs the scripts and
+[Playwright](https://playwright.dev/) drives Chromium:
+
+| Step              | Script        | Does                                                                     |
+| ----------------- | ------------- | ------------------------------------------------------------------------ |
+| `hero-capture`    | `capture.ts`  | Exports the movies for bias 0 and 0.8, and captures the marimo editor's cells at every slider step between them in both themes, into `scripts/hero/shots/` |
+| `hero-render`     | `render.ts`   | Paints each frame with `compose.html` and encodes the animated WebP files |
+
+`pixi run hero-render --at 7.5` writes the frame at 7.5 seconds in each theme
+to `shots/preview-<theme>-7.5.png`, for checking the layout without an
+encode. `render.ts` places the
+read highlights with the scene's timings, so update its `cues` when the
+convolution scene changes pace.
 
 ## Guides
 

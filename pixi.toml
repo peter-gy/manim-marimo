@@ -47,6 +47,16 @@ ty = ">=0.0.87"
 nodejs = ">=24"
 pnpm = ">=10"
 
+[feature.media.dependencies]
+bun = ">=1.4"
+libwebp = ">=1.6"
+
+[feature.media.tasks]
+hero-install = { cmd = "bun install --frozen-lockfile && bunx playwright install chromium", cwd = "scripts/hero", description = "Install the README hero's scripts and Chromium" }
+hero-capture = { cmd = "bun capture.ts", cwd = "scripts/hero", depends-on = ["hero-install"], description = "Render the convolution movies and capture the notebook cells" }
+hero-render = { cmd = "bun render.ts", cwd = "scripts/hero", depends-on = ["hero-install"], description = "Compose the README hero from the captured shots" }
+hero = { cmd = "bun capture.ts && bun render.ts", cwd = "scripts/hero", depends-on = ["hero-install"], description = "Capture and compose the README hero" }
+
 [feature.py310.dependencies]
 python = "3.10.*"
 
@@ -69,6 +79,7 @@ py311 = ["dev", "py311"]
 py312 = ["dev", "py312"]
 py313 = { features = ["dev", "py313"], solve-group = "py313" }
 py314 = ["dev", "py314"]
+media = { features = ["media", "py313"], solve-group = "py313" }
 
 [tasks]
 lint = { cmd = "ruff check src tests examples && ruff format --check src tests examples && actionlint", description = "Check lint, formatting, and workflows" }
