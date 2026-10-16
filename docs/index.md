@@ -10,9 +10,6 @@ hero:
     The notebook computes. A Manim scene animates the result. marimo-studio
     renders the movie beside the notebook's live controls, and renders it
     again when a value changes.
-  image:
-    src: /logo.svg
-    alt: marimo-manim
   actions:
     - theme: brand
       text: Get started
@@ -20,40 +17,31 @@ hero:
     - theme: alt
       text: Examples
       link: /examples/
-    - theme: alt
-      text: marimo-studio
-      link: https://marimo-team.github.io/marimo-studio/
-features:
-  - title: Animate notebook values
-    details: Read arrays, tables, and widget values in a scene with value(). Studio renders the scene again when one changes.
-    link: /guide/scenes
-  - title: Place notebook figures
-    details: output() and cell() bring matplotlib figures and cell outputs into the scene as images.
-    link: /guide/scenes#figures-and-cell-outputs
-  - title: Pages with several scenes
-    details: Each render host on the page plays one scene, beside native marimo cells and controls.
-    link: /guide/pages
-  - title: Agent authoring
-    details: The package ships an agent skill, so a coding agent can write the notebook, the scenes, and the page.
-    link: /guide/agents
 ---
 
-## A notebook value, animated
+<figure class="hero-figure">
+  <img class="only-light" src="/media/hero-light.webp" alt="A marimo notebook beside its Animation view. The view's Manim movie fills the diagonals of the notebook's joint probability table and places the notebook's matplotlib chart in the scene. Dragging the notebook's bias slider toward six renders the movie again for the new distribution.">
+  <img class="only-dark" src="/media/hero-dark.webp" alt="">
+</figure>
 
-The [Fourier example](./examples/fourier.md) computes Fourier coefficients in
-the notebook. Its scene draws them as rotating vectors:
+## Notebook results in a scene
 
-<video class="movie" src="/media/fourier.mp4" poster="/media/fourier.png" autoplay muted loop playsinline></video>
+The [convolution example](./examples/convolution.md) computes a joint
+probability table and a chart in the notebook. Its scene reads both by name:
 
 ```python
-from marimo_manim import value
+import numpy as np
+from marimo_manim import output, value
 
-chain = np.asarray(value("chain", default=circle), dtype=float)
-radii = np.asarray(value("radii", default=[1]), dtype=float)
+FAIR = np.full(6, 1 / 6)
+joint = np.asarray(
+    value("joint", default=np.outer(FAIR, FAIR).tolist()), dtype=float
+)
+chart = output("distribution_figure", height=2.6)
 ```
 
-Change the path or the number of frequencies in the notebook, and Studio
-renders the movie again.
+Studio finds these reads in the scene's source, captures the results from the
+notebook, and renders the movie again when the bias slider moves.
 
 ## Ask a coding agent
 
@@ -66,3 +54,14 @@ Run `pixi run agent-plugins read marimo-studio` and
 explains Fourier series and an Animation view that draws a square wave
 from rotating vectors.
 ```
+
+## Read on
+
+<nav class="routes">
+  <a href="./guide/getting-started"><strong>Getting started</strong><span>Install marimo-manim in a pixi workspace and add an Animation view.</span></a>
+  <a href="./guide/scenes"><strong>Scenes and notebook results</strong><span>Read values with <code>value()</code>, and place figures with <code>output()</code> and <code>cell()</code>.</span></a>
+  <a href="./guide/pages"><strong>Pages and players</strong><span>Play several scenes on one page beside native marimo cells.</span></a>
+  <a href="./guide/agents"><strong>Author with agents</strong><span>Let a coding agent write the notebook, the scenes, and the page.</span></a>
+  <a href="./guide/run-and-export"><strong>Run and export</strong><span>Serve views live, export static sites, and render on Linux servers.</span></a>
+  <a href="./reference/python-api"><strong>Python API</strong><span>The contract of <code>value()</code>, <code>output()</code>, and <code>cell()</code>.</span></a>
+</nav>
