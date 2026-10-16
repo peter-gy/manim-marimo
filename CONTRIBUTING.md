@@ -12,8 +12,8 @@ Install [pixi](https://pixi.sh/), then run every check from a clone:
 pixi run check
 ```
 
-pixi installs uv, Node.js, pnpm, and on Linux the Mesa OpenGL stack. uv then
-installs the Python environment from `uv.lock`.
+pixi installs Python, manimpango, the package in editable mode, the check and
+docs tools, and on Linux the Mesa OpenGL stack, all from `pixi.lock`.
 
 ## Pull requests
 

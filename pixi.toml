@@ -1,7 +1,7 @@
-# System tools for developing and rendering marimo-manim, installed from
-# conda-forge. uv owns the Python environment (uv.lock) and pnpm owns the
-# documentation site (docs/pnpm-lock.yaml). Every task runs through
-# `pixi run`, which activates this environment.
+# The development environment of marimo-manim. Python, the libraries ManimGL
+# links against, and the tools for checks and docs come from conda-forge. The
+# package and its Python dependencies come from PyPI, with marimo-manim
+# installed in editable mode. Every task runs through `pixi run`.
 [workspace]
 name = "marimo-manim"
 channels = ["conda-forge"]
@@ -9,31 +9,21 @@ platforms = ["linux-64", "linux-aarch64", "osx-64", "osx-arm64"]
 requires-pixi = ">=0.82"
 
 [dependencies]
-uv = ">=0.13.1,<0.14"
-nodejs = ">=24"
-pnpm = ">=10"
+python = ">=3.10,<3.15"
+# ManimGL's text renderer. conda-forge builds it against Pango on every
+# platform, where PyPI ships no Linux wheels.
+manimpango = ">=0.6"
+
+[pypi-dependencies]
+marimo-manim = { path = ".", editable = true }
 
 # ManimGL needs an OpenGL context. macOS provides one. On Linux, Mesa renders
 # in software through EGL, so scenes render on servers and CI runners without
-# a display or a GPU.
-#
-# manimpango, which ManimGL uses for Text, publishes no Linux wheels, so uv
-# compiles it against Pango. conda-forge's compiler links the extension to this
-# environment's libraries, and its fonts give Text a typeface to render.
+# a display or a GPU, and conda-forge's fonts give Text a typeface.
 [target.linux.dependencies]
 mesalib = ">=25"
 libegl = ">=1.7"
 libgl = ">=1.7"
-pango = ">=1.56"
-cairo = ">=1.18"
-pkg-config = ">=0.29"
-# glib ships glibconfig.h. pkg-config resolves Pango's private requirements,
-# whose .pc files these development packages ship.
-glib = ">=2.84"
-zlib = ">=1.3"
-expat = ">=2.6"
-xorg-xorgproto = ">=2024.1"
-c-compiler = ">=1.9"
 fonts-conda-ecosystem = "*"
 
 # glcontext loads OpenGL by library name, so point it at this environment's
@@ -42,23 +32,54 @@ fonts-conda-ecosystem = "*"
 GLCONTEXT_LINUX_LIBGL = "$CONDA_PREFIX/lib/libGL.so.1"
 GLCONTEXT_LINUX_LIBEGL = "$CONDA_PREFIX/lib/libEGL.so.1"
 __EGL_VENDOR_LIBRARY_DIRS = "$CONDA_PREFIX/share/glvnd/egl_vendor.d"
-# Compile extensions with this environment's GCC, and let them load its
-# libraries at runtime.
-CC = "$CONDA_PREFIX/bin/gcc"
-LDFLAGS = "-L$CONDA_PREFIX/lib -Wl,-rpath,$CONDA_PREFIX/lib"
+
+[feature.dev.dependencies]
+actionlint = ">=1.7"
+uv = ">=0.13.1,<0.14"
+
+[feature.dev.pypi-dependencies]
+basedpyright = ">=1.40.2"
+pytest = ">=9.1.1"
+ruff = ">=0.17.0"
+ty = ">=0.0.87"
+
+[feature.docs.dependencies]
+nodejs = ">=24"
+pnpm = ">=10"
+
+[feature.py310.dependencies]
+python = "3.10.*"
+
+[feature.py311.dependencies]
+python = "3.11.*"
+
+[feature.py312.dependencies]
+python = "3.12.*"
+
+[feature.py313.dependencies]
+python = "3.13.*"
+
+[feature.py314.dependencies]
+python = "3.14.*"
+
+[environments]
+default = { features = ["dev", "docs", "py313"], solve-group = "py313" }
+py310 = ["dev", "py310"]
+py311 = ["dev", "py311"]
+py312 = ["dev", "py312"]
+py313 = { features = ["dev", "py313"], solve-group = "py313" }
+py314 = ["dev", "py314"]
 
 [tasks]
-sync = { cmd = "uv sync --locked", description = "Install the Python environment from uv.lock" }
-
-lint = { cmd = "uv run ruff check src tests examples && uv run ruff format --check src tests examples && uv tool run --from actionlint-py==1.7.12.25 actionlint", depends-on = ["sync"], description = "Check lint, formatting, and workflows" }
-format = { cmd = "uv run ruff check --fix src tests examples && uv run ruff format src tests examples", depends-on = ["sync"], description = "Fix lint and formatting" }
-typecheck = { cmd = "uv run ty check && uv run basedpyright --level error", depends-on = ["sync"], description = "Type-check the package and tests" }
-test = { cmd = "uv run pytest", depends-on = ["sync"], description = "Run every test, including scene renders" }
+lint = { cmd = "ruff check src tests examples && ruff format --check src tests examples && actionlint", description = "Check lint, formatting, and workflows" }
+format = { cmd = "ruff check --fix src tests examples && ruff format src tests examples", description = "Fix lint and formatting" }
+typecheck = { cmd = "ty check && basedpyright --level error", description = "Type-check the package and tests" }
+test = { cmd = "pytest", description = "Run every test, including scene renders" }
 check = { depends-on = ["lint", "typecheck", "test"], description = "Run every check CI runs" }
 
-example = { cmd = "uv run marimo-studio validate --target examples/{{ name }}.py && uv run marimo-studio view build animation --target examples/{{ name }}.py", args = [{ arg = "name" }], depends-on = ["sync"], description = "Validate and build one example view" }
+example = { cmd = "marimo-studio validate --target examples/{{ name }}.py && marimo-studio view build animation --target examples/{{ name }}.py", args = [{ arg = "name" }], description = "Validate and build one example view" }
 examples = { depends-on = [{ task = "example", args = ["fourier"] }, { task = "example", args = ["convolution"] }], description = "Validate and build both example views" }
-edit = { cmd = "uv run marimo edit examples/{{ example }}.py --no-sandbox --watch", args = [{ arg = "example", default = "fourier" }], depends-on = ["sync"], description = "Open an example notebook in Studio" }
+edit = { cmd = "marimo edit examples/{{ example }}.py --no-sandbox --watch", args = [{ arg = "example", default = "fourier" }], description = "Open an example notebook in Studio" }
 build = { cmd = "uv build", description = "Build the wheel and sdist into dist/" }
 
 docs-install = { cmd = "pnpm install --frozen-lockfile", cwd = "docs", description = "Install the documentation site" }

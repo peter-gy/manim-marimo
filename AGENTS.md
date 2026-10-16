@@ -15,8 +15,9 @@ views.
 - Inspection reads source with `ast` and never runs project code.
 - The build publishes the page and its assets, and keeps scenes private in the
   render template.
-- System tools come from `pixi.toml`, Python packages from `uv.lock`, and the
-  docs site's packages from `docs/pnpm-lock.yaml`.
+- `pixi.toml` owns the development environment: Python 3.10 to 3.14, conda
+  libraries, and PyPI packages, locked in `pixi.lock`. The docs site's
+  packages come from `docs/pnpm-lock.yaml`.
 
 ## Validate
 

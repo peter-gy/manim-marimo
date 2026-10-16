@@ -9,9 +9,11 @@ test it through the same boundary.
 
 ## Set up
 
-[pixi](https://pixi.sh/) installs every system tool from conda-forge: uv,
-Node.js, pnpm, and on Linux the Mesa OpenGL stack that renders scenes without a
-display. uv installs the Python environment from `uv.lock`.
+[pixi](https://pixi.sh/) owns the development environment. From conda-forge it
+installs Python, manimpango built against Pango, the check and docs tools, and
+on Linux the Mesa OpenGL stack that renders scenes without a display. From PyPI
+it installs marimo-manim in editable mode with its dependencies. `pixi.lock`
+pins both.
 
 ```sh
 pixi run check
@@ -39,8 +41,8 @@ pixi run check
 | `examples/`                   | Two notebooks with Animation views, used by docs and manual checks      |
 | `docs/`                       | The VitePress documentation site                                       |
 | `tests/`                      | Read, inspection, starter, and worker tests                            |
-| `pixi.toml`, `pixi.lock`      | System tools and platform activation                                   |
-| `pyproject.toml`, `uv.lock`   | Package metadata and the Python environment                            |
+| `pixi.toml`, `pixi.lock`      | The development environments, one per Python version, and tasks       |
+| `pyproject.toml`              | Package metadata, dependencies, and the build backend                  |
 
 ## Guides
 
@@ -56,8 +58,8 @@ pixi run check
 | [marimo-studio](https://marimo-team.github.io/marimo-studio/)                | Hosts the provider. Its `view_providers` SDK is the only import. |
 | [ManimGL](https://github.com/3b1b/manim)                                     | Builds and renders scenes                                        |
 | [Agent Plugins](https://agent-plugins.org/)                                  | Packages the skill into the wheel and prints it for agents       |
-| [pixi](https://pixi.sh/)                                                     | Installs system tools from conda-forge                           |
-| [uv](https://docs.astral.sh/uv/)                                             | Resolves and installs the Python environment                     |
+| [pixi](https://pixi.sh/)                                                     | Installs and locks the development environments                  |
+| [uv](https://docs.astral.sh/uv/)                                             | Builds and publishes the package                                 |
 | [VitePress](https://vitepress.dev/)                                          | Builds the documentation site                                    |
 
 ## Change checklist

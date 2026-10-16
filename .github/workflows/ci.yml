@@ -13,19 +13,34 @@ concurrency:
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
-  check:
-    name: Check (${{ matrix.os }})
+  quality:
+    name: Lint and types
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: ./.github/actions/setup
+      - run: pixi run lint
+      - run: pixi run typecheck
+
+  test:
+    name: Test (${{ matrix.os }}, ${{ matrix.environment }})
     strategy:
       fail-fast: false
       matrix:
         # Ubuntu renders through Mesa's EGL with no display, macOS through its
         # system OpenGL.
-        os: [ubuntu-latest, macos-latest]
+        os: [ubuntu-latest]
+        environment: [py310, py311, py312, py313, py314]
+        include:
+          - os: macos-latest
+            environment: py313
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - uses: ./.github/actions/setup
-      - run: pixi run check
+        with:
+          environment: ${{ matrix.environment }}
+      - run: pixi run --environment ${{ matrix.environment }} test
 
   examples:
     name: Examples

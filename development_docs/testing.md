@@ -2,7 +2,8 @@
 
 ```sh
 pixi run check                    # lint, types, and every test, as CI runs them
-pixi run uv run pytest -m 'not render'
+pixi run pytest -m 'not render'
+pixi run --environment py310 test  # one Python version: py310 to py314
 ```
 
 ## Test layers
@@ -21,10 +22,13 @@ Studio does. It is the closest test to a reader opening a new view.
 
 Tests marked `render` start ManimGL and FFmpeg, so they need OpenGL. macOS
 provides it to every process. On Linux, `pixi.toml` installs Mesa from
-conda-forge and points glcontext at its libraries, and the worker opens an EGL
-context when no `DISPLAY` is set. It also installs Pango and a compiler, because
-manimpango publishes no Linux wheels and uv compiles it on first sync. CI runs
-the same `pixi run check` on Ubuntu with no display server and no GPU.
+conda-forge and points glcontext at its libraries. The worker turns off
+pyglet's hidden window and opens an EGL context when no `DISPLAY` is set. CI
+runs `pixi run test` on Ubuntu with no display server and no GPU, once for each
+Python version from 3.10 to 3.14.
+
+`manimpango` comes from conda-forge in every environment, built against the
+environment's Pango. `pixi list manimpango` shows its channel.
 
 To reproduce a Linux failure, run the suite inside the pixi environment on a
 Linux machine or container. `pixi run env | grep GLCONTEXT` shows the

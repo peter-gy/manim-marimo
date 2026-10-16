@@ -11,10 +11,7 @@ from typing import TYPE_CHECKING, Any
 
 if TYPE_CHECKING:
     from manimlib import ImageMobject, Mobject
-
-type JsonValue = (
-    bool | int | float | str | list[JsonValue] | dict[str, JsonValue] | None
-)
+    from marimo_studio.view_providers import JsonValue
 
 
 @dataclass(frozen=True)
@@ -87,7 +84,7 @@ def _image(
 
 
 @contextmanager
-def scene_reads(reads: SceneReads) -> Generator[None]:
+def scene_reads(reads: SceneReads) -> Generator[None, None, None]:
     """Supply ``reads`` to ``value()``, ``output()``, and ``cell()`` calls."""
     token = _current.set(reads)
     try:

@@ -12,12 +12,18 @@ classifiers = [
   "Intended Audience :: Education",
   "Intended Audience :: Science/Research",
   "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
   "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Programming Language :: Python :: 3.14",
   "Topic :: Multimedia :: Graphics :: 3D Rendering",
   "Topic :: Scientific/Engineering :: Visualization",
 ]
-requires-python = ">=3.12"
+requires-python = ">=3.10,<3.15"
 dependencies = [
+  # Python 3.13 removed audioop, which ManimGL imports through pydub.
+  "audioop-lts>=0.2.1; python_version >= '3.13'",
   "imageio-ffmpeg>=0.6,<0.7",
   "manimgl>=1.7.2,<1.8",
   "marimo-studio @ https://github.com/marimo-team/marimo-studio/releases/download/preview/marimo_studio-0.3.1.dev23-py3-none-any.whl",
@@ -43,23 +49,8 @@ build-backend = "agent_plugins.build.uv_build"
 [tool.agent-plugins]
 root = "."
 
-[dependency-groups]
-dev = [
-  "basedpyright>=1.40.2",
-  "marimo[recommended]>=0.25.1",
-  "pytest>=9.1.1",
-  "ruff>=0.17.0",
-  "ty>=0.0.87",
-]
-
-[tool.uv]
-required-version = ">=0.13.1,<0.14"
-# A uv-managed Python ships its own headers, so extensions such as manimpango
-# compile the same way on every machine.
-python-preference = "only-managed"
-
 [tool.ruff]
-target-version = "py312"
+target-version = "py310"
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "UP", "B", "SIM", "RUF", "C4", "PTH"]
@@ -71,7 +62,8 @@ markers = ["render: renders a scene with ManimGL, OpenGL, and FFmpeg"]
 
 [tool.basedpyright]
 include = ["src", "tests"]
+pythonVersion = "3.10"
 typeCheckingMode = "standard"
 
 [tool.ty.environment]
-python-version = "3.12"
+python-version = "3.10"

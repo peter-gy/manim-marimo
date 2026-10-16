@@ -1,6 +1,5 @@
 # /// script
-# requires-python = ">=3.12"
-# dependencies = ["marimo", "marimo-manim", "numpy", "matplotlib"]
+# requires-python = ">=3.10,<3.15"
 #
 # [tool.marimo-studio]
 # default = "animation"
