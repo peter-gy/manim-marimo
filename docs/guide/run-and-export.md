@@ -67,6 +67,7 @@ libgl = ">=1.7"
 pango = ">=1.56"
 cairo = ">=1.18"
 pkg-config = ">=0.29"
+glib = ">=2.84"
 zlib = ">=1.3"
 expat = ">=2.6"
 xorg-xorgproto = ">=2024.1"
@@ -77,6 +78,8 @@ fonts-conda-ecosystem = "*"
 GLCONTEXT_LINUX_LIBGL = "$CONDA_PREFIX/lib/libGL.so.1"
 GLCONTEXT_LINUX_LIBEGL = "$CONDA_PREFIX/lib/libEGL.so.1"
 __EGL_VENDOR_LIBRARY_DIRS = "$CONDA_PREFIX/share/glvnd/egl_vendor.d"
+CC = "$CONDA_PREFIX/bin/gcc"
+LDFLAGS = "-L$CONDA_PREFIX/lib -Wl,-rpath,$CONDA_PREFIX/lib"
 ```
 
 On a machine without a display, marimo-manim renders through
