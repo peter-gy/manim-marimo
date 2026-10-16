@@ -1,0 +1,56 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event_name == 'pull_request' && github.ref || github.run_id }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  check:
+    name: Check (${{ matrix.os }})
+    strategy:
+      fail-fast: false
+      matrix:
+        # Ubuntu renders through Mesa's EGL with no display, macOS through its
+        # system OpenGL.
+        os: [ubuntu-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: ./.github/actions/setup
+      - run: pixi run check
+
+  examples:
+    name: Examples
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: ./.github/actions/setup
+      - run: pixi run examples
+
+  package:
+    name: Package
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: ./.github/actions/setup
+      - run: pixi run build
+      - name: Check the wheel ships the provider, starter, and agent skill
+        run: |
+          contents="$(unzip -Z1 dist/marimo_manim-*.whl)"
+          for path in \
+            marimo_manim/_provider.py \
+            marimo_manim/starters/default/files/scene.py \
+            'marimo_manim-*.agent-plugin/plugin.json' \
+            'marimo_manim-*.agent-plugin/skills/marimo-manim/SKILL.md'; do
+            grep -q "^${path//\*/.*}$" <<<"$contents" || { echo "missing $path"; exit 1; }
+          done
+          grep -q 'manim = marimo_manim._provider:provider' \
+            <(unzip -p dist/marimo_manim-*.whl '*.dist-info/entry_points.txt')
