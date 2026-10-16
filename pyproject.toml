@@ -54,6 +54,9 @@ dev = [
 
 [tool.uv]
 required-version = ">=0.13.1,<0.14"
+# A uv-managed Python ships its own headers, so extensions such as manimpango
+# compile the same way on every machine.
+python-preference = "only-managed"
 
 [tool.ruff]
 target-version = "py312"
