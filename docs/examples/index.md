@@ -22,6 +22,10 @@ notebook with Studio. Open the **animation** view, then change a control.
   <a href="./convolution"><video class="movie" src="/media/convolution.mp4" poster="/media/convolution.png" muted loop playsinline></video></a>
 </div>
 
+The [convolution example](./convolution.md) embeds its zero-python export.
+Step from the notebook through the scene and the movie to the exported page,
+and move its slider.
+
 | Example                                 | Notebook computes                                   | Scenes show                                                  |
 | --------------------------------------- | --------------------------------------------------- | ------------------------------------------------------------ |
 | [Fourier drawing](./fourier.md)         | Fourier coefficients and sampled vector chains      | Rotating vectors drawing the path, and the spectrum          |

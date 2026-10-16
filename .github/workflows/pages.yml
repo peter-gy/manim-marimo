@@ -17,6 +17,9 @@ jobs:
   build:
     name: Build site
     runs-on: ubuntu-latest
+    # The build exports the convolution example, which renders one movie per
+    # bias value through Mesa.
+    timeout-minutes: 40
     permissions:
       contents: read
       pages: read

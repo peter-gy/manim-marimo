@@ -15,6 +15,7 @@ dist/
 docs/node_modules/
 docs/.vitepress/cache/
 docs/.vitepress/dist/
+docs/public/exports/
 
 # marimo and Studio build state
 __marimo__/

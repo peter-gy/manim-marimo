@@ -29,6 +29,7 @@ pixi run check
 | `examples`            | Validates and builds both example views                |
 | `edit <example>`      | Opens `examples/<example>.py` in Studio                |
 | `build`               | Builds the wheel and sdist into `dist/`                |
+| `docs-examples`       | Exports the convolution example the docs embed         |
 | `docs-dev`, `docs-build` | Serves or builds the VitePress site in `docs/`      |
 | `hero`                | Captures and renders the README hero                   |
 
@@ -41,6 +42,7 @@ pixi run check
 | `skills/marimo-manim/`, `plugin.json` | The agent skill the wheel ships as an Agent Plugin           |
 | `examples/`                   | Two notebooks with Animation views, used by docs and manual checks      |
 | `docs/`                       | The VitePress documentation site                                       |
+| `docs/scripts/build-examples.ts` | Exports the convolution example into `docs/public/exports/`, which the `ManimExample` component embeds |
 | `scripts/hero/`               | The bun scripts that render the README hero                            |
 | `tests/`                      | Read, inspection, starter, and worker tests                            |
 | `pixi.toml`, `pixi.lock`      | The development environments, one per Python version, and tasks       |

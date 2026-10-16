@@ -1,6 +1,7 @@
 ---
 title: Convolution of dice
 description: A joint probability table becomes the distribution of a sum, and the scene ends on the notebook's own chart.
+aside: false
 ---
 
 # Convolution of dice
@@ -8,12 +9,23 @@ description: A joint probability table becomes the distribution of a sum, and th
 [`examples/convolution.py`](https://github.com/peter-gy/marimo-manim/blob/main/examples/convolution.py)
 computes the joint probability table of a fair die and a die biased toward six,
 the distribution of their sum, and a matplotlib chart of that distribution.
+Its Animation view turns the table into that distribution.
+
+<ManimExample
+  name="convolution"
+  notebook="examples/convolution.py"
+  scene="examples/studio/convolution/animation/scene.py"
+>
+
+<<< ../../examples/studio/convolution/animation/scene.py{python:line-numbers}
+
+</ManimExample>
+
+Open the notebook and its view in Studio from a clone of the repository:
 
 ```sh
 pixi run edit convolution
 ```
-
-<video class="movie" src="/media/convolution.mp4" poster="/media/convolution.png" controls muted playsinline></video>
 
 ## Values and a figure
 
@@ -43,7 +55,7 @@ The view's
 [`states.yaml`](https://github.com/peter-gy/marimo-manim/blob/main/examples/studio/convolution/animation/states.yaml)
 prepares every value of the bias slider. A `zero-python` export renders one
 movie per value, and the exported page swaps movies as the reader moves the
-slider:
+slider. The **Page** stage above is this export:
 
 ```sh
 pixi run marimo-studio view export animation --target examples/convolution.py \

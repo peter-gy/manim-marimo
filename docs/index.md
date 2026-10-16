@@ -41,7 +41,9 @@ chart = output("distribution_figure", height=2.6)
 ```
 
 Studio finds these reads in the scene's source, captures the results from the
-notebook, and renders the movie again when the bias slider moves.
+notebook, and renders the movie again when the bias slider moves. The
+[example page](./examples/convolution.md) embeds the notebook, the scene, the
+movie, and the exported page.
 
 ## Ask a coding agent
 

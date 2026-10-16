@@ -94,5 +94,6 @@ edit = { cmd = "marimo edit examples/{{ example }}.py --no-sandbox --watch", arg
 build = { cmd = "uv build", description = "Build the wheel and sdist into dist/" }
 
 docs-install = { cmd = "pnpm install --frozen-lockfile", cwd = "docs", description = "Install the documentation site" }
-docs-dev = { cmd = "pnpm dev", cwd = "docs", depends-on = ["docs-install"], description = "Serve the documentation with live reload" }
-docs-build = { cmd = "pnpm build", cwd = "docs", depends-on = ["docs-install"], description = "Build the documentation site" }
+docs-examples = { cmd = "node scripts/build-examples.ts", cwd = "docs", inputs = ["examples/convolution.py", "examples/studio/convolution/**", "src/marimo_manim/**", "docs/scripts/build-examples.ts", "pixi.lock"], outputs = ["docs/public/exports/convolution/**"], description = "Export the convolution example the docs embed" }
+docs-dev = { cmd = "pnpm dev", cwd = "docs", depends-on = ["docs-install", "docs-examples"], description = "Serve the documentation with live reload" }
+docs-build = { cmd = "pnpm build", cwd = "docs", depends-on = ["docs-install", "docs-examples"], description = "Build the documentation site" }
