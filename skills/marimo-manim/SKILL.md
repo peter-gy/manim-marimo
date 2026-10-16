@@ -17,15 +17,23 @@ Read the marimo-studio skill first. It owns connecting to the notebook,
 creating and editing views, building, and browser verification:
 
 ```console
-uv run agent-plugins read marimo-studio
+pixi run agent-plugins read marimo-studio
 ```
 
 This skill adds what is specific to Manim views.
 
 ## Create the view
 
-The notebook's environment needs `marimo-manim`, and Studio discovers the
-provider when it starts. Create the view from the provider's starter:
+A [pixi](https://pixi.sh/) workspace beside the notebook provides marimo-manim
+with the libraries ManimGL renders with: `manimpango` from conda-forge, and on
+Linux Mesa's OpenGL. Start Studio in that environment, so the notebook, the
+provider, and every render share it:
+
+```console
+pixi run marimo edit notebook.py --no-sandbox --watch
+```
+
+Create the view from the provider's starter:
 
 ```python
 view = await workspace.create_view("animation", starter="marimo-manim/manim:default")
@@ -119,4 +127,4 @@ shows a new movie.
 | `manim-scene-missing` at a host in `index.html` | The host names a scene file that does not exist.                         |
 | `Found none` or `Found A, B` in a render error | The file defines no Scene subclass, or two unrelated ones.               |
 | Host stays `stale` for a long time             | The scene renders slowly. Use `quality = "draft"` or shorten `run_time`. |
-| OpenGL context errors on Linux                 | Run the marimo server under `xvfb-run -a` with Mesa installed.           |
+| OpenGL errors on Linux                         | Add Mesa to the pixi workspace and start Studio through `pixi run`.      |

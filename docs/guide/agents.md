@@ -9,12 +9,12 @@ marimo-manim ships an agent skill beside marimo-studio's. A coding agent reads
 both, writes the notebook's computation in marimo cells, writes the scenes and
 the page, renders them in Studio, and checks the movies.
 
-Paste this request into Claude Code, Codex, or another terminal agent, from a
-project where marimo-manim is installed:
+Paste this request into Claude Code, Codex, or another terminal agent, from the
+[pixi workspace](./getting-started.md#install) of a notebook with marimo-manim:
 
 ```text
-Run `uv run agent-plugins read marimo-studio` and
-`uv run agent-plugins read marimo-manim`, then create a notebook that
+Run `pixi run agent-plugins read marimo-studio` and
+`pixi run agent-plugins read marimo-manim`, then create a notebook that
 explains Fourier series and an Animation view that draws a square wave
 from rotating vectors.
 ```

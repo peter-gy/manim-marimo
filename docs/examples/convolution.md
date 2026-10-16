@@ -46,6 +46,6 @@ movie per value, and the exported page swaps movies as the reader moves the
 slider:
 
 ```sh
-uv run marimo-studio view export animation --target examples/convolution.py \
+pixi run marimo-studio view export animation --target examples/convolution.py \
   --output dist/convolution --runtime zero-python
 ```

@@ -12,7 +12,7 @@ compares the options.
 ## Run a live view
 
 ```sh
-uv run marimo run analysis.py
+pixi run marimo run analysis.py --no-sandbox
 ```
 
 Each reader gets a notebook session. Studio renders a scene for the results that
@@ -26,7 +26,7 @@ for each combination of control values the view lists, and renders every
 scene once per state:
 
 ```sh
-uv run marimo-studio view export animation --target analysis.py \
+pixi run marimo-studio view export animation --target analysis.py \
   --output dist/animation --runtime zero-python
 ```
 
@@ -54,43 +54,15 @@ npx serve dist/animation
 
 ## Linux servers
 
-ManimGL needs OpenGL, and its text library, manimpango, compiles against
-[Pango](https://pango.gnome.org/) on Linux. [pixi](https://pixi.sh/), the
-conda package manager, installs both from conda-forge into the workspace that
-runs Studio:
-
-```toml
-[target.linux.dependencies]
-mesalib = ">=25"
-libegl = ">=1.7"
-libgl = ">=1.7"
-pango = ">=1.56"
-cairo = ">=1.18"
-pkg-config = ">=0.29"
-glib = ">=2.84"
-zlib = ">=1.3"
-expat = ">=2.6"
-xorg-xorgproto = ">=2024.1"
-c-compiler = ">=1.9"
-fonts-conda-ecosystem = "*"
-
-[target.linux.activation.env]
-GLCONTEXT_LINUX_LIBGL = "$CONDA_PREFIX/lib/libGL.so.1"
-GLCONTEXT_LINUX_LIBEGL = "$CONDA_PREFIX/lib/libEGL.so.1"
-__EGL_VENDOR_LIBRARY_DIRS = "$CONDA_PREFIX/share/glvnd/egl_vendor.d"
-CC = "$CONDA_PREFIX/bin/gcc"
-LDFLAGS = "-L$CONDA_PREFIX/lib -Wl,-rpath,$CONDA_PREFIX/lib"
-```
-
-On a machine without a display, marimo-manim renders through
-[Mesa](https://mesa3d.org/)'s software EGL driver, which needs no window system
-and no GPU. Install the Python environment and start Studio through
-`pixi run`, so the build and the renders use these libraries:
+The [Getting started workspace](./getting-started.md#install) renders on Linux
+servers without a display or a GPU. Its Linux tables install
+[Mesa](https://mesa3d.org/)'s software OpenGL, and marimo-manim renders through
+Mesa's EGL driver when no `DISPLAY` is set. Start Studio through `pixi run`, so
+renders run in the workspace's environment:
 
 ```sh
-pixi run uv run marimo run analysis.py --host 0.0.0.0
+pixi run marimo run analysis.py --no-sandbox --host 0.0.0.0
 ```
 
-marimo-manim's own CI renders every test scene this way, from the same tables
-in its [`pixi.toml`](https://github.com/peter-gy/marimo-manim/blob/main/pixi.toml).
-With a `DISPLAY` set, ManimGL opens its usual X11 context instead.
+marimo-manim's CI renders every test scene this way on Ubuntu. With a
+`DISPLAY` set, ManimGL opens its usual X11 context instead.

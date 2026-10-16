@@ -14,8 +14,8 @@ pixi run edit fourier
 pixi run edit convolution
 ```
 
-[pixi](https://pixi.sh/) installs the repository's tools and opens the notebook
-with Studio. Open the **animation** view, then change a control.
+[pixi](https://pixi.sh/) installs the repository's environment and opens the
+notebook with Studio. Open the **animation** view, then change a control.
 
 <div class="movies">
   <a href="./fourier"><video class="movie" src="/media/fourier.mp4" poster="/media/fourier.png" muted loop playsinline></video></a>

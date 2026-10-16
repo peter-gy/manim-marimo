@@ -57,12 +57,12 @@ renders the movie again.
 
 ## Ask a coding agent
 
-From a project where marimo-manim is installed, paste this into Claude Code,
-Codex, or another terminal agent:
+From the pixi workspace of a notebook with marimo-manim, paste this into Claude
+Code, Codex, or another terminal agent:
 
 ```text
-Run `uv run agent-plugins read marimo-studio` and
-`uv run agent-plugins read marimo-manim`, then create a notebook that
+Run `pixi run agent-plugins read marimo-studio` and
+`pixi run agent-plugins read marimo-manim`, then create a notebook that
 explains Fourier series and an Animation view that draws a square wave
 from rotating vectors.
 ```

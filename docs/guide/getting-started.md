@@ -13,32 +13,64 @@ notebook's values.
 
 ## Install
 
-Add marimo-manim to the environment that runs the notebook. It brings
-marimo-studio and ManimGL with it:
+ManimGL renders with OpenGL, draws text with Pango, and encodes video with
+FFmpeg. [pixi](https://pixi.sh/), the conda package manager, installs Python,
+those libraries, and marimo-manim into one environment on macOS and Linux.
+Put this `pixi.toml` beside the notebook:
 
-```sh
-uv add "marimo-manim @ git+https://github.com/peter-gy/marimo-manim"
+```toml
+[workspace]
+name = "analysis"
+channels = ["conda-forge"]
+platforms = ["linux-64", "linux-aarch64", "osx-64", "osx-arm64"]
+
+[dependencies]
+python = ">=3.10,<3.15"
+manimpango = ">=0.6"
+
+[pypi-dependencies]
+marimo-manim = { git = "https://github.com/peter-gy/marimo-manim" }
+
+[target.linux.dependencies]
+mesalib = ">=25"
+libegl = ">=1.7"
+libgl = ">=1.7"
+fonts-conda-ecosystem = "*"
+
+[target.linux.activation.env]
+GLCONTEXT_LINUX_LIBGL = "$CONDA_PREFIX/lib/libGL.so.1"
+GLCONTEXT_LINUX_LIBEGL = "$CONDA_PREFIX/lib/libEGL.so.1"
+__EGL_VENDOR_LIBRARY_DIRS = "$CONDA_PREFIX/share/glvnd/egl_vendor.d"
 ```
 
-[uv](https://docs.astral.sh/uv/) is the Python package manager these pages use.
-Rendering needs an [OpenGL](https://www.opengl.org/) context, which macOS
-provides. On a Linux server, run Studio under `xvfb-run -a` as
-[Run and export](./run-and-export.md#linux-servers) describes. The video
-encoder comes from [imageio-ffmpeg](https://github.com/imageio/imageio-ffmpeg).
+| Table                         | Installs                                                                 |
+| ----------------------------- | ------------------------------------------------------------------------ |
+| `dependencies`                | Python 3.10 to 3.14 and manimpango, ManimGL's text renderer, built against Pango |
+| `pypi-dependencies`           | marimo-manim, with marimo, marimo-studio, ManimGL, and FFmpeg            |
+| `target.linux.dependencies`   | [Mesa](https://mesa3d.org/)'s software OpenGL and fonts                  |
+| `target.linux.activation.env` | The paths ManimGL's OpenGL loader opens Mesa from                        |
+
+macOS provides OpenGL itself. On Linux, marimo-manim renders through Mesa's EGL
+driver when no display is set, so scenes render on servers without a GPU.
 
 ## Add an Animation view
 
-Open the notebook with Studio:
+Open the notebook with Studio in the workspace's environment:
 
 ```sh
-uv run marimo edit analysis.py --watch
+pixi run marimo edit analysis.py --no-sandbox --watch
 ```
+
+Studio runs the notebook, its views, and every render in this environment.
+Start it inside the workspace: Studio renders scenes in the server's own
+environment, which a [pixi sandbox](https://marimo.io/blog/pixi-sandboxes)
+started with `--sandbox=pixi` provides to the kernel alone.
 
 Click **Add view**, choose **Manim animation**, and create the view. Or create
 it from a terminal:
 
 ```sh
-uv run marimo-studio view create animation --target analysis.py \
+pixi run marimo-studio view create animation --target analysis.py \
   --starter marimo-manim/manim:default
 ```
 
