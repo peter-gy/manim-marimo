@@ -1,0 +1,117 @@
+---
+title: Scenes and notebook results
+description: Read notebook values, figures, and cell outputs in a Manim scene, and give every read a default.
+---
+
+# Scenes and notebook results
+
+A scene is a Python file in the view project that defines one
+`manimlib.Scene` subclass. It reads notebook results through three functions
+from `marimo_manim`:
+
+```python
+from manimlib import DOWN, FadeIn, Scene, Text
+from marimo_manim import output, value
+
+
+class Summary(Scene):
+    def construct(self):
+        mean = float(value("summary.mean", default=0))
+        self.play(FadeIn(Text(f"Mean {mean:.2f}")))
+        chart = output("distribution_figure", height=3)
+        if chart is not None:
+            self.play(FadeIn(chart.to_edge(DOWN)))
+        self.wait(1)
+```
+
+| Read                                         | Returns                                                                 |
+| -------------------------------------------- | ----------------------------------------------------------------------- |
+| `value(selector, *, default=None)`           | The value's JSON form                                                   |
+| `output(selector, *, default=None, **image)` | The value as an `ImageMobject`, such as a matplotlib figure             |
+| `cell(name, *, default=None, **image)`       | The output of the cell called `name` as an `ImageMobject`               |
+
+Studio renders the scene again whenever one of these results changes in the
+notebook.
+
+## Values
+
+`value()` returns what [marimo-export](https://marimo-team.github.io/marimo-export/reference/python/values)
+produces for the notebook variable:
+
+| Notebook value                  | Scene receives                 |
+| ------------------------------- | ------------------------------ |
+| NumPy array                     | Nested lists of numbers        |
+| pandas or polars DataFrame      | A list of row objects          |
+| `datetime.date`                 | ISO 8601 text                  |
+| `mo.ui` element, such as a slider | Its current value through `name.value` |
+
+Selectors reach into values with dots and indexes, such as `summary.mean`,
+`shape.value`, or `points[0]`. Wrap a value in `np.asarray()` to animate it.
+
+## Figures and cell outputs
+
+`output()` reads a notebook value as an image. Studio draws a matplotlib figure
+as a PNG, and the scene receives an `ImageMobject`. Keyword arguments such as
+`height` pass through to `ImageMobject`.
+
+`cell()` reads the rendered output of a named cell. Name a cell by its
+function, `def distribution_chart():`. A cell whose last expression is a figure
+arrives as that figure. A cell that shows text, a table, or a layout of several
+outputs has no image form and returns `default`.
+
+## Defaults
+
+Every read returns its `default` when the notebook has not computed the
+result, when an output or cell has no image form, and when the scene runs
+outside Studio, for example with `manimgl scene.py`. A present `None` value
+stays `None`.
+
+The build runs each scene with every read at its default, skipping animation.
+A scene that fails there fails the build at its own line, and Studio keeps the
+last published view. Give each read a default the scene can render:
+
+```python
+circle = [[[0, 0], [np.cos(t), np.sin(t)]] for t in np.linspace(0, 2 * np.pi, 61)]
+chain = np.asarray(value("chain", default=circle), dtype=float)
+```
+
+## How Studio finds the reads
+
+Studio reads the scene's source without running it and records every literal
+target. Write each target as a string literal. A computed target, such as
+`value(name)`, reports `manim-read-dynamic` and always returns its default.
+
+A scene's reads include those in project modules it imports. Shared helpers can
+live beside the scenes:
+
+```text
+studio/analysis/animation/
+  scene.py        from helpers import axes_for
+  helpers.py      reads value("bounds")
+```
+
+A change to `bounds` renders `scene.py` again, and leaves scenes that do not
+import `helpers` untouched.
+
+## One scene per file
+
+The file's scene is the one `Scene` subclass it defines that no other class in
+the file extends. A base class in the same file, or in an imported helper,
+stays available:
+
+```python
+class Styled(Scene):
+    default_camera_config = {"background_color": "#ffffff"}
+
+
+class Animation(Styled):
+    def construct(self): ...
+```
+
+Put a second animation in its own file and show it with its own render host.
+
+## LaTeX
+
+`Text` renders with system fonts. `Tex` and `MathTex` call a
+[LaTeX installation](https://3b1b.github.io/manim/getting_started/installation.html)
+on the machine that renders the scene.

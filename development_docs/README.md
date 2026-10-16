@@ -1,0 +1,69 @@
+# Contributor guide
+
+marimo-manim is a marimo-studio view provider. Studio owns notebooks, view
+projects, builds, sessions, and delivery. marimo-manim owns one kind of view:
+it finds the notebook results Manim scenes read, renders the scenes into
+movies, and ships the starter, the scene API, and the agent skill for authoring
+them. Start a change from the behavior a view author or reader depends on, and
+test it through the same boundary.
+
+## Set up
+
+[pixi](https://pixi.sh/) installs every system tool from conda-forge: uv,
+Node.js, pnpm, and on Linux the Mesa OpenGL stack that renders scenes without a
+display. uv installs the Python environment from `uv.lock`.
+
+```sh
+pixi run check
+```
+
+`pixi task list` shows every task:
+
+| Task                  | Runs                                                   |
+| --------------------- | ------------------------------------------------------ |
+| `check`               | `lint`, `typecheck`, and `test`, as CI does            |
+| `format`              | ruff fixes and formatting                              |
+| `example <name>`      | Validates and builds one example view                  |
+| `examples`            | Validates and builds both example views                |
+| `edit <example>`      | Opens `examples/<example>.py` in Studio                |
+| `build`               | Builds the wheel and sdist into `dist/`                |
+| `docs-dev`, `docs-build` | Serves or builds the VitePress site in `docs/`      |
+
+## Where things live
+
+| Path                          | Owns                                                                   |
+| ----------------------------- | ---------------------------------------------------------------------- |
+| `src/marimo_manim/`           | The provider, the scene API, and the render worker                     |
+| `src/marimo_manim/starters/`  | Files of the `marimo-manim/manim:default` starter                      |
+| `skills/marimo-manim/`, `plugin.json` | The agent skill the wheel ships as an Agent Plugin           |
+| `examples/`                   | Two notebooks with Animation views, used by docs and manual checks      |
+| `docs/`                       | The VitePress documentation site                                       |
+| `tests/`                      | Read, inspection, starter, and worker tests                            |
+| `pixi.toml`, `pixi.lock`      | System tools and platform activation                                   |
+| `pyproject.toml`, `uv.lock`   | Package metadata and the Python environment                            |
+
+## Guides
+
+- [Architecture](architecture.md): the provider lifecycle and the worker
+  protocol.
+- [Testing](testing.md): test layers, rendering on Linux, and example checks.
+- [Releasing](releasing.md): preview wheels, tagged releases, and the docs site.
+
+## External foundations
+
+| Project                                                                      | Role here                                                        |
+| ---------------------------------------------------------------------------- | ---------------------------------------------------------------- |
+| [marimo-studio](https://marimo-team.github.io/marimo-studio/)                | Hosts the provider. Its `view_providers` SDK is the only import. |
+| [ManimGL](https://github.com/3b1b/manim)                                     | Builds and renders scenes                                        |
+| [Agent Plugins](https://agent-plugins.org/)                                  | Packages the skill into the wheel and prints it for agents       |
+| [pixi](https://pixi.sh/)                                                     | Installs system tools from conda-forge                           |
+| [uv](https://docs.astral.sh/uv/)                                             | Resolves and installs the Python environment                     |
+| [VitePress](https://vitepress.dev/)                                          | Builds the documentation site                                    |
+
+## Change checklist
+
+- Behavior visible to view authors appears in `docs/`, the starter's
+  `AGENTS.md`, and `skills/marimo-manim/SKILL.md` in the same terms.
+- A change to scene reads, renders, or the starter keeps both examples
+  building: `pixi run examples`.
+- `pixi run check` passes, and the docs build with `pixi run docs-build`.

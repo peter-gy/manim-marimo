@@ -1,0 +1,114 @@
+:root {
+  --vp-c-bg: #fcfcfa;
+  --vp-c-bg-soft: #f3f4f1;
+  --vp-c-bg-alt: #f3f4f1;
+  --vp-c-divider: #e2e5e0;
+  --vp-c-text-1: #1f2b30;
+  --vp-c-text-2: #56636a;
+  --vp-c-brand-1: #1f6f8b;
+  --vp-c-brand-2: #2a809d;
+  --vp-c-brand-3: #175871;
+  --vp-c-brand-soft: rgba(31, 111, 139, 0.12);
+}
+
+.dark {
+  --vp-c-bg: #11161c;
+  --vp-c-bg-soft: #1a2129;
+  --vp-c-bg-alt: #0d1116;
+  --vp-c-divider: #2c353f;
+  --vp-c-text-1: #e5ebee;
+  --vp-c-text-2: #a3b0b8;
+  --vp-c-brand-1: #8fd3e8;
+  --vp-c-brand-2: #a9dfef;
+  --vp-c-brand-3: #6fbfd8;
+  --vp-c-brand-soft: rgba(143, 211, 232, 0.12);
+  --vp-button-brand-text: var(--vp-c-black);
+  --vp-button-brand-hover-text: var(--vp-c-black);
+  --vp-button-brand-active-text: var(--vp-c-black);
+}
+
+.VPNavBar > .divider {
+  display: none;
+}
+
+.VPHomeHero .text {
+  max-width: 640px;
+  font-size: clamp(34px, 4vw, 50px);
+  font-weight: 500;
+  line-height: 1.13;
+  letter-spacing: -0.035em;
+}
+
+.VPHomeHero .tagline {
+  max-width: 560px;
+  padding-top: 20px;
+  font-size: 18px;
+  line-height: 1.65;
+}
+
+.VPHomeHero .image-bg {
+  display: none;
+}
+
+.VPButton {
+  border-radius: 6px !important;
+  font-weight: 500;
+}
+
+.VPButton.alt {
+  border-color: var(--vp-c-divider);
+}
+
+.VPFeatures .VPFeature {
+  border: 1px solid var(--vp-c-divider);
+  border-radius: 8px;
+  background: var(--vp-c-bg);
+}
+
+.VPFeature .title {
+  font-weight: 600;
+}
+
+.VPHome .vp-doc h2 {
+  border-top: 0;
+  padding-top: 16px;
+  font-size: 26px;
+  font-weight: 500;
+  letter-spacing: -0.025em;
+}
+
+.vp-doc h1 {
+  font-weight: 500;
+  letter-spacing: -0.025em;
+}
+
+.vp-doc a {
+  text-underline-offset: 3px;
+}
+
+.vp-doc div[class*="language-"],
+.vp-doc img {
+  border: 1px solid var(--vp-c-divider);
+  border-radius: 6px;
+}
+
+/* Rendered movies keep the scene's 16:9 frame and dark background. */
+.vp-doc video.movie {
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  margin: 16px 0;
+  border: 1px solid var(--vp-c-divider);
+  border-radius: 6px;
+  background: #11161c;
+}
+
+.vp-doc .movies {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 16px;
+}
+
+.vp-doc .movies video.movie {
+  margin: 0;
+}
