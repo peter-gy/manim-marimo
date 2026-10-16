@@ -8,8 +8,9 @@ import os
 import subprocess
 import sys
 import traceback
+from collections.abc import Callable
 from pathlib import Path
-from typing import Any
+from typing import Any, cast
 
 from marimo_manim._reads import SceneReads, scene_reads
 
@@ -47,12 +48,14 @@ def _use_headless_opengl() -> None:
         return
     import moderngl
 
-    create = moderngl.create_standalone_context
+    # moderngl's stub types each keyword argument as a dict, so the original
+    # function and its replacement pass through Any.
+    create = cast("Callable[..., moderngl.Context]", moderngl.create_standalone_context)
 
     def create_with_egl(**settings: Any) -> moderngl.Context:
-        return create(**{**settings, "backend": "egl"})
+        return create(**settings, backend="egl")
 
-    moderngl.create_standalone_context = create_with_egl
+    moderngl.create_standalone_context = cast(Any, create_with_egl)
 
 
 def _encoder_closed(scene: Any) -> None:
