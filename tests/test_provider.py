@@ -73,6 +73,27 @@ def test_each_page_render_host_declares_its_scene_with_the_reads_it_reaches(
     assert result.diagnostics == ()
 
 
+def test_source_opens_view_files_in_their_editor_language(tmp_path: Path):
+    result = inspect_project(
+        tmp_path,
+        '<marimo-output render="scene.py"></marimo-output>\n',
+        {
+            "scene.py": "from manimlib import Scene\n",
+            "style.css": "body { margin: 0; }\n",
+            "states.yaml": "schema: marimo-export.states.v1\n",
+            "notes.md": "# Storyboard\n",
+        },
+    )
+
+    assert {str(document.path): document.language for document in result.documents} == {
+        "index.html": "html",
+        "notes.md": "markdown",
+        "scene.py": "python",
+        "states.yaml": "yaml",
+        "style.css": "css",
+    }
+
+
 def test_a_render_host_for_a_missing_scene_reports_the_host(tmp_path: Path):
     result = inspect_project(
         tmp_path, '<main>\n  <marimo-output render="scene.py"></marimo-output>\n', {}

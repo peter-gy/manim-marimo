@@ -43,6 +43,10 @@ quality = "preview"
 | `*.py`                       | Scenes and helper modules. Private to the render.            |
 | Other files                  | Private to the render, such as data a scene loads            |
 
+Studio's Source panel edits the project's HTML, CSS, JavaScript, Python, JSON,
+Markdown, TOML, SVG, and YAML files, such as `states.yaml`, with syntax
+highlighting.
+
 ## Renders
 
 Each `<marimo-output render="path.py">` host on `index.html` declares a render

@@ -73,8 +73,11 @@ _LANGUAGES = {
     ".js": "javascript",
     ".py": "python",
     ".json": "json",
+    ".md": "markdown",
     ".toml": "toml",
     ".svg": "xml",
+    ".yaml": "yaml",
+    ".yml": "yaml",
 }
 _QUALITY = {
     "draft": VideoFormat(640, 360, 15),
