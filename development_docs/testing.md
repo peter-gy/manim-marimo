@@ -22,8 +22,9 @@ Studio does. It is the closest test to a reader opening a new view.
 Tests marked `render` start ManimGL and FFmpeg, so they need OpenGL. macOS
 provides it to every process. On Linux, `pixi.toml` installs Mesa from
 conda-forge and points glcontext at its libraries, and the worker opens an EGL
-context when no `DISPLAY` is set. CI runs the same `pixi run check` on Ubuntu
-with no display server and no GPU.
+context when no `DISPLAY` is set. It also installs Pango and a compiler, because
+manimpango publishes no Linux wheels and uv compiles it on first sync. CI runs
+the same `pixi run check` on Ubuntu with no display server and no GPU.
 
 To reproduce a Linux failure, run the suite inside the pixi environment on a
 Linux machine or container. `pixi run env | grep GLCONTEXT` shows the

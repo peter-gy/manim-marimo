@@ -16,10 +16,19 @@ pnpm = ">=10"
 # ManimGL needs an OpenGL context. macOS provides one. On Linux, Mesa renders
 # in software through EGL, so scenes render on servers and CI runners without
 # a display or a GPU.
+#
+# manimpango, which ManimGL uses for Text, publishes no Linux wheels, so uv
+# compiles it against Pango. conda-forge's compiler links the extension to this
+# environment's libraries, and its fonts give Text a typeface to render.
 [target.linux.dependencies]
 mesalib = ">=25"
 libegl = ">=1.7"
 libgl = ">=1.7"
+pango = ">=1.56"
+cairo = ">=1.18"
+pkg-config = ">=0.29"
+c-compiler = ">=1.9"
+fonts-conda-ecosystem = "*"
 
 # glcontext loads OpenGL by library name, so point it at this environment's
 # libraries, and let libglvnd find Mesa's EGL driver here.

@@ -54,16 +54,21 @@ npx serve dist/animation
 
 ## Linux servers
 
-ManimGL needs OpenGL. On a Linux machine without a display, marimo-manim
-renders through [Mesa](https://mesa3d.org/)'s software EGL driver, which needs
-no window system and no GPU. Install Mesa with [pixi](https://pixi.sh/), the
-conda package manager, in the workspace that runs Studio:
+ManimGL needs OpenGL, and its text library, manimpango, compiles against
+[Pango](https://pango.gnome.org/) on Linux. [pixi](https://pixi.sh/), the
+conda package manager, installs both from conda-forge into the workspace that
+runs Studio:
 
 ```toml
 [target.linux.dependencies]
 mesalib = ">=25"
 libegl = ">=1.7"
 libgl = ">=1.7"
+pango = ">=1.56"
+cairo = ">=1.18"
+pkg-config = ">=0.29"
+c-compiler = ">=1.9"
+fonts-conda-ecosystem = "*"
 
 [target.linux.activation.env]
 GLCONTEXT_LINUX_LIBGL = "$CONDA_PREFIX/lib/libGL.so.1"
@@ -71,11 +76,15 @@ GLCONTEXT_LINUX_LIBEGL = "$CONDA_PREFIX/lib/libEGL.so.1"
 __EGL_VENDOR_LIBRARY_DIRS = "$CONDA_PREFIX/share/glvnd/egl_vendor.d"
 ```
 
-Start Studio through `pixi run`, so renders inherit the environment:
+On a machine without a display, marimo-manim renders through
+[Mesa](https://mesa3d.org/)'s software EGL driver, which needs no window system
+and no GPU. Install the Python environment and start Studio through
+`pixi run`, so the build and the renders use these libraries:
 
 ```sh
 pixi run uv run marimo run analysis.py --host 0.0.0.0
 ```
 
-marimo-manim's own CI renders every test scene this way. With a `DISPLAY` set,
-ManimGL opens its usual X11 context instead.
+marimo-manim's own CI renders every test scene this way, from the same tables
+in its [`pixi.toml`](https://github.com/peter-gy/marimo-manim/blob/main/pixi.toml).
+With a `DISPLAY` set, ManimGL opens its usual X11 context instead.
