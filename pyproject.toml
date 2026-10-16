@@ -1,0 +1,74 @@
+[project]
+name = "marimo-manim"
+version = "0.1.0"
+description = "Manim animations of marimo notebook results, as marimo-studio views"
+readme = "README.md"
+license = "Apache-2.0"
+license-files = ["LICENSE"]
+authors = [{ name = "Péter Ferenc Gyarmati", email = "dev.petergy@gmail.com" }]
+keywords = ["marimo", "marimo-studio", "manim", "animation", "notebooks"]
+classifiers = [
+  "Development Status :: 3 - Alpha",
+  "Intended Audience :: Education",
+  "Intended Audience :: Science/Research",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.12",
+  "Topic :: Multimedia :: Graphics :: 3D Rendering",
+  "Topic :: Scientific/Engineering :: Visualization",
+]
+requires-python = ">=3.12"
+dependencies = [
+  "imageio-ffmpeg>=0.6,<0.7",
+  "manimgl>=1.7.2,<1.8",
+  "marimo-studio @ https://github.com/marimo-team/marimo-studio/releases/download/preview/marimo_studio-0.3.1.dev23-py3-none-any.whl",
+  # ManimGL 1.7 reads its version through pkg_resources at import.
+  "setuptools>=70,<81",
+]
+
+[project.urls]
+Homepage = "https://peter-gy.github.io/marimo-manim/"
+Documentation = "https://peter-gy.github.io/marimo-manim/"
+Repository = "https://github.com/peter-gy/marimo-manim"
+Issues = "https://github.com/peter-gy/marimo-manim/issues"
+
+[project.entry-points."marimo_studio.view_provider"]
+manim = "marimo_manim._provider:provider"
+
+[build-system]
+requires = ["agent-plugins>=0.2.4,<0.3", "uv_build>=0.13.1,<0.14"]
+build-backend = "agent_plugins.build.uv_build"
+
+# The wheel ships plugin.json and skills/ as an Agent Plugin, which
+# `agent-plugins read marimo-manim` prints for coding agents.
+[tool.agent-plugins]
+root = "."
+
+[dependency-groups]
+dev = [
+  "basedpyright>=1.40.2",
+  "marimo[recommended]>=0.25.1",
+  "pytest>=9.1.1",
+  "ruff>=0.17.0",
+  "ty>=0.0.87",
+]
+
+[tool.uv]
+required-version = ">=0.13.1,<0.14"
+
+[tool.ruff]
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "SIM", "RUF", "C4", "PTH"]
+
+[tool.pytest.ini_options]
+addopts = "--strict-markers"
+testpaths = ["tests"]
+markers = ["render: renders a scene with ManimGL, OpenGL, and FFmpeg"]
+
+[tool.basedpyright]
+include = ["src", "tests"]
+typeCheckingMode = "standard"
+
+[tool.ty.environment]
+python-version = "3.12"

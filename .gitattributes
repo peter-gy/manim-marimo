@@ -1,0 +1,3 @@
+pixi.lock merge=binary linguist-language=YAML linguist-generated=true
+uv.lock linguist-generated=true
+docs/pnpm-lock.yaml linguist-generated=true
