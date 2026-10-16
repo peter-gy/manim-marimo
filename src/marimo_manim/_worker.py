@@ -39,14 +39,19 @@ def _scene_type(module: Any, scene: type) -> type:
 
 
 def _use_headless_opengl() -> None:
-    """Open OpenGL contexts through EGL on Linux machines without a display.
+    """Render through EGL on Linux machines without a display.
 
-    ManimGL asks moderngl for an X11 context on Linux. Mesa's EGL renders the
-    same scenes in software with no window system, as on servers and CI.
+    ManimGL imports pyglet's window module, which opens a hidden X11 window,
+    and asks moderngl for an X11 context. Mesa's EGL renders the same scenes in
+    software with no window system, as on servers and CI. Call this before
+    importing manimlib.
     """
     if not sys.platform.startswith("linux") or os.environ.get("DISPLAY"):
         return
     import moderngl
+    import pyglet
+
+    pyglet.options["shadow_window"] = False
 
     # moderngl's stub types each keyword argument as a dict, so the original
     # function and its replacement pass through Any.
@@ -96,10 +101,9 @@ def _run(job: dict[str, Any]) -> None:
     # to this worker, independently of Studio's command line.
     sys.argv = ["manim", "--config_file", str(config)]
     sys.dont_write_bytecode = True
+    _use_headless_opengl()
     import imageio_ffmpeg
     from manimlib import Scene
-
-    _use_headless_opengl()
 
     ffmpeg = imageio_ffmpeg.get_ffmpeg_exe()
     reads = SceneReads(
