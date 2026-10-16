@@ -121,6 +121,11 @@ render that succeeds can still overlap labels or place a figure off screen.
 Change a notebook control and confirm the host passes through `stale` and
 shows a new movie.
 
+For a static export, list every value each control can send in `states.yaml`
+beside `view.toml`. `marimo-studio view preflight animation` warns with
+`prepared-states-skip-control-values` for each control whose values the states
+skip.
+
 | Symptom                                        | Cause and repair                                                         |
 | ---------------------------------------------- | ------------------------------------------------------------------------ |
 | Build fails at a scene line                    | The scene fails with defaults. Give the read a renderable default.       |

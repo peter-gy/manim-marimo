@@ -26,3 +26,9 @@ host to show a second animation. The markup inside a host is its player, and
 `animation.mp4`, `poster.png`, and `metadata.json`. The host's `data-state` is
 `stale` while a new movie renders. Keep native `<marimo-cell>` hosts beside it
 for the controls and outputs that belong in this view.
+
+A static export renders one movie per state that `states.yaml` beside
+`view.toml` lists. List every value each control can send:
+`marimo-studio view preflight animation` warns with
+`prepared-states-skip-control-values` for each control whose values the states
+skip.

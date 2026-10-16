@@ -45,6 +45,15 @@ Prepare every value a control can take. A slider stepped to a value without a
 prepared state keeps the previous movie. Each state renders a full movie, so
 the export time grows with the number of states.
 
+`view preflight` prepares and renders every state as an export does, then
+discards the site. Both commands warn with `prepared-states-skip-control-values`
+for each control whose values the states skip, with the count and the first
+skipped values:
+
+```sh
+pixi run marimo-studio view preflight animation --target analysis.py
+```
+
 Serve the export from a web server that compresses JavaScript and answers byte
 range requests, so the page loads quickly and the movie streams:
 
