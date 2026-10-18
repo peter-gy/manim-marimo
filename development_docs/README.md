@@ -81,7 +81,7 @@ dataflow scene changes pace.
 | Color    | ManimGL's palette. Notebook results are green, scenes are blue, and yellow surrounds what has focus |
 | Type     | Computer Modern from the `computer-modern` package: CMU Serif for text, CMU Bright for navigation, CMU Typewriter for code |
 | Surfaces | A stroke and the same color as a faint fill, with square corners                           |
-| Hero     | `FourierHero.vue` draws the mark with the vectors in the generated `mark.ts`               |
+| Hero     | `FourierHero.vue` draws the mark and writes the wordmark with rotating vectors, from the generated `brand.ts`, and loops |
 
 Code blocks use the `manim-dark` and `manim-light` Shiki themes in
 `docs/.vitepress/config.mts`. Recompose the README hero with
@@ -97,7 +97,7 @@ notebook and writes, beside the wordmark set in CMU Serif:
 | ---------------------------------------- | ------------------------------------------------------------- |
 | `docs/public/brand/`                     | Marks, icons, wordmarks, and lockups as SVG and PNG, the Open Graph image, and the brand board |
 | `docs/public/favicon.svg`, `apple-touch-icon.png` | The icon on the scene's plate                         |
-| `docs/.vitepress/theme/mark.ts`          | The vectors the home page's hero turns                        |
+| `docs/.vitepress/theme/brand.ts`         | The mark's vectors and the wordmark's contours, which the home page's hero draws |
 | `examples/studio/*/animation/fonts/`     | CMU faces the scenes register with manimpango                 |
 | `examples/studio/*/animation/assets/fonts/` | CMU faces the example pages load                           |
 

@@ -298,24 +298,23 @@ body {
 }
 
 .VPHomeHero .image-container {
+  height: auto !important;
   transform: none;
 }
 
 @media (max-width: 959px) {
   .VPHomeHero .image {
-    margin: 0 -1.5rem -0.5rem;
+    margin: 0 -1.5rem 2rem;
   }
 
   .VPHomeHero .image-container {
-    width: 16rem;
-    height: 16rem;
+    width: 17rem;
   }
 }
 
 @media (min-width: 960px) {
   .VPHomeHero .image-container {
     width: 440px;
-    height: 440px;
     margin-left: auto;
   }
 }
