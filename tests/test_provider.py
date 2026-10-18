@@ -1,4 +1,6 @@
+import compileall
 import os
+import shutil
 import subprocess
 from collections.abc import Mapping, Sequence
 from importlib.metadata import version
@@ -8,6 +10,7 @@ import pytest
 from marimo_studio.view_providers import (
     BuildRequest,
     InspectionRequest,
+    NotebookSpec,
     ProviderCancellation,
     ProviderCommandResult,
     Render,
@@ -15,10 +18,12 @@ from marimo_studio.view_providers import (
     RenderOutput,
     RenderValue,
     SourceLocation,
+    StarterContext,
     ViewProject,
 )
 from marimo_studio.view_providers.testing import check_provider
 
+import marimo_manim.starters.default
 from marimo_manim._provider import provider
 
 IMAGES = ("image/png", "image/jpeg", "image/webp")
@@ -159,6 +164,29 @@ def test_inspection_reads_scene_source_and_reports_syntax_location(tmp_path: Pat
     assert diagnostic.source.path == PurePosixPath("scene.py")
     assert diagnostic.source.line == 3
     assert not (tmp_path / "executed").exists()
+
+
+def test_starter_files_of_a_compiled_install_exclude_bytecode(tmp_path: Path):
+    # `uv run --compile-bytecode`, which Studio runs for a notebook's
+    # dependencies, compiles the starter's scene.py in site-packages.
+    files = Path(marimo_manim.starters.default.__file__).parent / "files"
+    compileall.compile_dir(files, quiet=1)
+    try:
+        (starter,) = provider.starters()
+        notebook = NotebookSpec(tmp_path / "analysis.py", "1", (), {})
+        plan = provider.create(
+            starter, StarterContext("animation", "analysis", notebook, {})
+        )
+    finally:
+        shutil.rmtree(files / "__pycache__")
+
+    assert sorted(path.as_posix() for path in plan.files) == [
+        "AGENTS.md",
+        "index.html",
+        "player.js",
+        "scene.py",
+        "style.css",
+    ]
 
 
 def test_availability_reports_a_worker_from_another_release(
