@@ -68,6 +68,23 @@ encode. `render.ts` places the
 read highlights with the scene's timings, so update its `cues` when the
 convolution scene changes pace.
 
+## Documentation theme
+
+`docs/.vitepress/theme/` draws the site like a Manim scene, and
+`scripts/hero/compose.html` paints the README hero in the same terms:
+
+| Element  | Contract                                                                                  |
+| -------- | ----------------------------------------------------------------------------------------- |
+| Page     | Dark mode takes `#11161c`, the background the worker renders scenes on. Light mode is white |
+| Color    | ManimGL's palette. Notebook results are green, scenes are blue, and yellow surrounds what has focus |
+| Type     | Computer Modern from the `computer-modern` package: CMU Serif for text, CMU Bright for navigation, CMU Typewriter for code |
+| Surfaces | A stroke and the same color as a faint fill, with square corners                           |
+| Hero     | `FourierHero.vue` writes the italic m of CMU Serif with rotating vectors                   |
+
+Code blocks use the `manim-dark` and `manim-light` Shiki themes in
+`docs/.vitepress/config.mts`. Recompose the README hero with
+`pixi run hero-render` after changing the page colors.
+
 ## Guides
 
 - [Architecture](architecture.md): the provider lifecycle and the worker

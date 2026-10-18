@@ -5,67 +5,74 @@
     <title>manim-marimo hero</title>
     <style>
       @font-face {
-        font-family: "Inter";
-        font-weight: 100 900;
-        src: url("node_modules/@fontsource-variable/inter/files/inter-latin-wght-normal.woff2") format("woff2");
-      }
-
-      @font-face {
-        font-family: "Fira Mono";
+        font-family: "CMU Bright";
         font-weight: 400;
-        src: url("node_modules/@fontsource/fira-mono/files/fira-mono-latin-400-normal.woff2") format("woff2");
+        src: url("node_modules/computer-modern/fonts/cmu-bright-500-roman.woff2") format("woff2");
       }
 
       @font-face {
-        font-family: "Fira Mono";
-        font-weight: 500;
-        src: url("node_modules/@fontsource/fira-mono/files/fira-mono-latin-500-normal.woff2") format("woff2");
+        font-family: "CMU Bright";
+        font-weight: 600;
+        src: url("node_modules/computer-modern/fonts/cmu-bright-600-roman.woff2") format("woff2");
       }
 
-      /* Frames are opaque, on the page color GitHub shows the README on, so
-         animated WebP frames blend without lossy alpha. */
+      @font-face {
+        font-family: "CMU Serif";
+        font-style: italic;
+        font-weight: 400;
+        src: url("node_modules/computer-modern/fonts/cmu-serif-500-italic.woff2") format("woff2");
+      }
+
+      @font-face {
+        font-family: "CMU Typewriter Text";
+        font-weight: 400;
+        src: url("node_modules/computer-modern/fonts/cmu-typewriter-text-500-roman.woff2") format("woff2");
+      }
+
+      @font-face {
+        font-family: "CMU Typewriter Text";
+        font-weight: 700;
+        src: url("node_modules/computer-modern/fonts/cmu-typewriter-text-700-roman.woff2") format("woff2");
+      }
+
+      /* Frames are opaque, on the documentation site's page colors, so
+         animated WebP frames blend without lossy alpha. The colors keep the
+         site's meanings: notebook results are green, the scene is blue, and
+         yellow surrounds what the movie reads. */
       :root {
         --page: #ffffff;
-        --accent: #1d7363;
-        --accent-ring: rgb(29 115 99 / 22%);
-        --accent-wash: rgb(29 115 99 / 8%);
-        --card-bg: #fff;
-        --card-border: rgb(20 30 25 / 12%);
+        --ring: #b8860b;
+        --ring-wash: rgb(184 134 11 / 9%);
+        --notebook: #4f7a3a;
+        --scene: #1c758a;
+        --card-bg: #ffffff;
+        --card-border: #d5d9dd;
         --chip: #e8e8ec;
         --chip-text: #3c4043;
-        --chrome: #fbfbfa;
-        --chrome-rule: rgb(20 30 25 / 8%);
-        --code: #1f2328;
-        --label: #3c4043;
-        --muted: #8a8f94;
-        --notebook-bg: #fff;
-        --notebook-chrome: #eef5f2;
-        --notebook-label: #1d7363;
-        --shadow:
-          0 0 0 1px rgb(20 30 25 / 4%), 0 2px 4px rgb(20 30 25 / 5%),
-          0 16px 32px -12px rgb(20 30 25 / 16%), 0 28px 56px -28px rgb(20 30 25 / 22%);
+        --chrome: #f6f7f8;
+        --chrome-rule: #e6e8eb;
+        --code: #16191d;
+        --label: #16191d;
+        --muted: #7d858e;
+        --notebook-bg: #ffffff;
       }
 
       body[data-theme="dark"] {
-        --page: #0d1117;
-        --accent: #5cc2a8;
-        --accent-ring: rgb(92 194 168 / 26%);
-        --accent-wash: rgb(92 194 168 / 10%);
-        --card-bg: #181c1a;
-        --card-border: rgb(255 255 255 / 12%);
+        --page: #11161c;
+        --ring: #ffff00;
+        --ring-wash: rgb(255 255 0 / 8%);
+        --notebook: #83c167;
+        --scene: #58c4dd;
+        --card-bg: #151b22;
+        --card-border: #333b45;
         --chip: #1b537b;
         --chip-text: #dbe9f5;
-        --chrome: #1b1d1f;
-        --chrome-rule: rgb(255 255 255 / 8%);
-        --code: #e3e5e8;
-        --label: #e3e5e8;
-        --muted: #8f959b;
-        --notebook-bg: #181c1a;
-        --notebook-chrome: #1f2a26;
-        --notebook-label: #cad996;
-        --shadow:
-          0 0 0 1px rgb(0 0 0 / 40%), 0 2px 4px rgb(0 0 0 / 30%),
-          0 16px 32px -12px rgb(0 0 0 / 50%), 0 28px 56px -28px rgb(0 0 0 / 65%);
+        --chrome: #1a2129;
+        --chrome-rule: #222932;
+        --code: #ececec;
+        --label: #ececec;
+        --muted: #848b94;
+        --notebook-bg: #151b22;
       }
 
       html,
@@ -84,10 +91,8 @@
         gap: 24px;
         box-sizing: border-box;
         width: 1200px;
-        /* The padding holds the card shadows, which reach 56px below a card. */
-        padding: 24px 32px 64px;
-        font-family: "Inter", system-ui, sans-serif;
-        -webkit-font-smoothing: antialiased;
+        padding: 24px 32px;
+        font-family: "CMU Bright", system-ui, sans-serif;
       }
 
       .card {
@@ -95,9 +100,8 @@
         flex-direction: column;
         overflow: hidden;
         border: 1px solid var(--card-border);
-        border-radius: 12px;
+        border-radius: 2px;
         background: var(--card-bg);
-        box-shadow: var(--shadow);
       }
 
       .card > header {
@@ -111,14 +115,13 @@
         border-bottom: 1px solid var(--chrome-rule);
         background: var(--chrome);
         color: var(--label);
-        font-size: 13px;
-        font-weight: 550;
-        letter-spacing: -0.005em;
+        font-size: 14px;
+        font-weight: 400;
       }
 
       .card > header span:last-child {
         color: var(--muted);
-        font: 400 12px "Fira Mono", ui-monospace, monospace;
+        font: 400 13px "CMU Typewriter Text", ui-monospace, monospace;
       }
 
       .card.is-notebook {
@@ -126,8 +129,7 @@
       }
 
       .card.is-notebook > header {
-        background: var(--notebook-chrome);
-        color: var(--notebook-label);
+        color: var(--notebook);
       }
 
       .notebook {
@@ -137,8 +139,8 @@
         padding: 16px 14px 18px;
       }
 
-      /* A cell shot carries marimo's own border, so the focus ring sits just
-         outside it. */
+      /* The cell the movie reads gets Manim's SurroundingRectangle: square,
+         yellow, and clear of marimo's own border. */
       .cell {
         position: relative;
       }
@@ -150,10 +152,8 @@
 
       .cell::after {
         position: absolute;
-        inset: -3px;
-        border: 1.5px solid var(--accent);
-        border-radius: 11px;
-        box-shadow: 0 0 0 4px var(--accent-ring);
+        inset: -5px;
+        border: 2px solid var(--ring);
         content: "";
         opacity: var(--focus, 0);
         pointer-events: none;
@@ -209,11 +209,11 @@
 
       .render span {
         padding: 5px 10px 5px 9px;
-        border-radius: 999px;
-        background: rgb(20 22 24 / 82%);
-        box-shadow: 0 0 0 1px rgb(255 255 255 / 10%);
-        color: #e3e5e8;
-        font: 400 11.5px "Fira Mono", ui-monospace, monospace;
+        border: 1px solid rgb(255 255 255 / 14%);
+        border-radius: 2px;
+        background: rgb(17 22 28 / 86%);
+        color: #ececec;
+        font: 400 12.5px "CMU Typewriter Text", ui-monospace, monospace;
       }
 
       .render span::before {
@@ -222,7 +222,7 @@
         height: 6px;
         margin-right: 8px;
         border-radius: 50%;
-        background: #5cc2a8;
+        background: #58c4dd;
         vertical-align: 1px;
         content: "";
       }
@@ -233,7 +233,7 @@
         left: 0;
         height: 2px;
         width: 100%;
-        background: #5cc2a8;
+        background: #58c4dd;
         transform: scaleX(var(--progress, 0));
         transform-origin: left;
       }
@@ -247,21 +247,20 @@
         padding: 0 14px;
         border-bottom: 1px solid var(--chrome-rule);
         color: var(--muted);
-        font: 400 11px "Fira Mono", ui-monospace, monospace;
+        font: 400 12px "CMU Typewriter Text", ui-monospace, monospace;
         font-variant-numeric: tabular-nums;
       }
 
       .player .track {
-        height: 3px;
+        height: 2px;
         overflow: hidden;
-        border-radius: 999px;
         background: var(--chrome-rule);
       }
 
       .player .track i {
         display: block;
         height: 100%;
-        background: var(--accent);
+        background: var(--scene);
         transform: scaleX(var(--progress, 0));
         transform-origin: left;
       }
@@ -274,10 +273,7 @@
       .reads h2 {
         margin: 0 0 10px 10px;
         color: var(--muted);
-        font-size: 10.5px;
-        font-weight: 600;
-        letter-spacing: 0.08em;
-        text-transform: uppercase;
+        font: italic 400 16px "CMU Serif", serif;
       }
 
       .read {
@@ -288,15 +284,13 @@
         gap: 14px;
         height: 40px;
         padding: 0 10px;
-        border-radius: 7px;
       }
 
       .read::before {
         position: absolute;
-        inset: 0;
-        border-radius: 7px;
-        background: var(--accent-wash);
-        box-shadow: inset 2px 0 var(--accent);
+        inset: 3px 0;
+        border: 2px solid var(--ring);
+        background: var(--ring-wash);
         content: "";
         opacity: var(--focus, 0);
       }
@@ -304,18 +298,18 @@
       .read code {
         position: relative;
         color: var(--code);
-        font: 400 12.5px "Fira Mono", ui-monospace, monospace;
+        font: 400 14px "CMU Typewriter Text", ui-monospace, monospace;
       }
 
       .read code b {
-        color: var(--accent);
-        font-weight: 500;
+        color: var(--notebook);
+        font-weight: 400;
       }
 
       .read output {
         position: relative;
         color: var(--muted);
-        font-size: 12px;
+        font-size: 13px;
         font-variant-numeric: tabular-nums;
         text-align: right;
       }
@@ -326,10 +320,10 @@
         position: relative;
         min-width: 112px;
         padding: 3px 7px;
-        border-radius: 5px;
+        border-radius: 2px;
         background: var(--chip);
         color: var(--chip-text);
-        font: 400 11px "Fira Mono", ui-monospace, monospace;
+        font: 400 12px "CMU Typewriter Text", ui-monospace, monospace;
         text-align: center;
       }
     </style>
