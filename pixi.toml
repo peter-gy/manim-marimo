@@ -39,6 +39,8 @@ uv = ">=0.13.1,<0.14"
 
 [feature.dev.pypi-dependencies]
 basedpyright = ">=1.40.2"
+# Lens selects the shapes of a rendered movie in Studio's preview.
+marimo-lens = ">=0.2.4"
 pytest = ">=9.1.1"
 ruff = ">=0.17.0"
 ty = ">=0.0.87"

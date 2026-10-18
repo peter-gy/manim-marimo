@@ -31,7 +31,8 @@ interface ExportResult {
 }
 
 // Studio's prepared export records the default state and the scene's reads in
-// zero-python/current, and each state's render bundle in renders/index.json.
+// zero-python/current. renders/index.json maps each state to the bundle of
+// each render and lists each bundle's files once.
 interface Current {
   prepared: { inputs: Record<string, unknown>; state_fingerprint: string };
   projections: {
@@ -43,7 +44,12 @@ interface Current {
 }
 
 interface RenderIndex {
-  states: Record<string, Record<string, { bundle: string; main: string; preview: string }>>;
+  schema: 2;
+  bundles: Record<string, { main: string; preview: string }>;
+  states: Record<
+    string,
+    Record<string, { bundle: string; warnings: { code: string; message: string }[] }>
+  >;
 }
 
 const isFile = async (path: string): Promise<boolean> =>
@@ -85,12 +91,22 @@ try {
   const state = join(page, "_marimo-studio/views", view);
   const current = JSON.parse(await readFile(join(state, "zero-python/current"), "utf8")) as Current;
   const index = JSON.parse(await readFile(join(state, "renders/index.json"), "utf8")) as RenderIndex;
-  const render = index.states[current.prepared.state_fingerprint]?.[scene];
+  if (index.schema !== 2) {
+    throw new Error(`The page export has render index schema ${index.schema}, expected 2.`);
+  }
+  const warnings = Object.values(index.states).flatMap((renders) =>
+    Object.values(renders).flatMap((render) => render.warnings),
+  );
+  if (warnings.length > 0) {
+    throw new Error(`The page export's renders warned:\n${JSON.stringify(warnings, null, 2)}`);
+  }
+  const id = index.states[current.prepared.state_fingerprint]?.[scene]?.bundle;
+  const render = id === undefined ? undefined : index.bundles[id];
   const reads = current.projections.renders[scene];
-  if (!render || !reads) {
+  if (!id || !render || !reads) {
     throw new Error(`The page export has no render of ${scene} for its default state.`);
   }
-  const bundle = join(state, "renders", render.bundle);
+  const bundle = join(state, "renders", id);
   await mkdir(join(staging, "render"));
   for (const file of [render.main, render.preview, "metadata.json"]) {
     if (!(await isFile(join(bundle, file)))) {
