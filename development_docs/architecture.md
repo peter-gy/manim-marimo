@@ -29,7 +29,7 @@ disk, and only `render()` sees notebook results.
    file with `ast` and attributes literal `value()`, `output()`, and `cell()`
    calls to each scene through the project modules the scene imports. It never
    executes project code.
-2. `build()` copies the page, styles, scripts, and `public/` into the staging
+2. `build()` copies the page, styles, scripts, and `assets/` into the staging
    root, and everything else into the private render template. It writes
    `.manim-marimo/video.json` with the resolution and frame rate of the
    selected quality. It then runs every declared scene once in check mode, so a

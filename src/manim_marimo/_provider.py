@@ -156,7 +156,7 @@ def _video(project: ViewProject, profile: BuildProfile) -> VideoFormat:
 
 
 def _is_page_file(path: PurePosixPath) -> bool:
-    return path == _PAGE or path.suffix in {".css", ".js"} or path.parts[0] == "public"
+    return path == _PAGE or path.suffix in {".css", ".js"} or path.parts[0] == "assets"
 
 
 class _RenderHosts(HTMLParser):

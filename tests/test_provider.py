@@ -239,6 +239,65 @@ def test_installed_starter_publishes_its_page_and_renders_the_scene():
 
 
 @pytest.mark.render
+def test_build_publishes_the_page_and_its_assets_and_keeps_scenes_private(
+    tmp_path: Path,
+):
+    root = tmp_path / "project"
+    root.mkdir()
+    inspection = inspect_project(
+        root,
+        '<link rel="stylesheet" href="style.css">'
+        '<marimo-output render="scene.py"></marimo-output>',
+        {
+            "scene.py": (
+                "from manimlib import Scene\n"
+                "\n"
+                "class Animation(Scene):\n"
+                "    def construct(self):\n"
+                "        self.wait(0.1)\n"
+            ),
+            "style.css": "body { margin: 0; }\n",
+            "assets/fonts/serif.woff2": "font",
+            "fonts/serif.ttf": "font",
+        },
+    )
+    project = ViewProject("test", root, root / "view.toml", "manim-marimo/manim", {})
+    roots = {name: tmp_path / name for name in ("staging", "template", "work", "cache")}
+    for folder in roots.values():
+        folder.mkdir()
+    provider.build(
+        BuildRequest(
+            project,
+            inspection,
+            tuple(item.path for item in inspection.inputs),
+            "revision",
+            "development",
+            roots["staging"],
+            roots["template"],
+            roots["work"],
+            roots["cache"],
+            ProviderCancellation(),
+            Runner(),
+            120,
+        )
+    )
+
+    def files(folder: Path) -> list[str]:
+        return sorted(
+            path.relative_to(folder).as_posix()
+            for path in folder.rglob("*")
+            if path.is_file() and ".manim-marimo" not in path.parts
+        )
+
+    assert files(roots["staging"]) == [
+        "assets/fonts/serif.woff2",
+        "index.html",
+        "style.css",
+    ]
+    assert files(roots["template"]) == ["fonts/serif.ttf", "scene.py"]
+
+
+@pytest.mark.render
 def test_build_sizes_outputs_placed_at_a_literal_height_in_points(tmp_path: Path):
     root = tmp_path / "project"
     root.mkdir()

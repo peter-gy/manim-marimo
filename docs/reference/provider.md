@@ -39,7 +39,7 @@ quality = "preview"
 | Path                         | Role                                                         |
 | ---------------------------- | ------------------------------------------------------------ |
 | `index.html`                 | The page. Published.                                         |
-| `*.css`, `*.js`, `public/**` | Page assets. Published.                                      |
+| `*.css`, `*.js`, `assets/**` | Page assets. Published.                                      |
 | `*.py`                       | Scenes and helper modules. Private to the render.            |
 | Other files                  | Private to the render, such as data a scene loads            |
 

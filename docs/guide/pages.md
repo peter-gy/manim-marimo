@@ -117,6 +117,6 @@ render at `production`.
 
 ## Page assets
 
-Put images and fonts beneath `public/` and reference them from `index.html`.
-The build publishes the page, its CSS and JavaScript, and `public/`. Scenes and
+Put images and fonts beneath `assets/` and reference them from `index.html`.
+The build publishes the page, its CSS and JavaScript, and `assets/`. Scenes and
 their helper modules stay private to the render.
