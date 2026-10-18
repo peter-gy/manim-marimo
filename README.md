@@ -31,26 +31,33 @@ figures inside the scene.
 
 ## Get started
 
-[pixi](https://pixi.sh/) installs Python, the OpenGL and Pango libraries
-ManimGL renders with, and marimo-manim into one environment. Add these tables
-to the `pixi.toml` beside the notebook:
+marimo-manim renders scenes in the notebook's [pixi](https://pixi.sh/)
+environment, which installs the OpenGL and Pango libraries ManimGL renders with
+from conda-forge. Declare it in the notebook's script metadata:
 
-```toml
-[dependencies]
-python = ">=3.10,<3.15"
-manimpango = ">=0.6"
-
-[pypi-dependencies]
-marimo-manim = { git = "https://github.com/peter-gy/marimo-manim" }
+```python
+# /// script
+# requires-python = ">=3.10,<3.15"
+# dependencies = [
+#     "marimo-manim[render] @ git+https://github.com/peter-gy/marimo-manim",
+# ]
+#
+# [tool.pixi.workspace]
+# channels = ["conda-forge"]
+#
+# [tool.pixi.dependencies]
+# manimpango = ">=0.6"
+# ///
 ```
 
 ```sh
-pixi run marimo edit analysis.py --no-sandbox --watch
+uvx --with "marimo-manim @ git+https://github.com/peter-gy/marimo-manim" \
+  marimo edit analysis.py --sandbox=pixi --watch
 ```
 
 In Studio, click **Add view** and choose **Manim animation**.
 [Getting started](https://peter-gy.github.io/marimo-manim/guide/getting-started)
-shows the complete `pixi.toml`, including the Mesa tables that render on Linux
+shows the complete metadata, including the Mesa tables that render on Linux
 servers without a display.
 
 ## Author with a coding agent
@@ -59,10 +66,10 @@ marimo-manim ships an agent skill beside marimo-studio's. Paste this into
 Claude Code, Codex, or another terminal agent:
 
 ```text
-Run `pixi run agent-plugins read marimo-studio` and
-`pixi run agent-plugins read marimo-manim`, then create a notebook that
-explains Fourier series and an Animation view that draws a square wave
-from rotating vectors.
+Read the marimo-studio and marimo-manim skills with
+`uvx --with "marimo-manim @ git+https://github.com/peter-gy/marimo-manim" agent-plugins read <name>`,
+then create a notebook that explains Fourier series and an Animation view
+that draws a square wave from rotating vectors.
 ```
 
 ## Examples

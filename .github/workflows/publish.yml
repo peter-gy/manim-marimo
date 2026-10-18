@@ -98,11 +98,17 @@ jobs:
           fi
           gh release upload preview "dist/$wheel" --clobber
           cat > notes.md <<NOTES
-          Wheels built from main. The newest is $VERSION:
+          Wheels built from main. The newest is $VERSION. Declare it in the
+          notebook's script metadata and start Studio with the same wheel:
 
-          \`\`\`toml
-          [pypi-dependencies]
-          marimo-manim = { url = "$url" }
+          \`\`\`python
+          # dependencies = [
+          #     "marimo-manim[render] @ $url",
+          # ]
+          \`\`\`
+
+          \`\`\`sh
+          uvx --with "marimo-manim @ $url" marimo edit analysis.py --sandbox=pixi --watch
           \`\`\`
           NOTES
           gh release edit preview --notes-file notes.md

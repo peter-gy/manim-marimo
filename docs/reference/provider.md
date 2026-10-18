@@ -8,8 +8,8 @@ description: The marimo-manim/manim provider's starter, options, project files, 
 marimo-manim registers one marimo-studio
 [view provider](https://marimo-team.github.io/marimo-studio/guide/view-providers)
 under the key `marimo-manim/manim`, through the `marimo_studio.view_provider`
-entry point. Studio discovers it in the notebook's environment when Studio
-starts.
+entry point. Studio discovers it in the environment of the marimo server when
+Studio starts.
 
 ## Starter
 
@@ -69,7 +69,8 @@ notebook gives it.
 | `poster.png`    | `image/png`        | Preview, the last frame      |
 | `metadata.json` | `application/json` | `duration`, `fps`, `width`, `height` |
 
-Each render runs in a worker process under Studio's command deadline. The build
+Each render runs in a worker process under Studio's command deadline, started
+from the command [Availability](#availability) describes. The build
 runs every declared scene once with all reads at their defaults, skipping
 animation and encoding.
 
@@ -134,6 +135,21 @@ shape stops being watched after its first run.
 
 ## Availability
 
-The provider reports itself available when `manimgl` is installed and
-imageio-ffmpeg locates an FFmpeg binary. `marimo-studio doctor` shows the
-installed ManimGL version.
+Scenes render with the `marimo-manim-worker` command, which the `render` extra
+installs. Studio looks for it in the notebook's pixi environment first, when
+the notebook declares `[tool.pixi]` metadata and runs with `--sandbox=pixi` or
+a `marimo-studio` command targets it, and then on `PATH`. Without the command,
+scenes render in the Python that runs Studio.
+
+The provider reports itself available when the worker's ManimGL imports and
+imageio-ffmpeg locates an FFmpeg binary. The worker and Studio's provider read
+and write the same render jobs, so both install one marimo-manim release.
+Otherwise the starter is unavailable with a reason that names both versions.
+`marimo-studio starters --target analysis.py` shows the availability for one
+notebook:
+
+```text
+available 0.1.0 marimo-manim/manim:default
+  A Manim scene, a video player, and native notebook context.
+  provider marimo-manim/manim
+```

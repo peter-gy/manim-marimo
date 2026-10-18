@@ -68,20 +68,20 @@ movie, and the exported page.
 
 ## Ask a coding agent
 
-From the pixi workspace of a notebook with marimo-manim, paste this into Claude
-Code, Codex, or another terminal agent:
+Paste this into Claude Code, Codex, or another terminal agent, from the folder
+of the notebook:
 
 ```text
-Run `pixi run agent-plugins read marimo-studio` and
-`pixi run agent-plugins read marimo-manim`, then create a notebook that
-explains Fourier series and an Animation view that draws a square wave
-from rotating vectors.
+Read the marimo-studio and marimo-manim skills with
+`uvx --with "marimo-manim @ git+https://github.com/peter-gy/marimo-manim" agent-plugins read <name>`,
+then create a notebook that explains Fourier series and an Animation view
+that draws a square wave from rotating vectors.
 ```
 
 ## Read on
 
 <nav class="routes">
-  <a href="./guide/getting-started"><strong>Getting started</strong><span>Install marimo-manim in a pixi workspace and add an Animation view.</span></a>
+  <a href="./guide/getting-started"><strong>Getting started</strong><span>Declare the notebook's pixi environment and add an Animation view.</span></a>
   <a href="./guide/scenes"><strong>Scenes and notebook results</strong><span>Read values with <code>value()</code>, and place figures with <code>output()</code> and <code>cell()</code>.</span></a>
   <a href="./guide/pages"><strong>Pages and players</strong><span>Play several scenes on one page beside native marimo cells.</span></a>
   <a href="./guide/agents"><strong>Author with agents</strong><span>Let a coding agent write the notebook, the scenes, and the page.</span></a>

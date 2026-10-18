@@ -10,13 +10,13 @@ both, writes the notebook's computation in marimo cells, writes the scenes and
 the page, renders them in Studio, and checks the movies.
 
 Paste this request into Claude Code, Codex, or another terminal agent, from the
-[pixi workspace](./getting-started.md#install) of a notebook with marimo-manim:
+folder of a notebook [set up for marimo-manim](./getting-started.md#install):
 
 ```text
-Run `pixi run agent-plugins read marimo-studio` and
-`pixi run agent-plugins read marimo-manim`, then create a notebook that
-explains Fourier series and an Animation view that draws a square wave
-from rotating vectors.
+Read the marimo-studio and marimo-manim skills with
+`uvx --with "marimo-manim @ git+https://github.com/peter-gy/marimo-manim" agent-plugins read <name>`,
+then create a notebook that explains Fourier series and an Animation view
+that draws a square wave from rotating vectors.
 ```
 
 [agent-plugins](https://agent-plugins.org/) prints a skill that a Python
@@ -39,11 +39,14 @@ instructions.
 ## Point at a shape with Lens
 
 [Lens](https://marimo-team.github.io/marimo-lens/) lets you select part of
-Studio's preview and attach a note for the agent. Add it to the pixi
-workspace, then restart Studio:
+Studio's preview and attach a note for the agent. Add it to the notebook's
+dependencies, then restart Studio:
 
-```sh
-pixi add --pypi "marimo-lens>=0.2.4"
+```python
+# dependencies = [
+#     "marimo-manim[render] @ git+https://github.com/peter-gy/marimo-manim",
+#     "marimo-lens>=0.2.4",
+# ]
 ```
 
 Preview shows a Lens dock. Click **Select** and click a shape in the movie,

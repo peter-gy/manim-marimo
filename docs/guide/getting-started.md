@@ -14,63 +14,66 @@ notebook's values.
 ## Install
 
 ManimGL renders with OpenGL, draws text with Pango, and encodes video with
-FFmpeg. [pixi](https://pixi.sh/), the conda package manager, installs Python,
-those libraries, and marimo-manim into one environment on macOS and Linux.
-Put this `pixi.toml` beside the notebook:
+FFmpeg. marimo-manim renders scenes in the notebook's
+[pixi](https://pixi.sh/) environment, where conda-forge provides those
+libraries on macOS and Linux. Declare the environment in the notebook's script
+metadata, the `# /// script` block at the top of `analysis.py`:
 
-```toml
-[workspace]
-name = "analysis"
-channels = ["conda-forge"]
-platforms = ["linux-64", "linux-aarch64", "osx-64", "osx-arm64"]
-
-[dependencies]
-python = ">=3.10,<3.15"
-manimpango = ">=0.6"
-
-[pypi-dependencies]
-marimo-manim = { git = "https://github.com/peter-gy/marimo-manim" }
-
-[target.linux.dependencies]
-mesalib = ">=25"
-libegl = ">=1.7"
-libgl = ">=1.7"
-fonts-conda-ecosystem = "*"
-
-[target.linux.activation.env]
-GLCONTEXT_LINUX_LIBGL = "$CONDA_PREFIX/lib/libGL.so.1"
-GLCONTEXT_LINUX_LIBEGL = "$CONDA_PREFIX/lib/libEGL.so.1"
-__EGL_VENDOR_LIBRARY_DIRS = "$CONDA_PREFIX/share/glvnd/egl_vendor.d"
+```python
+# /// script
+# requires-python = ">=3.10,<3.15"
+# dependencies = [
+#     "marimo-manim[render] @ git+https://github.com/peter-gy/marimo-manim",
+# ]
+#
+# [tool.pixi.workspace]
+# channels = ["conda-forge"]
+# platforms = ["linux-64", "linux-aarch64", "osx-64", "osx-arm64"]
+#
+# [tool.pixi.dependencies]
+# manimpango = ">=0.6"
+#
+# [tool.pixi.target.linux.dependencies]
+# mesalib = ">=25"
+# libegl = ">=1.7"
+# libgl = ">=1.7"
+# fonts-conda-ecosystem = "*"
+# ///
 ```
 
-| Table                         | Installs                                                                 |
-| ----------------------------- | ------------------------------------------------------------------------ |
-| `dependencies`                | Python 3.10 to 3.14 and manimpango, ManimGL's text renderer, built against Pango |
-| `pypi-dependencies`           | marimo-manim, with marimo, marimo-studio, ManimGL, and FFmpeg            |
-| `target.linux.dependencies`   | [Mesa](https://mesa3d.org/)'s software OpenGL and fonts                  |
-| `target.linux.activation.env` | The paths ManimGL's OpenGL loader opens Mesa from                        |
+| Table                                 | Installs                                                                     |
+| ------------------------------------- | ---------------------------------------------------------------------------- |
+| `dependencies`                        | marimo-manim, and through its `render` extra ManimGL and FFmpeg              |
+| `tool.pixi.workspace`                 | conda-forge as the channel, and the platforms pixi solves for                |
+| `tool.pixi.dependencies`              | manimpango, ManimGL's text renderer, built against Pango                     |
+| `tool.pixi.target.linux.dependencies` | [Mesa](https://mesa3d.org/)'s software OpenGL and fonts                      |
 
 macOS provides OpenGL itself. On Linux, marimo-manim renders through Mesa's EGL
 driver when no display is set, so scenes render on servers without a GPU.
 
 ## Add an Animation view
 
-Open the notebook with Studio in the workspace's environment:
+Open the notebook in a [pixi sandbox](https://marimo.io/blog/pixi-sandboxes),
+with Studio and marimo-manim in the marimo server:
 
 ```sh
-pixi run marimo edit analysis.py --no-sandbox --watch
+uvx --with "marimo-manim @ git+https://github.com/peter-gy/marimo-manim" \
+  marimo edit analysis.py --sandbox=pixi --watch
 ```
 
-Studio runs the notebook, its views, and every render in this environment.
-Start it inside the workspace: Studio renders scenes in the server's own
-environment, which a [pixi sandbox](https://marimo.io/blog/pixi-sandboxes)
-started with `--sandbox=pixi` provides to the kernel alone.
+[uv](https://docs.astral.sh/uv/)'s `uvx` runs marimo with marimo-manim and
+Studio, and needs `pixi` on `PATH`. `--sandbox=pixi` installs the notebook's
+environment and runs its kernel there. Studio runs the commands views need from
+the same environment first, so every scene renders with the ManimGL, Pango, and
+Mesa the metadata declares. The first start downloads Python and those
+libraries.
 
 Click **Add view**, choose **Manim animation**, and create the view. Or create
 it from a terminal:
 
 ```sh
-pixi run marimo-studio view create animation --target analysis.py \
+uvx --with "marimo-manim @ git+https://github.com/peter-gy/marimo-manim" \
+  marimo-studio view create animation --target analysis.py \
   --starter marimo-manim/manim:default
 ```
 

@@ -8,11 +8,18 @@ marimo-manim publishes two kinds of builds from `.github/workflows/publish.yml`.
 | Release | An annotated `vX.Y.Z` tag on `main` | `X.Y.Z` from `pyproject.toml` | A `vX.Y.Z` GitHub release, and PyPI            |
 
 `N` counts the commits since the last release tag, so preview versions sort in
-commit order. Install a preview wheel by URL in a pixi workspace:
+commit order. Install a preview wheel by URL, in the notebook's script metadata
+and in the marimo server, so the provider and the worker share one release:
 
-```toml
-[pypi-dependencies]
-marimo-manim = { url = "https://github.com/peter-gy/marimo-manim/releases/download/preview/marimo_manim-0.1.1.dev3-py3-none-any.whl" }
+```python
+# dependencies = [
+#     "marimo-manim[render] @ https://github.com/peter-gy/marimo-manim/releases/download/preview/marimo_manim-0.1.1.dev3-py3-none-any.whl",
+# ]
+```
+
+```sh
+uvx --with "marimo-manim @ https://github.com/peter-gy/marimo-manim/releases/download/preview/marimo_manim-0.1.1.dev3-py3-none-any.whl" \
+  marimo edit analysis.py --sandbox=pixi --watch
 ```
 
 ## Cut a release

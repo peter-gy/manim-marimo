@@ -12,7 +12,8 @@ compares the options.
 ## Run a live view
 
 ```sh
-pixi run marimo run analysis.py --no-sandbox
+uvx --with "marimo-manim @ git+https://github.com/peter-gy/marimo-manim" \
+  marimo run analysis.py --sandbox=pixi
 ```
 
 Each reader gets a notebook session. Studio renders a scene for the results that
@@ -26,9 +27,13 @@ for each combination of control values the view lists, and renders every
 scene once per state:
 
 ```sh
-pixi run marimo-studio view export animation --target analysis.py \
+uvx --with "marimo-manim @ git+https://github.com/peter-gy/marimo-manim" \
+  marimo-studio view export animation --target analysis.py \
   --output dist/animation --runtime zero-python
 ```
+
+Studio commands that target a notebook with `[tool.pixi]` metadata install its
+pixi environment and render from it, as `--sandbox=pixi` does.
 
 List the control values to prepare in `states.yaml` beside `view.toml`. The
 [convolution example](../examples/convolution.md) prepares every value of its
@@ -58,7 +63,8 @@ for each control whose values the states skip, with the count and the first
 skipped values:
 
 ```sh
-pixi run marimo-studio view preflight animation --target analysis.py
+uvx --with "marimo-manim @ git+https://github.com/peter-gy/marimo-manim" \
+  marimo-studio view preflight animation --target analysis.py
 ```
 
 Serve the export from a web server that compresses JavaScript and answers byte
@@ -70,15 +76,16 @@ npx serve dist/animation
 
 ## Linux servers
 
-The [Getting started workspace](./getting-started.md#install) renders on Linux
-servers without a display or a GPU. Its Linux tables install
-[Mesa](https://mesa3d.org/)'s software OpenGL, and marimo-manim renders through
-Mesa's EGL driver when no `DISPLAY` is set. Start Studio through `pixi run`, so
-renders run in the workspace's environment:
+The [Getting started metadata](./getting-started.md#install) renders on Linux
+servers without a display or a GPU. Its `tool.pixi.target.linux.dependencies`
+table installs [Mesa](https://mesa3d.org/)'s software OpenGL into the
+notebook's pixi environment, and marimo-manim renders through Mesa's EGL driver
+when no `DISPLAY` is set:
 
 ```sh
-pixi run marimo run analysis.py --no-sandbox --host 0.0.0.0
+uvx --with "marimo-manim @ git+https://github.com/peter-gy/marimo-manim" \
+  marimo run analysis.py --sandbox=pixi --host 0.0.0.0
 ```
 
-marimo-manim's CI renders every test scene this way on Ubuntu. With a
+marimo-manim's CI renders every test scene through Mesa's EGL driver on Ubuntu. With a
 `DISPLAY` set, ManimGL opens its usual X11 context instead.

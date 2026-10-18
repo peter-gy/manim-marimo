@@ -17,21 +17,49 @@ Read the marimo-studio skill first. It owns connecting to the notebook,
 creating and editing views, building, and browser verification:
 
 ```console
-pixi run agent-plugins read marimo-studio
+uvx --with "marimo-manim @ git+https://github.com/peter-gy/marimo-manim" agent-plugins read marimo-studio
 ```
 
 This skill adds what is specific to Manim views.
 
 ## Create the view
 
-A [pixi](https://pixi.sh/) workspace beside the notebook provides marimo-manim
-with the libraries ManimGL renders with: `manimpango` from conda-forge, and on
-Linux Mesa's OpenGL. Start Studio in that environment, so the notebook, the
-provider, and every render share it:
+Scenes render in the notebook's [pixi](https://pixi.sh/) environment. Declare
+it in the notebook's `# /// script` block: `marimo-manim[render]` under
+`dependencies`, `manimpango` from conda-forge under `[tool.pixi.dependencies]`,
+and on Linux Mesa's OpenGL under `[tool.pixi.target.linux.dependencies]`:
+
+```python
+# /// script
+# requires-python = ">=3.10,<3.15"
+# dependencies = [
+#     "marimo-manim[render] @ git+https://github.com/peter-gy/marimo-manim",
+# ]
+#
+# [tool.pixi.workspace]
+# channels = ["conda-forge"]
+# platforms = ["linux-64", "linux-aarch64", "osx-64", "osx-arm64"]
+#
+# [tool.pixi.dependencies]
+# manimpango = ">=0.6"
+#
+# [tool.pixi.target.linux.dependencies]
+# mesalib = ">=25"
+# libegl = ">=1.7"
+# libgl = ">=1.7"
+# fonts-conda-ecosystem = "*"
+# ///
+```
+
+Start Studio with the pixi sandbox. Studio renders every scene with the
+`marimo-manim-worker` command from that environment:
 
 ```console
-pixi run marimo edit notebook.py --no-sandbox --watch
+uvx --with "marimo-manim @ git+https://github.com/peter-gy/marimo-manim" marimo edit notebook.py --sandbox=pixi --watch
 ```
+
+`marimo-studio starters --target notebook.py` reports whether the Manim starter
+can render for that notebook, and why not.
 
 Create the view from the provider's starter:
 
@@ -158,4 +186,4 @@ skip.
 | `manim-scene-missing` at a host in `index.html` | The host names a scene file that does not exist.                         |
 | `Found none` or `Found A, B` in a render error | The file defines no Scene subclass, or two unrelated ones.               |
 | Host stays `stale` for a long time             | The scene renders slowly. Use `quality = "draft"` or shorten `run_time`. |
-| OpenGL errors on Linux                         | Add Mesa to the pixi workspace and start Studio through `pixi run`.      |
+| OpenGL errors on Linux                         | Declare Mesa under `[tool.pixi.target.linux.dependencies]` and restart Studio with `--sandbox=pixi`. |
