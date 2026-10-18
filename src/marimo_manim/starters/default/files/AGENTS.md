@@ -23,6 +23,11 @@ Give `output()` a literal `height`, such as `output("figure", height=2.6)`, and
 Studio draws the figure at that height, so its text reads at the scene's own
 font sizes.
 
+Each render traces every shape to the read it shows. Bind each read to a name
+and index it with names and integers, such as `joint[i, j]`, or walk it with
+`enumerate()` and `zip()`, so a Lens selection on a shape in Preview names the
+read, such as `joint[2][3]`, and the line that created the shape.
+
 Each `<marimo-output render="scene.py">` host on the page renders that scene
 file, which defines one `manimlib.Scene` subclass. Add another scene file and
 host to show a second animation. The markup inside a host is its player, and

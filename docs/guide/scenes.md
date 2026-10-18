@@ -95,6 +95,30 @@ studio/analysis/animation/
 A change to `bounds` renders `scene.py` again, and leaves scenes that do not
 import `helpers` untouched.
 
+## Shapes that trace to their results
+
+Each render records which notebook result every shape shows, so a reader can
+select a shape in Studio's preview and reach the cell that computed it. The
+tracer follows a read through the names it is bound to and the indexes the
+scene takes of it:
+
+```python
+joint = np.asarray(value("joint"), dtype=float)
+for i in range(6):
+    for j in range(6):
+        square = Rectangle(fill_opacity=joint[i, j])  # traces to joint[i][j]
+
+for diagonal, probability in enumerate(probabilities):
+    target = bars[diagonal].copy().set_height(probability * 12)
+    bars[diagonal].become(target)  # traces to probabilities[diagonal]
+```
+
+Bind each read to a name, index it with names, integers, and arithmetic, and
+walk it with `enumerate()` and `zip()`, so each shape names the cell of the
+table it shows.
+[Traced shapes](../reference/provider.md#traced-shapes) lists what the tracer
+records.
+
 ## One scene per file
 
 The file's scene is the one `Scene` subclass it defines that no other class in

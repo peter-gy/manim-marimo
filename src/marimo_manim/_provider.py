@@ -12,6 +12,11 @@ and constructs each scene with every read at its default, so a scene that
 cannot run keeps the last published view. Studio renders a scene whenever a
 result it reads changes, in an owned worker process, and publishes the movie,
 its poster, and its metadata together.
+
+A render also traces the shapes of each frame to the notebook results they
+show, and returns them as regions of the movie and its poster. A page then
+lets a reader select a shape at the moment it is on screen and follow it to the
+cells that computed it.
 """
 
 from __future__ import annotations
@@ -25,6 +30,7 @@ from dataclasses import asdict, dataclass, field
 from html.parser import HTMLParser
 from importlib.metadata import PackageNotFoundError, version
 from pathlib import Path, PurePosixPath
+from typing import Any
 
 from marimo_studio.view_providers import (
     BuildInput,
@@ -39,10 +45,12 @@ from marimo_studio.view_providers import (
     ProviderError,
     ProviderInfo,
     ProviderStarter,
+    Rect,
     Render,
     RenderCell,
     RenderFile,
     RenderOutput,
+    RenderRegion,
     RenderRequest,
     RenderResult,
     RenderValue,
@@ -480,8 +488,45 @@ class ManimProvider:
             ),
             main=_MOVIE,
             preview=_POSTER,
+            regions=_regions(Path(job.work, "lineage.json"), video.fps),
         )
 
+
+def _region(
+    record: dict[str, Any], file: PurePosixPath, fps: int, *, timed: bool
+) -> RenderRegion:
+    x, y, width, height = record["box"]
+    source = record["source"]
+    start, end = record.get("start"), record.get("end")
+    return RenderRegion(
+        file,
+        Rect(x, y, width, height),
+        reads=tuple(record["reads"]),
+        source=SourceLocation(
+            PurePosixPath(source["path"]), source["line"], source["column"]
+        ),
+        label=str(record["label"]),
+        start=start / fps if timed and isinstance(start, int) else None,
+        end=end / fps if timed and isinstance(end, int) else None,
+    )
+
+
+def _regions(lineage: Path, fps: int) -> tuple[RenderRegion, ...]:
+    """Return the traced shapes as regions of the movie and of its poster.
+
+    The worker writes ``lineage.json`` beside its report, with frame ranges
+    for the movie and the shapes of the last frame, which the poster shows.
+    """
+    # Regions are evidence beside the movie, so unreadable lineage leaves them
+    # out and the render publishes.
+    try:
+        records = json.loads(lineage.read_text(encoding="utf-8"))
+        return (
+            *(_region(item, _MOVIE, fps, timed=True) for item in records["regions"]),
+            *(_region(item, _POSTER, fps, timed=False) for item in records["last"]),
+        )
+    except (OSError, ValueError, KeyError, TypeError):
+        return ()
 
 
 provider = ManimProvider()

@@ -12,6 +12,7 @@ from collections.abc import Callable
 from pathlib import Path
 from typing import Any, cast
 
+from marimo_manim._lineage import SceneLineage
 from marimo_manim._reads import SceneReads, scene_reads
 
 
@@ -77,6 +78,26 @@ def _encoder_closed(scene: Any) -> None:
             encoder.wait()
 
 
+# Lens selects shapes on a paused movie, so boxes about this often locate them.
+_BOXES_PER_SECOND = 12
+
+
+def _traced(scene: Any, root: Path, reads: SceneReads, fps: int) -> SceneLineage:
+    """Record the traced shapes of the frames ``scene`` writes."""
+    lineage = SceneLineage(
+        root.resolve(), reads.values, every=-(-fps // _BOXES_PER_SECOND)
+    )
+    emit = scene.emit_frame
+
+    def emit_frame() -> None:
+        emit()
+        if not scene.skip_animations:
+            lineage.frame(scene)
+
+    scene.emit_frame = emit_frame
+    return lineage
+
+
 def _run(job: dict[str, Any]) -> None:
     import yaml
 
@@ -137,8 +158,14 @@ def _run(job: dict[str, Any]) -> None:
                 "quiet": True,
             },
         )
+        lineage = None if job["check"] else _traced(scene, root, reads, video["fps"])
         try:
-            scene.run()
+            if lineage is None:
+                scene.run()
+            else:
+                with lineage.trace():
+                    scene.run()
+                lineage.poster(scene)
         finally:
             _encoder_closed(scene)
     encoder = scene.file_writer.writing_process
@@ -177,6 +204,14 @@ def _run(job: dict[str, Any]) -> None:
         )
     ready.replace(movie)
     (output / "animation.png").replace(output / "poster.png")
+    if lineage is not None:
+        # Lineage is evidence beside the video, so a tracing problem leaves it out.
+        try:
+            records = lineage.records()
+        except Exception as error:
+            print(f"Scene lineage is unavailable: {error}", file=sys.stderr)
+        else:
+            (work / "lineage.json").write_text(json.dumps(records), encoding="utf-8")
     (output / "metadata.json").write_text(
         json.dumps(
             {

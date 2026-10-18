@@ -36,6 +36,25 @@ file, and how to verify a rendered movie.
 Studio shows `AGENTS.md` in Source, so the agent and the author read the same
 instructions.
 
+## Point at a shape with Lens
+
+[Lens](https://marimo-team.github.io/marimo-lens/) lets you select part of
+Studio's preview and attach a note for the agent. Add it to the pixi
+workspace, then restart Studio:
+
+```sh
+pixi add --pypi "marimo-lens>=0.2.4"
+```
+
+Preview shows a Lens dock. Click **Select** and click a shape in the movie,
+such as one cell of the convolution example's joint table. The selection names
+the shape, such as `square: Rectangle`, the read it shows, such as
+`joint[2][3]`, the scene line that created it, and the notebook cell that
+computed the read. Targets follow the shapes as the movie plays, so pause on
+the frame you mean. Then ask:
+
+> Use Lens to address my current selection in this Studio view.
+
 ## Create the view from code
 
 Inside notebook code mode, an agent creates the view from the provider's

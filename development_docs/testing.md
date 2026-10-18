@@ -13,6 +13,7 @@ pixi run --environment py310 test  # one Python version: py310 to py314
 | `tests/test_reads.py`    | `value`, `output`, and `cell` inside and outside a render                           |
 | `tests/test_provider.py` | Inspection records and diagnostics, and the installed starter through `check_provider` |
 | `tests/test_worker.py`   | `run_scene` against a real ManimGL process: reads, figures, checks, failures        |
+| `tests/test_lineage.py`  | Traced shapes through `provider.render`: the reads each region names, and the region budget |
 
 `check_provider("marimo-manim/manim")` creates the starter in a temporary
 notebook, builds it, publishes the page, and renders every declared scene, as

@@ -93,6 +93,17 @@ Rules that inspection and the build enforce:
   Studio draws the figure at that height, so its text reads at the scene's own
   font sizes.
 
+## Shapes trace to notebook results
+
+Each render records which read every shape shows, and Studio's preview makes
+the shapes Lens targets. Keep the trace precise: bind each read to a name,
+index it with names, integers, and arithmetic, such as `joint[i, j]`, and walk
+it with `enumerate()` and `zip()`. A Lens selection on a shape names its
+variable and class, such as `bar: Rectangle`, the read it shows, such as
+`probabilities[4]`, and the scene line that created it. Change the
+choreography at that line, or the notebook cell behind the read when the
+number itself is wrong.
+
 ## Show scenes on the page
 
 Each `<marimo-output render="scene.py">` host on `index.html` renders that

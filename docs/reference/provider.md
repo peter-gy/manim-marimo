@@ -73,6 +73,54 @@ Each render runs in a worker process under Studio's command deadline. The build
 runs every declared scene once with all reads at their defaults, skipping
 animation and encoding.
 
+### Traced shapes
+
+A render traces each shape the scene's code creates to the notebook results
+it shows, and returns the shapes as Studio
+[render regions](https://marimo-team.github.io/marimo-studio/reference/provider-api#locate-parts-of-rendered-files).
+A shape is a region of `animation.mp4` for each run of frames in which it
+keeps its box and reads, and the shapes of the last frame are regions of
+`poster.png`. With [Lens](../guide/agents.md#point-at-a-shape-with-lens)
+installed, Studio's preview makes each region a selection target that follows
+the shape as the movie plays.
+
+| Scene code                                                      | Region reads                         |
+| --------------------------------------------------------------- | ------------------------------------ |
+| `joint = np.asarray(value("joint"))` then `Rectangle(fill_opacity=joint[i, j])` | `joint[2][3]` for that rectangle |
+| `for index, p in enumerate(probabilities)` then `bar.become(target)` built from `p` | `probabilities[4]` once the bar animates |
+| `for i, (h, c) in enumerate(zip(heights, colors))` then `Square(color=c).set_height(h)` | `heights[1]` and `colors[1]` for that square |
+| An updater that moves a dot to `path[index]`                    | `path[index]` for each frame range   |
+| `output("figure")`                                              | `figure`                             |
+| `bar = make(heights[0])` with a helper that returns a `Square`  | `heights[0]` for that square          |
+| `label = Text(names[0]).next_to(dot, UP)`                       | `names[0]` for the label, none for the dot |
+| `for index in range(len(probabilities))` then a label at `index` | None                                |
+
+Each region names the shape's variable and class, such as `bar: Rectangle`,
+and the line that created it. A statement gives its reads to the shapes it
+creates and to the shapes it calls methods on, such as `dot` in
+`dot.animate.move_to(...)`. A shape it only passes along, as an anchor or to
+an animation, keeps its own reads. A shape shows the reads of the `play()`
+call that moves it while that call writes frames. A shape that shows no read,
+such as a title or an axis label, has no region, and selecting it selects the
+whole movie.
+
+The tracer evaluates index expressions made of names, integers, and
+arithmetic, and keeps a shorter selector, such as `chain`, when an index
+depends on anything else. A name that holds part of a `value()` read must
+still hold the notebook's value of that part, so a loop name reused for
+another read, or an index that moved on after the loop, drops the read.
+
+Studio keeps 4,096 regions per render. When a scene's traced shapes need more,
+adjacent regions of a shape merge into one over both time spans, the regions of
+large shapes first. A shape that holds still for about half a second keeps its exact
+box until every moving region has merged, so a scene that pauses on a moment
+gives every shape there an exact target.
+
+Tracing watches only project code and records the boxes of shapes at most
+twelve times a second: every third frame at 30 frames per second, and every
+other frame at 24. A statement that changes no
+shape stops being watched after its first run.
+
 ## Diagnostics
 
 | Code                    | Severity | Raised by  | Meaning                                                     |
