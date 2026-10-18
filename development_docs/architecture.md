@@ -33,7 +33,9 @@ disk, and only `render()` sees notebook results.
    `.marimo-manim/video.json` with the resolution and frame rate of the
    selected quality. It then runs every declared scene once in check mode, so a
    scene that fails with its defaults fails the build and Studio keeps the last
-   published view.
+   published view. It returns `output_sizes` for each `output()` call with a
+   literal `height`, converted from scene units to points at the scale of
+   ManimGL's `Text`, so Studio draws those figures at the size they appear.
 3. `render()` writes the request's values as `.marimo-manim/reads/values.json`
    and each output and cell image beneath `.marimo-manim/reads/` in its private
    template copy, then runs the scene in render mode.

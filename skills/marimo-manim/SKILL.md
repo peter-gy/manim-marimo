@@ -89,6 +89,9 @@ Rules that inspection and the build enforce:
   toward the scenes that import them.
 - Use `Text` for labels. `Tex` and `MathTex` need a LaTeX installation on the
   machine that renders.
+- Place figures with a literal height, such as `output("chart", height=2.6)`.
+  Studio draws the figure at that height, so its text reads at the scene's own
+  font sizes.
 
 ## Show scenes on the page
 

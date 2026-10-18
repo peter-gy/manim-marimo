@@ -55,6 +55,14 @@ of that scene file. A render reads the targets of every literal `value()`,
 imports. `output()` and `cell()` accept `image/png`, `image/jpeg`, and
 `image/webp`.
 
+When an `output()` call passes `height` as a number, such as
+`output("chart", height=2.6)`, the build reports that height to Studio in
+points, about 99 points per scene unit. Studio then draws a matplotlib figure
+or a Vega-Lite chart at that height with the notebook's aspect ratio, so its
+text keeps its point size in the scene: a 10 point tick label matches
+`Text(font_size=10)`. Without a literal height, the figure keeps the size the
+notebook gives it.
+
 | File            | Media type         | Role                         |
 | --------------- | ------------------ | ---------------------------- |
 | `animation.mp4` | `video/mp4`        | Main file, downloaded        |

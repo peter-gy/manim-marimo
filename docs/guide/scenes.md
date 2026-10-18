@@ -52,7 +52,9 @@ Selectors reach into values with dots and indexes, such as `summary.mean`,
 
 `output()` reads a notebook value as an image. Studio draws a matplotlib figure
 as a PNG, and the scene receives an `ImageMobject`. Keyword arguments such as
-`height` pass through to `ImageMobject`.
+`height` pass through to `ImageMobject`. A literal `height`, such as
+`output("distribution_figure", height=2.6)`, also sets the size Studio draws
+the figure at, so its tick labels read at the scene's own font sizes.
 
 `cell()` reads the rendered output of a named cell. Name a cell by its
 function, `def distribution_chart():`. A cell whose last expression is a figure

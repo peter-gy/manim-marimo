@@ -19,6 +19,10 @@ at its default, and a scene that fails there keeps the last published view.
 Keep calculations and analytical controls in the notebook, and expose what
 the scene needs as notebook variables.
 
+Give `output()` a literal `height`, such as `output("figure", height=2.6)`, and
+Studio draws the figure at that height, so its text reads at the scene's own
+font sizes.
+
 Each `<marimo-output render="scene.py">` host on the page renders that scene
 file, which defines one `manimlib.Scene` subclass. Add another scene file and
 host to show a second animation. The markup inside a host is its player, and

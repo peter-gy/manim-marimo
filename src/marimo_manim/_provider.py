@@ -20,6 +20,7 @@ import ast
 import html
 import json
 from collections.abc import Mapping
+from contextlib import suppress
 from dataclasses import asdict, dataclass, field
 from html.parser import HTMLParser
 from importlib.metadata import PackageNotFoundError, version
@@ -46,6 +47,7 @@ from marimo_studio.view_providers import (
     RenderResult,
     RenderValue,
     Representation,
+    Size,
     SourceDocument,
     SourceLocation,
     StarterContext,
@@ -87,6 +89,9 @@ _QUALITY = {
 # ImageMobject reads these through Pillow, in order of preference.
 _IMAGES = {"image/png": ".png", "image/jpeg": ".jpg", "image/webp": ".webp"}
 _ACCEPT = tuple(_IMAGES)
+# ManimGL scales Text by 0.0076 scene units per SVG pixel, and Pango draws one
+# point as 4/3 pixels, so a scene unit holds about 99 points of Text.
+_POINTS_PER_UNIT = 1 / (0.0076 * 4 / 3)
 
 
 def _markers(context: StarterContext) -> StarterMarkers:
@@ -156,6 +161,8 @@ class _Module:
     values: list[RenderValue] = field(default_factory=list)
     outputs: list[RenderOutput] = field(default_factory=list)
     cells: list[RenderCell] = field(default_factory=list)
+    # The literal height in scene units at which ``output()`` places a target.
+    heights: dict[str, float] = field(default_factory=dict)
 
 
 def _module_name(path: PurePosixPath) -> str:
@@ -224,13 +231,22 @@ def _module(
             found.values.append(RenderValue(target.value, location))
         elif read == "output":
             found.outputs.append(RenderOutput(target.value, location, _ACCEPT))
+            height = next(
+                (item.value for item in node.keywords if item.arg == "height"), None
+            )
+            if isinstance(height, ast.Constant) and isinstance(
+                height.value, int | float
+            ):
+                found.heights.setdefault(target.value, float(height.value))
         else:
             found.cells.append(RenderCell(target.value, location, _ACCEPT))
     return found, diagnostics
 
 
-def _render(scene: PurePosixPath, modules: dict[PurePosixPath, _Module]) -> Render:
-    """Declare ``scene`` with the reads of every project module it reaches."""
+def _reached(
+    scene: PurePosixPath, modules: dict[PurePosixPath, _Module]
+) -> list[_Module]:
+    """Return ``scene`` and every project module it imports, directly or not."""
     names = {_module_name(path): path for path in modules}
     seen: set[PurePosixPath] = set()
     pending = [scene]
@@ -240,13 +256,47 @@ def _render(scene: PurePosixPath, modules: dict[PurePosixPath, _Module]) -> Rend
             continue
         seen.add(path)
         pending.extend(names[name] for name in modules[path].imports if name in names)
-    reached = [modules[path] for path in sorted(seen)]
+    return [modules[path] for path in sorted(seen)]
+
+
+def _render(scene: PurePosixPath, modules: dict[PurePosixPath, _Module]) -> Render:
+    """Declare ``scene`` with the reads of every project module it reaches."""
+    reached = _reached(scene, modules)
     return Render(
         scene,
         values=tuple(read for module in reached for read in module.values),
         outputs=tuple(read for module in reached for read in module.outputs),
         cells=tuple(read for module in reached for read in module.cells),
     )
+
+
+def _output_sizes(request: BuildRequest) -> dict[PurePosixPath, dict[str, Size]]:
+    """Return the size of each output a scene places at a literal height.
+
+    Studio draws a figure at that size, so its text appears at the scene's own
+    font sizes, as ``Text(font_size=10)`` beside a 10 point label.
+    """
+    modules: dict[PurePosixPath, _Module] = {}
+    for path in project_files(request.project, exclude=("__pycache__",)):
+        if path.suffix != ".py":
+            continue
+        try:
+            tree = ast.parse(request.project.root.joinpath(*path.parts).read_bytes())
+        except SyntaxError:
+            tree = ast.Module([], [])
+        modules[path] = _module(path, tree)[0]
+    sizes: dict[PurePosixPath, dict[str, Size]] = {}
+    for render in request.inspection.renders:
+        placed: dict[str, Size] = {}
+        for module in _reached(render.source, modules):
+            for target, height in module.heights.items():
+                # Size bounds its lengths, and an output beyond them draws at
+                # the notebook's own size.
+                with suppress(ValueError):
+                    placed.setdefault(target, Size(height=height * _POINTS_PER_UNIT))
+        if placed:
+            sizes[render.source] = placed
+    return sizes
 
 
 def _failure(error: RenderFailure, hint: str) -> ProviderError:
@@ -396,7 +446,7 @@ class ManimProvider:
                 raise _failure(
                     error, "Fix the scene so it renders with every read at its default."
                 ) from error
-        return BuildResult(_PAGE)
+        return BuildResult(_PAGE, output_sizes=_output_sizes(request))
 
     def render(self, request: RenderRequest) -> RenderResult:
         root = request.template_root
@@ -431,6 +481,7 @@ class ManimProvider:
             main=_MOVIE,
             preview=_POSTER,
         )
+
 
 
 provider = ManimProvider()

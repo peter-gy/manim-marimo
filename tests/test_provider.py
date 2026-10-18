@@ -1,7 +1,10 @@
+import subprocess
+from collections.abc import Mapping, Sequence
 from pathlib import Path, PurePosixPath
 
 import pytest
 from marimo_studio.view_providers import (
+    BuildRequest,
     InspectionRequest,
     ProviderCancellation,
     ProviderCommandResult,
@@ -22,6 +25,23 @@ IMAGES = ("image/png", "image/jpeg", "image/webp")
 class UnusedRunner:
     def run(self, *args: object, **kwargs: object) -> ProviderCommandResult:
         raise AssertionError("Inspection must not execute commands")
+
+
+class Runner:
+    def run(
+        self,
+        command: Sequence[str],
+        *,
+        cwd: Path,
+        timeout: float = 120.0,
+        environment: Mapping[str, str] | None = None,
+    ) -> ProviderCommandResult:
+        completed = subprocess.run(
+            command, cwd=cwd, timeout=timeout, capture_output=True, text=True
+        )
+        return ProviderCommandResult(
+            completed.returncode, completed.stdout, completed.stderr
+        )
 
 
 def inspect_project(root: Path, page: str, files: dict[str, str]):
@@ -161,3 +181,52 @@ def test_installed_starter_publishes_its_page_and_renders_the_scene():
     }
     assert render.files[PurePosixPath("animation.mp4")][4:8] == b"ftyp"
     assert not view.warnings
+
+
+@pytest.mark.render
+def test_build_sizes_outputs_placed_at_a_literal_height_in_points(tmp_path: Path):
+    root = tmp_path / "project"
+    root.mkdir()
+    inspection = inspect_project(
+        root,
+        '<marimo-output render="scene.py"></marimo-output>',
+        {
+            "scene.py": (
+                "from manimlib import Scene\n"
+                "from marimo_manim import output\n"
+                "\n"
+                "class Animation(Scene):\n"
+                "    def construct(self):\n"
+                '        output("chart", height=2)\n'
+                '        output("photo")\n'
+                "        self.wait(0.1)\n"
+            )
+        },
+    )
+    project = ViewProject("test", root, root / "view.toml", "marimo-manim/manim", {})
+    roots = {name: tmp_path / name for name in ("staging", "template", "work", "cache")}
+    for folder in roots.values():
+        folder.mkdir()
+    result = provider.build(
+        BuildRequest(
+            project,
+            inspection,
+            tuple(item.path for item in inspection.inputs),
+            "revision",
+            "development",
+            roots["staging"],
+            roots["template"],
+            roots["work"],
+            roots["cache"],
+            ProviderCancellation(),
+            Runner(),
+            120,
+        )
+    )
+
+    # Two scene units hold as much as Text(font_size=197).
+    assert list(result.output_sizes) == [PurePosixPath("scene.py")]
+    sizes = result.output_sizes[PurePosixPath("scene.py")]
+    assert list(sizes) == ["chart"]
+    assert sizes["chart"].width is None
+    assert sizes["chart"].height == pytest.approx(197.37, abs=0.01)
