@@ -101,10 +101,21 @@ export default defineConfig({
   sitemap: { hostname: site.href },
   head: [
     ["link", { rel: "icon", type: "image/svg+xml", href: `${base}favicon.svg` }],
+    ["link", { rel: "apple-touch-icon", href: `${base}apple-touch-icon.png` }],
     ["meta", { property: "og:type", content: "website" }],
     ["meta", { property: "og:title", content: "manim-marimo" }],
     ["meta", { property: "og:description", content: description }],
-    ["meta", { property: "og:image", content: new URL("media/fourier.png", site).href }],
+    ["meta", { property: "og:image", content: new URL("brand/manim-marimo-og.png", site).href }],
+    ["meta", { property: "og:image:width", content: "2400" }],
+    ["meta", { property: "og:image:height", content: "1260" }],
+    [
+      "meta",
+      {
+        property: "og:image:alt",
+        content: "Animate marimo notebooks with Manim: rotating vectors draw manim-marimo's mark, marimo's looped circle.",
+      },
+    ],
+    ["meta", { name: "twitter:card", content: "summary_large_image" }],
   ],
   // Preload the faces the first screen sets: body text and code.
   transformHead({ assets }) {
@@ -113,7 +124,7 @@ export default defineConfig({
       .map((href) => ["link", { rel: "preload", href, as: "font", type: "font/woff2", crossorigin: "" }]);
   },
   themeConfig: {
-    logo: { light: "/logo-light.svg", dark: "/logo-dark.svg", alt: "" },
+    logo: { light: "/brand/manim-marimo-icon-light.svg", dark: "/brand/manim-marimo-icon-dark.svg", alt: "" },
     nav: [
       { text: "Guide", link: "/guide/getting-started" },
       { text: "Examples", link: "/examples/" },
@@ -136,9 +147,10 @@ export default defineConfig({
         text: "Examples",
         items: [
           { text: "Overview", link: "/examples/" },
+          { text: "A notebook is a dataflow graph", link: "/examples/dataflow" },
           { text: "Fourier drawing", link: "/examples/fourier" },
-          { text: "Simulating an epidemic", link: "/examples/epidemic" },
           { text: "Convolution of dice", link: "/examples/convolution" },
+          { text: "Simulating an epidemic", link: "/examples/epidemic" },
         ],
       },
       {

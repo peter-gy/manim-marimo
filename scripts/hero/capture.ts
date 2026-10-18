@@ -1,25 +1,26 @@
-// Capture the shots the README hero composes: the convolution movie at two
-// slider values, and the notebook cells at every slider step in each theme.
-// Usage: pixi run hero-capture
+// Capture the shots the README hero composes: the dataflow movie for two
+// radio choices, and the notebook cells with each choice selected, in each
+// theme. Usage: pixi run hero-capture
 //
-// The capture copies examples/convolution.py and its view into a scratch
+// The capture copies examples/dataflow.py and its view into a scratch
 // workspace inside the repository, where Studio finds manim-marimo in the
-// project dependencies. It exports one movie per state through `marimo-studio view export`,
-// and drives the slider in the marimo editor. render.ts composes the shots.
+// project dependencies. It exports one movie per choice through
+// `marimo-studio view export`, and clicks the choices in the marimo editor.
+// render.ts composes the shots.
 import { $, type Subprocess } from "bun";
 import { cp, mkdir, readdir, rm, writeFile } from "node:fs/promises";
 import { createServer, type AddressInfo } from "node:net";
 import { join, resolve } from "node:path";
 import { chromium } from "playwright";
 
-import { cells, fps, movieWidth, states, steps, themes, type Manifest, type Shot } from "./hero.ts";
+import { cells, fps, movieWidth, states, themes, type Manifest } from "./hero.ts";
 
 const here = import.meta.dir;
 const root = resolve(here, "../..");
 const shotsDir = join(here, "shots");
 const timeoutMs = 300_000;
 // marimo keeps a medium-width cell 510 CSS pixels wide in this viewport, with
-// its floating controls clear of the cells. The hero shows cells at 87% of that.
+// its floating controls clear of the cells.
 const editorViewport = { height: 1400, width: 700 };
 const editorScale = 3;
 
@@ -34,8 +35,8 @@ const freePort = (): Promise<number> =>
   });
 
 const workspace = join(shotsDir, "workspace");
-const notebook = join(workspace, "convolution.py");
-const view = join(workspace, "studio/convolution/animation");
+const notebook = join(workspace, "dataflow.py");
+const view = join(workspace, "studio/dataflow/animation");
 let editor: Subprocess | undefined;
 const stopEditor = async (): Promise<void> => {
   editor?.kill();
@@ -52,8 +53,8 @@ for (const signal of ["SIGINT", "SIGTERM"] as const) {
 
 await rm(shotsDir, { force: true, recursive: true });
 await mkdir(workspace, { recursive: true });
-await cp(join(root, "examples/convolution.py"), notebook);
-await cp(join(root, "examples/studio/convolution/animation"), view, { recursive: true });
+await cp(join(root, "examples/dataflow.py"), notebook);
+await cp(join(root, "examples/studio/dataflow/animation"), view, { recursive: true });
 
 // The render worker encodes movies with imageio-ffmpeg's ffmpeg, so the
 // capture decodes them with the same build.
@@ -66,34 +67,32 @@ const manifest: Manifest = {
 };
 
 try {
-  // Each export renders one state, so its only movie belongs to that slider
-  // value.
-  for (const [name, { bias }] of Object.entries(states)) {
+  // Each export renders one state, so its only movie belongs to that choice.
+  for (const state of states) {
     await writeFile(
       join(view, "states.yaml"),
-      ["schema: marimo-export.states.v1", "default_state: matrix-000000", "matrix:", `  bias: [${bias}]`, ""].join(
+      ["schema: marimo-export.states.v1", "default_state: matrix-000000", "matrix:", `  changed: ["${state}"]`, ""].join(
         "\n",
       ),
     );
-    const output = join(workspace, "exports", name);
-    console.log(`rendering bias ${bias}`);
+    const output = join(workspace, "exports", state);
+    console.log(`rendering ${state}`);
     const exported = await $`marimo-studio view export animation --target ${notebook} --output ${output} --runtime zero-python --json`
       .quiet()
       .nothrow();
     if (exported.exitCode !== 0) {
-      throw new Error(`Exporting bias ${bias} failed:\n${exported.stderr.toString()}`);
+      throw new Error(`Exporting ${state} failed:\n${exported.stderr.toString()}`);
     }
     const renders = join(output, "_marimo-studio/views/animation/renders");
     const bundles = (await readdir(renders, { withFileTypes: true })).filter((entry) => entry.isDirectory());
     if (bundles.length !== 1) {
-      throw new Error(`Expected one render for bias ${bias}, found ${bundles.length}.`);
+      throw new Error(`Expected one render for ${state}, found ${bundles.length}.`);
     }
     const bundle = join(renders, bundles[0]!.name);
-    const frames = join(shotsDir, `movie-${name}`);
+    const frames = join(shotsDir, `movie-${state}`);
     await mkdir(frames);
     await $`${ffmpeg} -v error -i ${join(bundle, "animation.mp4")} -vf fps=${fps},scale=${movieWidth}:-2:flags=lanczos ${join(frames, "%04d.png")}`;
-    manifest.states[name as keyof typeof states] = {
-      bias,
+    manifest.states[state] = {
       frames: (await readdir(frames)).length,
       movie: await Bun.file(join(bundle, "metadata.json")).json(),
     };
@@ -122,7 +121,7 @@ try {
         ].join("\n"),
       );
       const port = await freePort();
-      editor = Bun.spawn(["marimo", "edit", "convolution.py", "--headless", "--no-token", "--port", String(port)], {
+      editor = Bun.spawn(["marimo", "edit", "dataflow.py", "--headless", "--no-token", "--port", String(port)], {
         cwd: workspace,
         stderr: Bun.file(join(shotsDir, `marimo-${theme}.log`)),
         stdout: "ignore",
@@ -155,69 +154,51 @@ try {
       }
       await page.goto(editorUrl, { timeout: timeoutMs });
       const frame = page.mainFrame();
-      const settled = async (): Promise<void> => {
+      const cell = (name: string) => frame.locator(`.marimo-cell[data-cell-name="${name}"]`);
+      // A summary naming the choice marks the finished run.
+      const settled = async (state: string): Promise<void> => {
         await frame.waitForFunction(
-          () =>
-            document.querySelector('.marimo-cell[data-cell-name="distribution_chart"] marimo-mime-renderer') &&
+          ([selector, choice]) =>
+            document.querySelector(selector)?.textContent?.includes(`Moving ${choice}`) &&
             !document.querySelector('[data-status="running"], [data-status="queued"]'),
-          undefined,
+          [`.marimo-cell[data-cell-name="${cells.summary}"]`, state] as const,
           { polling: 250, timeout: timeoutMs },
         );
         await frame.evaluate(() => document.fonts.ready.then(() => undefined));
         await page.waitForTimeout(600);
       };
-      await settled();
-      const cell = (name: string) => frame.locator(`.marimo-cell[data-cell-name="${name}"]`);
-      const slider = cell(cells.controls).locator('[role="slider"]');
-
-      const shoot = async (name: string, file: string): Promise<Shot> => {
+      // The hero shows a cell's output, or the code of a cell without one,
+      // without marimo's cell chrome.
+      const part = (name: string) =>
+        name === cells.cascade ? cell(name).locator(".cm-editor").first() : cell(name).locator(".output-area").first();
+      const shoot = async (name: string, file: string) => {
         await page.mouse.move(0, 0);
-        const box = await cell(name).boundingBox();
+        const box = await part(name).boundingBox();
         if (!box) {
           throw new Error(`Cell ${name} is not visible.`);
         }
-        await cell(name).screenshot({ path: join(shotsDir, file) });
+        await part(name).screenshot({ path: join(shotsDir, file) });
         return { file, height: box.height, width: box.width };
       };
 
-      const shots = manifest.cells[theme];
-      shots.distributions = await shoot(cells.distributions, `${theme}-distributions.png`);
-      shots.controls = [];
-      shots.chart = [];
-      const expectedSum = async (): Promise<string> =>
-        (await cell(cells.chart).innerText()).match(/Expected sum: (\d+\.\d+)/)?.[1] ?? "";
-      let mean = await expectedSum();
-      for (let step = 0; step < steps; step += 1) {
-        // One key press per step gives the kernel one change to run, and every
-        // step moves the expected sum, so a new sum marks the finished run.
-        const before = await slider.getAttribute("aria-valuenow");
-        await slider.focus();
-        await page.keyboard.press(step === 0 ? "Home" : "ArrowRight");
-        await slider.blur();
-        if ((await slider.getAttribute("aria-valuenow")) !== before) {
-          await frame.waitForFunction(
-            ([selector, previous]) =>
-              !document.querySelector(selector)?.textContent?.includes(`Expected sum: ${previous}`),
-            [`.marimo-cell[data-cell-name="${cells.chart}"]`, mean] as const,
-            { polling: 100, timeout: timeoutMs },
-          );
+      const shots = { controls: {}, choices: {}, summary: {} } as Manifest["cells"][typeof theme];
+      await settled(states[0]);
+      shots.cascade = await shoot(cells.cascade, `${theme}-cascade.png`);
+      const box = await part(cells.controls).boundingBox();
+      for (const state of states) {
+        const choice = cell(cells.controls).getByRole("radio", { name: state, exact: true });
+        await choice.check();
+        await settled(state);
+        const at = await choice.boundingBox();
+        if (!box || !at) {
+          throw new Error(`The ${state} choice is not visible.`);
         }
-        await settled();
-        mean = await expectedSum();
-        const [cellBox, thumbBox] = await Promise.all([cell(cells.controls).boundingBox(), slider.boundingBox()]);
-        if (!cellBox || !thumbBox) {
-          throw new Error("The slider is not visible.");
-        }
-        shots.controls.push({
-          ...(await shoot(cells.controls, `${theme}-controls-${step}.png`)),
-          thumb: {
-            x: thumbBox.x + thumbBox.width / 2 - cellBox.x,
-            y: thumbBox.y + thumbBox.height / 2 - cellBox.y,
-          },
-        });
-        shots.chart.push({ ...(await shoot(cells.chart, `${theme}-chart-${step}.png`)), mean });
-        console.log(`captured ${theme} step ${step}, expected sum ${mean}`);
+        shots.choices[state] = { x: at.x + at.width / 2 - box.x, y: at.y + at.height / 2 - box.y };
+        shots.controls[state] = await shoot(cells.controls, `${theme}-controls-${state}.png`);
+        shots.summary[state] = await shoot(cells.summary, `${theme}-summary-${state}.png`);
+        console.log(`captured ${theme} ${state}`);
       }
+      manifest.cells[theme] = shots;
       await context.close();
       await stopEditor();
     }

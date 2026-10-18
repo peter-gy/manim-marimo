@@ -90,6 +90,8 @@
   --vp-sidebar-bg-color: var(--vp-c-bg);
   --vp-home-hero-name-color: var(--vp-c-text-2);
   --vp-local-search-highlight-bg: color-mix(in srgb, var(--mm-focus) 35%, transparent);
+  --vp-local-search-result-border: transparent;
+  --vp-local-search-result-selected-border: var(--mm-focus);
   --vp-local-search-highlight-text: var(--vp-c-text-1);
 }
 
@@ -148,6 +150,10 @@ body {
 .VPNavBar .divider,
 .VPNavBar > .divider {
   display: none;
+}
+
+.VPNavBarTitle .logo {
+  margin-right: 0;
 }
 
 .VPNavBarTitle .title {
@@ -227,7 +233,9 @@ body {
 }
 
 .VPDocAsideOutline .outline-link {
+  padding: 3px 0;
   font-size: 14px;
+  line-height: 1.35;
   white-space: normal;
 }
 
@@ -294,7 +302,12 @@ body {
 
 @media (max-width: 959px) {
   .VPHomeHero .image {
-    margin-bottom: -1rem;
+    margin: 0 -1.5rem -0.5rem;
+  }
+
+  .VPHomeHero .image-container {
+    width: 16rem;
+    height: 16rem;
   }
 }
 
@@ -329,12 +342,6 @@ body {
   --figure-width: min(1152px, 100vw - 48px);
   width: var(--figure-width);
   margin: 0 0 8px calc((100% - var(--figure-width)) / 2);
-}
-
-.vp-doc .wide {
-  --figure-width: min(1152px, 100vw - 48px);
-  width: var(--figure-width);
-  margin-left: calc((100% - var(--figure-width)) / 2);
 }
 
 .vp-doc .hero-figure img {
@@ -606,50 +613,50 @@ body {
   max-width: 720px;
 }
 
-/* Rendered movies keep the scene's 16:9 frame. On the dark page the frame
-   is the page itself. */
-.vp-doc video.movie {
-  display: block;
-  width: 100%;
-  aspect-ratio: 16 / 9;
-  margin: 20px 0;
-  border: 1px solid var(--vp-c-divider);
-  border-radius: 2px;
-  background: var(--manim-scene-bg);
-}
-
-.vp-doc .movies {
+/* The examples gallery: each example's poster, its title, and one line. */
+.vp-doc .gallery {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 16px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 36px 28px;
+  margin: 32px 0 36px;
 }
 
-.vp-doc .movies video.movie {
-  margin: 0;
-}
-
-.vp-doc a.feature {
+.vp-doc .gallery a {
   display: grid;
-  gap: 12px;
-  margin: 28px 0 32px;
+  gap: 6px;
   color: var(--vp-c-text-2);
-  font-size: 16px;
-  line-height: 1.55;
+  font-size: 15.5px;
+  line-height: 1.5;
   text-decoration: none;
 }
 
-.vp-doc a.feature video.movie {
-  margin: 0;
+.vp-doc .gallery img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  margin-bottom: 8px;
+  background: var(--manim-scene-bg);
+  transition: border-color 0.2s;
 }
 
-.vp-doc a.feature strong {
-  margin-right: 6px;
+.vp-doc .gallery strong {
   color: var(--vp-c-text-1);
+  font-size: 19px;
   font-weight: 400;
 }
 
-.vp-doc a.feature:hover strong {
+.vp-doc .gallery a:hover img {
+  border-color: var(--mm-scene);
+}
+
+.vp-doc .gallery a:hover strong {
   color: var(--vp-c-brand-1);
+}
+
+@media (max-width: 639px) {
+  .vp-doc .gallery {
+    grid-template-columns: 1fr;
+  }
 }
 
 .VPDocFooter .edit-link-button,
@@ -709,21 +716,50 @@ body {
   background: color-mix(in srgb, var(--mm-focus) 8%, transparent);
 }
 
-/* The appearance switch is a small mobject too: a stroked track and a
-   square knob. */
+/* The appearance switch: a hairline track and a square knob that carries the
+   page's color, so the knob reads as the theme it switches to. */
 .VPSwitch {
-  border-radius: 2px;
+  width: 2.375rem !important;
+  height: 1.375rem !important;
+  border-color: var(--vp-c-border) !important;
+  border-radius: 2px !important;
+  background: transparent !important;
+}
+
+.VPSwitch:hover {
+  border-color: var(--vp-c-text-3) !important;
 }
 
 .VPSwitch .check {
-  border-radius: 1px;
-  box-shadow: none;
+  top: 2px !important;
+  left: 2px !important;
+  width: 1rem !important;
+  height: 1rem !important;
+  border-radius: 0 !important;
+  background: var(--vp-c-text-2) !important;
+  box-shadow: none !important;
 }
 
-.VPNavScreenAppearance {
+.VPSwitch .icon {
+  width: 1rem !important;
+  height: 1rem !important;
+  border-radius: 0 !important;
+}
+
+.VPSwitch .icon [class^="vpi-"] {
+  top: 0.125rem !important;
+  left: 0.125rem !important;
+  color: var(--vp-c-bg) !important;
+}
+
+.dark .VPSwitchAppearance .check {
+  transform: translateX(1rem) !important;
+}
+
+.VPNavScreen .VPNavScreenAppearance {
   border: 1px solid var(--vp-c-divider);
-  border-radius: 2px;
-  background: transparent;
+  border-radius: 2px !important;
+  background: transparent !important;
 }
 
 .NotFound :is(.code, .title) {

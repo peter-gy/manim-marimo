@@ -1,4 +1,9 @@
-# manim-marimo
+<h1>
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="docs/public/brand/manim-marimo-lockup-horizontal-dark.svg">
+    <img alt="manim-marimo" src="docs/public/brand/manim-marimo-lockup-horizontal-light.svg" width="340">
+  </picture>
+</h1>
 
 manim-marimo brings [Manim](https://github.com/3b1b/manim) animations to
 [marimo](https://marimo.io/) notebooks through
@@ -8,7 +13,7 @@ renders the movie again whenever a value changes.
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="docs/public/media/hero-dark.webp">
-  <img alt="A marimo notebook beside its Animation view. The view's Manim movie fills the diagonals of the notebook's joint probability table and places the notebook's matplotlib chart in the scene. Dragging the notebook's bias slider toward six renders the movie again for the new distribution." src="docs/public/media/hero-light.webp" width="100%">
+  <img alt="A marimo notebook beside its Animation view. The notebook analyzes a small notebook's dataflow graph, and the Manim movie sorts its cells and lights up the ones a slider reruns. Choosing another slider in the notebook renders the movie again for its cascade." src="docs/public/media/hero-light.webp" width="100%">
 </picture>
 
 ```python
@@ -74,20 +79,22 @@ that draws a square wave from rotating vectors.
 
 ## Examples
 
-[![Two hundred simulated people at the peak of an epidemic, with infection rings around the infectious, beside the stacked shares of susceptible, infectious, and recovered people](docs/public/media/epidemic.webp)](https://peter-gy.github.io/manim-marimo/examples/epidemic)
-
+- [A notebook is a dataflow graph](https://peter-gy.github.io/manim-marimo/examples/dataflow):
+  the notebook parses a small notebook, sorts its cells topologically, and
+  finds what each slider reruns. The scene draws those results.
+- [Fourier drawing](https://peter-gy.github.io/manim-marimo/examples/fourier):
+  rotating vectors draw manim-marimo's mark and TeX's italic m from Fourier
+  coefficients the notebook computes.
+- [Convolution of dice](https://peter-gy.github.io/manim-marimo/examples/convolution):
+  a joint probability table folding into the distribution of a sum, ending on
+  the notebook's own chart.
 - [Simulating an epidemic](https://peter-gy.github.io/manim-marimo/examples/epidemic):
   two hundred people simulated in the notebook, after 3Blue1Brown's
   *Simulating an epidemic*. Pause the movie and point at anyone to trace them
   to the notebook row that simulated them.
-- [Fourier drawing](https://peter-gy.github.io/manim-marimo/examples/fourier):
-  rotating vectors and a spectrum from Fourier coefficients.
-- [Convolution of dice](https://peter-gy.github.io/manim-marimo/examples/convolution):
-  a joint probability table folding into the distribution of a sum, ending on
-  the notebook's own chart.
 
 ```sh
-pixi run edit epidemic
+pixi run edit dataflow
 ```
 
 ## Documentation

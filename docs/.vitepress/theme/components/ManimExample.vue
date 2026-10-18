@@ -82,7 +82,7 @@ const stages = [
     file: "index.html",
     source: `${repository}/${props.scene.replace(/[^/]*$/, "index.html")}`,
     open: withBase(`${root}/page/index.html`),
-    caption: "The zero-python export prepares one movie per control value. Move the slider.",
+    caption: "The zero-python export prepares one movie per control value. Change a control.",
   },
 ] as const;
 
@@ -573,11 +573,18 @@ onBeforeUnmount(() => resize?.disconnect());
   background: var(--vp-c-bg);
 }
 
+/* The exports follow prefers-color-scheme, which a frame's color-scheme sets
+   for the document inside it. */
 .manim-example__viewport iframe {
+  color-scheme: light;
   display: block;
   width: 100%;
   height: 100%;
   border: 0;
+}
+
+.dark .manim-example__viewport iframe {
+  color-scheme: dark;
 }
 
 .manim-example__loading {
@@ -759,6 +766,39 @@ figcaption a:hover {
 }
 
 @media (max-width: 640px) {
+  /* Four equal tabs keep their places as the selection moves. */
+  .manim-example__rail {
+    flex-wrap: wrap;
+    row-gap: 4px;
+  }
+
+  .manim-example__rail nav {
+    display: grid;
+    flex: 1 1 100%;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 0;
+    overflow: visible;
+  }
+
+  .manim-example__arrow {
+    display: none;
+  }
+
+  .manim-example__rail button {
+    padding: 6px 0;
+    text-align: center;
+  }
+
+  .manim-example__open {
+    margin-left: auto;
+    font-size: 14px;
+  }
+
+  /* The movie sits at the top of its panel, above its details. */
+  .manim-example__frame {
+    flex: 0 0 auto;
+  }
+
   .manim-example__viewport {
     height: clamp(460px, calc(100dvh - var(--vp-nav-height) - 180px), 680px);
   }

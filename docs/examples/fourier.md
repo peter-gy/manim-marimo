@@ -1,59 +1,63 @@
 ---
 title: Fourier drawing
-description: Rotating vectors and a spectrum, rendered from Fourier coefficients the notebook computes.
+description: Rotating vectors draw manim-marimo's mark and TeX's italic m from Fourier coefficients the notebook computes.
+aside: false
 ---
 
 # Fourier drawing
 
-[`examples/fourier.py`](https://github.com/peter-gy/manim-marimo/blob/main/examples/fourier.py)
-samples a closed path, computes its Fourier coefficients, and reconstructs the
-path from a chosen number of frequency pairs. The view's page shows two scenes
-beside the notebook's controls and comparison chart.
+The drawing on the [home page](../index.md) is this example. Its notebook,
+[`examples/fourier.py`](https://github.com/peter-gy/manim-marimo/blob/main/examples/fourier.py),
+samples a closed path, computes its Fourier coefficients, and keeps the
+frequencies up to a slider's value. The scene turns one vector per coefficient
+and traces the tip of their chain, after 3Blue1Brown's
+[*But what is a Fourier series?*](https://www.youtube.com/watch?v=r6sGWTCMz2k)
+
+<ManimExample
+  name="fourier"
+  notebook="examples/fourier.py"
+  scene="examples/studio/fourier/animation/scene.py"
+  stage="movie"
+>
+
+<<< ../../examples/studio/fourier/animation/scene.py{python:line-numbers}
+
+</ManimExample>
+
+Open the notebook and its view in Studio from a clone of the repository:
 
 ```sh
 pixi run edit fourier
 ```
 
-## Rotating vectors
+## Two paths
 
-[`scene.py`](https://github.com/peter-gy/manim-marimo/blob/main/examples/studio/fourier/animation/scene.py)
-reads the vector chain the notebook samples, `chain`, with shape
-`[frames, vectors + 1, 2]`, and the circle radii:
+| Path                | Sampled from                                       | Vectors that draw it |
+| ------------------- | -------------------------------------------------- | -------------------- |
+| manim-marimo mark   | Five rotating vectors the notebook lists           | 5                    |
+| TeX's italic m      | The outline of `$m$`, from matplotlib's `TextPath` | Every one kept       |
 
-<video class="movie" src="/media/fourier.mp4" poster="/media/fourier.png" controls muted playsinline></video>
+manim-marimo's mark is marimo's looped circle drawn by rotating vectors: one
+turns four times while four short ones let the loops drift. The notebook
+samples it, and the Fourier transform finds exactly those five vectors again.
+TeX's italic m needs many more. Move the slider to see how few frequencies
+still read as an m.
+
+## The notebook computes the coefficients
 
 ```python
-circle = [[[0, 0], [np.cos(t), np.sin(t)]] for t in np.linspace(0, 2 * np.pi, 61)]
-chain = np.asarray(value("chain", default=circle), dtype=float)
-radii = np.asarray(value("radii", default=[1]), dtype=float)
+all_coefficients = np.fft.fft(signal) / sample_count
+frequencies = np.array([k for n in range(1, pairs.value + 1) for k in (n, -n)])
 ```
 
-The defaults describe one rotating vector, so the scene also renders before
-the notebook runs and in the build's check. The construction follows
-[ComplexFourierSeriesExample](https://github.com/3b1b/videos/blob/master/_2019/diffyq/part4/fourier_series_scenes.py)
-from 3Blue1Brown's videos.
+The scene reads `terms`, one `[frequency, real, imaginary]` row per vector with
+the longest first, and `traced`, the path the chain's tip draws in one turn:
 
-## Spectrum
-
-[`spectrum.py`](https://github.com/peter-gy/manim-marimo/blob/main/examples/studio/fourier/animation/spectrum.py)
-grows one bar per frequency, with the radius as its height:
-
-<video class="movie" src="/media/spectrum.mp4" poster="/media/spectrum.png" controls muted playsinline></video>
-
-Both scenes read `radii`, so changing the path or the frequency count renders
-both movies again.
-
-## The page
-
-```html
-<marimo-output render="scene.py" aria-label="Rotating vectors">...</marimo-output>
-<marimo-cell name="controls"></marimo-cell>
-<div class="pair">
-  <marimo-output render="spectrum.py" aria-label="Spectrum">...</marimo-output>
-  <marimo-cell name="comparison"></marimo-cell>
-</div>
+```python
+terms = np.asarray(value("terms", default=[[1, 0.25, 0.0]]), dtype=float)
+traced = np.asarray(value("traced", default=circle), dtype=float)
 ```
 
-[`index.html`](https://github.com/peter-gy/manim-marimo/blob/main/examples/studio/fourier/animation/index.html)
-places the notebook's `controls` and `comparison` cells, so the reader changes
-the path and the frequency count beside the movies.
+A second scene, `spectrum.py`, draws one stem per frequency with the vector's
+length as its height. The view's page plays both movies beside the notebook's
+`controls` and `comparison` cells.

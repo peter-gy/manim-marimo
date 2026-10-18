@@ -4,9 +4,9 @@
 // `pixi run hero-render --at 3.2 --at 12` writes the frames at those seconds to
 // shots/ as PNG files and skips the encode, for checking the layout.
 //
-// The hero plays the fair-dice movie, drags the notebook slider toward six,
-// plays the movie Studio renders for the new value, and drags it back, so the
-// animation loops. Highlights follow the scene's reads as the movie plays.
+// The hero plays the movie for the noise slider, clicks "degree" in the
+// notebook, plays the cascade Studio renders for it, and clicks "noise" again,
+// so the animation loops. Rectangles surround each read as the scene uses it.
 import { $ } from "bun";
 import { existsSync } from "node:fs";
 import { mkdir, readFile, rm } from "node:fs/promises";
@@ -14,16 +14,17 @@ import { join, resolve } from "node:path";
 import { pathToFileURL } from "node:url";
 import { chromium } from "playwright";
 
-import { step, themes, type Manifest, type State } from "./hero.ts";
+import { themes, type Manifest, type State } from "./hero.ts";
+
+type Read = "nodes" | "edges" | "backward" | "rerun" | "changed";
 
 interface FrameState {
-  cursor: { dx: number; dy: number; opacity: number; pressed: boolean; step: number };
-  focus: Partial<Record<"chart" | "controls" | "distributions", number>>;
-  mean: string;
+  choice: State;
+  cursor: { dx: number; dy: number; opacity: number; pressed: boolean; target: State };
+  focus: Partial<Record<"controls" | "cascade", number>>;
   movie: { frame: number; next?: { frame: number; opacity: number; state: State }; state: State };
-  reads: Partial<Record<"figure" | "joint" | "mean" | "probabilities", number>>;
+  reads: Partial<Record<Read, number>>;
   render: { label: string; opacity: number; progress: number };
-  step: number;
 }
 
 const here = import.meta.dir;
@@ -42,15 +43,15 @@ const scale = 1.5;
 // Lossy animated WebP keeps stale pixels wherever a fade ends with changes
 // below the encoder's threshold, such as the pointer fading out. Near-lossless
 // frames update exactly the pixels that change.
-const nearLossless = 40;
+const nearLossless = 20;
 const previews = process.argv.flatMap((argument, index, all) =>
   all[index - 1] === "--at" ? [Number(argument)] : [],
 );
 
-// Seconds into the movie at which examples/studio/convolution/animation/scene.py
-// reaches each read: the table and the sums fill the diagonals, the mean fades
-// in, and the notebook's chart replaces the bars.
-const cues = { diagonals: 0.7, mean: 4.55, chart: 5.65 };
+// Seconds into the movie at which examples/studio/dataflow/animation/scene.py
+// reads each result: the cells appear, the references draw, the caption counts
+// the backward ones, the cells sort, and the cascade runs.
+const cues = { cells: 0.8, references: 2.4, backward: 5.4, sort: 7.2, cascade: 11.2 };
 
 const clamp = (value: number) => Math.min(Math.max(value, 0), 1);
 const smooth = (value: number) => {
@@ -61,19 +62,16 @@ const smooth = (value: number) => {
 const window_ = (t: number, start: number, end: number, fade = 0.25) =>
   Math.min(smooth((t - start) / fade + 1), smooth((end - t) / fade));
 
-const timeline = (theme: (typeof themes)[number]): FrameState[] => {
-  const shots = manifest.cells[theme];
-  const mean = (state: State) => shots.chart[step(state)]!.mean;
+const timeline = (): FrameState[] => {
   const frames: FrameState[] = [];
   const idle = { label: "", opacity: 0, progress: 0 };
   const still = (state: State, frame: number): FrameState => ({
-    cursor: { dx: 0, dy: 0, opacity: 0, pressed: false, step: step(state) },
+    choice: state,
+    cursor: { dx: 0, dy: 0, opacity: 0, pressed: false, target: state },
     focus: {},
-    mean: mean(state),
     movie: { frame, state },
     reads: {},
     render: idle,
-    step: step(state),
   });
   const seconds = (duration: number, paint: (t: number) => FrameState) => {
     const count = Math.round(duration * fps);
@@ -82,71 +80,69 @@ const timeline = (theme: (typeof themes)[number]): FrameState[] => {
     }
   };
 
-  const play = (state: State) => {
+  // Plays `state` from `from` seconds into its movie, with the reads lit at
+  // the moments the scene uses them.
+  const play = (state: State, from = 0) => {
     const last = manifest.states[state].frames - 1;
-    const end = (last + 1) / fps + 0.9;
-    seconds(end, (t) => ({
-      ...still(state, Math.min(Math.round(t * fps), last)),
-      focus: {
-        chart: window_(t, cues.chart, end - 0.1, 0.35),
-        distributions: window_(t, cues.diagonals, cues.chart),
-      },
-      reads: {
-        figure: window_(t, cues.chart, end - 0.1, 0.35),
-        joint: window_(t, cues.diagonals, cues.mean),
-        mean: window_(t, cues.mean, cues.chart),
-        probabilities: window_(t, cues.diagonals, cues.mean),
-      },
-    }));
+    const end = (last + 1) / fps - from + 1;
+    seconds(end, (t) => {
+      const at = t + from;
+      return {
+        ...still(state, Math.min(Math.round(at * fps), last)),
+        focus: { cascade: window_(at, cues.cascade, cues.cascade + 5, 0.35) },
+        reads: {
+          nodes: Math.max(window_(at, cues.cells, cues.references), window_(at, cues.sort, cues.cascade)),
+          edges: window_(at, cues.references, cues.backward),
+          backward: window_(at, cues.backward, cues.sort),
+          changed: window_(at, cues.cascade, cues.cascade + 1.4),
+          rerun: window_(at, cues.cascade + 0.6, cues.cascade + 5.5, 0.35),
+        },
+      };
+    });
   };
 
-  const drag = (from: State, to: State) => {
+  // Clicks `to` in the notebook while `from` holds its last frame, then fades
+  // to the new movie at `start` seconds.
+  const choose = (from: State, to: State, start = 0) => {
     const last = manifest.states[from].frames - 1;
-    const start = step(from);
-    const target = step(to);
-    const approach = 0.55;
-    const travel = 1.5;
+    const approach = 0.8;
+    const press = 0.18;
     const leave = 0.5;
     const rendering = 1.4;
     const swap = 0.35;
-    // The new movie's first frame holds briefly, so the swap completes inside
-    // this segment.
-    const settle = 0.2;
-    const release = approach + travel;
-    const label = `Rendering bias = ${manifest.states[to].bias}`;
-    seconds(release + rendering + swap + settle, (t) => {
-      const moved = smooth((t - approach) / travel);
-      const pointer = start + (target - start) * moved;
+    const release = approach + press;
+    seconds(release + rendering + swap + 0.2, (t) => {
       const entering = 1 - smooth(t / approach);
       const leaving = smooth((t - release) / leave);
       const shown = clamp((t - release - rendering) / swap);
       return {
         ...still(from, last),
+        choice: t >= approach ? to : from,
         cursor: {
-          dx: 34 * entering + 30 * leaving,
-          dy: 30 * entering + 26 * leaving,
+          dx: 46 * entering + 30 * leaving,
+          dy: 34 * entering + 26 * leaving,
           opacity: Math.min(smooth(t / (approach * 0.7)), 1 - leaving),
-          pressed: t >= approach - 0.05 && t < release + 0.05,
-          step: pointer,
+          pressed: t >= approach - 0.05 && t < release,
+          target: to,
         },
-        focus: { controls: window_(t, 0.3, release + leave * 0.6, 0.3) },
-        mean: shown < 1 ? mean(from) : mean(to),
-        movie: { frame: last, next: { frame: 0, opacity: smooth(shown), state: to }, state: from },
+        focus: { controls: window_(t, 0.2, release + leave * 0.8, 0.3) },
+        movie: { frame: last, next: { frame: Math.round(start * fps), opacity: smooth(shown), state: to }, state: from },
         render: {
-          label,
+          label: `Rendering changed = ${to}`,
           opacity: window_(t, release, release + rendering + swap * 0.5, 0.2),
           progress: smooth((t - release) / rendering),
         },
-        step: Math.round(pointer),
       };
     });
   };
 
-  seconds(0.5, () => still("fair", 0));
-  play("fair");
-  drag("fair", "biased");
-  play("biased");
-  drag("biased", "fair");
+  seconds(0.4, () => still("noise", 0));
+  play("noise");
+  // The movies agree until the cascade, so the second one starts there.
+  const jump = cues.cascade - 0.4;
+  choose("noise", "degree", jump);
+  play("degree", jump);
+  choose("degree", "noise");
   return frames;
 };
 
@@ -160,7 +156,7 @@ try {
     await page.goto(pathToFileURL(join(here, "compose.html")).href);
     await page.waitForSelector("body[data-ready=true]", { timeout: 60_000 });
 
-    const frames = timeline(theme);
+    const frames = timeline();
     if (previews.length > 0) {
       for (const at of previews) {
         const index = Math.min(Math.round(at * fps), frames.length - 1);

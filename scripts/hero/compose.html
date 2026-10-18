@@ -5,15 +5,9 @@
     <title>manim-marimo hero</title>
     <style>
       @font-face {
-        font-family: "CMU Bright";
+        font-family: "CMU Serif";
         font-weight: 400;
-        src: url("node_modules/computer-modern/fonts/cmu-bright-500-roman.woff2") format("woff2");
-      }
-
-      @font-face {
-        font-family: "CMU Bright";
-        font-weight: 600;
-        src: url("node_modules/computer-modern/fonts/cmu-bright-600-roman.woff2") format("woff2");
+        src: url("node_modules/computer-modern/fonts/cmu-serif-500-roman.woff2") format("woff2");
       }
 
       @font-face {
@@ -29,114 +23,71 @@
         src: url("node_modules/computer-modern/fonts/cmu-typewriter-text-500-roman.woff2") format("woff2");
       }
 
-      @font-face {
-        font-family: "CMU Typewriter Text";
-        font-weight: 700;
-        src: url("node_modules/computer-modern/fonts/cmu-typewriter-text-700-roman.woff2") format("woff2");
-      }
-
       /* Frames are opaque, on the documentation site's page colors, so
-         animated WebP frames blend without lossy alpha. The colors keep the
+         animated WebP frames blend without lossy alpha. Colors keep the
          site's meanings: notebook results are green, the scene is blue, and
          yellow surrounds what the movie reads. */
       :root {
         --page: #ffffff;
-        --ring: #b8860b;
-        --ring-wash: rgb(184 134 11 / 9%);
+        --ink: #16191d;
+        --muted: #69717a;
+        --rule: #e6e8eb;
         --notebook: #4f7a3a;
         --scene: #1c758a;
-        --card-bg: #ffffff;
-        --card-border: #d5d9dd;
-        --chip: #e8e8ec;
-        --chip-text: #3c4043;
-        --chrome: #f6f7f8;
-        --chrome-rule: #e6e8eb;
-        --code: #16191d;
-        --label: #16191d;
-        --muted: #7d858e;
-        --notebook-bg: #ffffff;
+        --ring: #b8860b;
+        --wash: rgb(184 134 11 / 8%);
       }
 
       body[data-theme="dark"] {
         --page: #11161c;
-        --ring: #ffff00;
-        --ring-wash: rgb(255 255 0 / 8%);
+        --ink: #ececec;
+        --muted: #848b94;
+        --rule: #222932;
         --notebook: #83c167;
         --scene: #58c4dd;
-        --card-bg: #151b22;
-        --card-border: #333b45;
-        --chip: #1b537b;
-        --chip-text: #dbe9f5;
-        --chrome: #1a2129;
-        --chrome-rule: #222932;
-        --code: #ececec;
-        --label: #ececec;
-        --muted: #848b94;
-        --notebook-bg: #151b22;
+        --ring: #ffff00;
+        --wash: rgb(255 255 0 / 6%);
       }
 
       html,
       body {
         margin: 0;
-      }
-
-      #canvas {
         background: var(--page);
       }
 
       #canvas {
+        position: relative;
         display: grid;
-        grid-template-columns: 472px 1fr;
-        align-items: stretch;
-        gap: 24px;
+        grid-template-columns: 440px 1fr;
+        gap: 40px;
         box-sizing: border-box;
         width: 1200px;
-        padding: 24px 32px;
-        font-family: "CMU Bright", system-ui, sans-serif;
+        height: 720px;
+        padding: 28px 36px 32px;
+        background: var(--page);
+        color: var(--ink);
+        font-family: "CMU Serif", serif;
       }
 
-      .card {
+      .caption {
         display: flex;
-        flex-direction: column;
-        overflow: hidden;
-        border: 1px solid var(--card-border);
-        border-radius: 2px;
-        background: var(--card-bg);
-      }
-
-      .card > header {
-        display: flex;
-        flex: 0 0 auto;
-        align-items: center;
+        align-items: baseline;
         justify-content: space-between;
-        gap: 16px;
-        height: 34px;
-        padding: 0 14px;
-        border-bottom: 1px solid var(--chrome-rule);
-        background: var(--chrome);
-        color: var(--label);
-        font-size: 14px;
-        font-weight: 400;
-      }
-
-      .card > header span:last-child {
+        margin: 0 0 14px;
         color: var(--muted);
-        font: 400 13px "CMU Typewriter Text", ui-monospace, monospace;
+        font-size: 17px;
+        font-style: italic;
       }
 
-      .card.is-notebook {
-        background: var(--notebook-bg);
-      }
-
-      .card.is-notebook > header {
-        color: var(--notebook);
+      .caption code {
+        font: 400 14px "CMU Typewriter Text", monospace;
+        font-style: normal;
       }
 
       .notebook {
         display: flex;
         flex-direction: column;
-        gap: 12px;
-        padding: 16px 14px 18px;
+        gap: 22px;
       }
 
       /* The cell the movie reads gets Manim's SurroundingRectangle: square,
@@ -152,36 +103,18 @@
 
       .cell::after {
         position: absolute;
-        inset: -5px;
+        inset: -8px;
         border: 2px solid var(--ring);
         content: "";
         opacity: var(--focus, 0);
         pointer-events: none;
       }
 
-      .cursor {
-        position: absolute;
-        z-index: 2;
-        width: 20px;
-        height: 20px;
-        margin: -2px 0 0 -4px;
-        opacity: 0;
-        transform-origin: 4px 2px;
-        filter: drop-shadow(0 1px 1.5px rgb(0 0 0 / 35%));
-        pointer-events: none;
-      }
-
-      .view {
-        display: flex;
-        flex: 1 1 auto;
-        flex-direction: column;
-      }
-
       .movie {
         position: relative;
         aspect-ratio: 16 / 9;
         overflow: hidden;
-        background: #000;
+        background: #11161c;
       }
 
       .movie img {
@@ -201,38 +134,26 @@
         inset: 0;
         display: flex;
         align-items: flex-end;
-        justify-content: flex-start;
-        padding: 14px;
-        background: rgb(0 0 0 / 46%);
+        padding: 16px;
+        background: rgb(17 22 28 / 55%);
         opacity: 0;
       }
 
       .render span {
-        padding: 5px 10px 5px 9px;
-        border: 1px solid rgb(255 255 255 / 14%);
+        padding: 5px 10px;
+        border: 1px solid rgb(255 255 255 / 16%);
         border-radius: 2px;
-        background: rgb(17 22 28 / 86%);
+        background: rgb(17 22 28 / 88%);
         color: #ececec;
-        font: 400 12.5px "CMU Typewriter Text", ui-monospace, monospace;
-      }
-
-      .render span::before {
-        display: inline-block;
-        width: 6px;
-        height: 6px;
-        margin-right: 8px;
-        border-radius: 50%;
-        background: #58c4dd;
-        vertical-align: 1px;
-        content: "";
+        font: 400 13px "CMU Typewriter Text", monospace;
       }
 
       .render i {
         position: absolute;
         bottom: 0;
         left: 0;
-        height: 2px;
         width: 100%;
+        height: 2px;
         background: #58c4dd;
         transform: scaleX(var(--progress, 0));
         transform-origin: left;
@@ -242,63 +163,56 @@
         display: grid;
         grid-template-columns: auto 1fr auto;
         align-items: center;
-        gap: 12px;
-        height: 34px;
-        padding: 0 14px;
-        border-bottom: 1px solid var(--chrome-rule);
+        gap: 14px;
+        height: 40px;
         color: var(--muted);
-        font: 400 12px "CMU Typewriter Text", ui-monospace, monospace;
+        font: 400 13px "CMU Typewriter Text", monospace;
         font-variant-numeric: tabular-nums;
       }
 
       .player .track {
-        height: 2px;
-        overflow: hidden;
-        background: var(--chrome-rule);
+        height: 1px;
+        background: var(--rule);
       }
 
       .player .track i {
         display: block;
-        height: 100%;
+        height: 1.5px;
+        margin-top: -0.25px;
         background: var(--scene);
         transform: scaleX(var(--progress, 0));
         transform-origin: left;
       }
 
-      .reads {
-        flex: 1 1 auto;
-        padding: 18px 14px 16px;
-      }
-
       .reads h2 {
-        margin: 0 0 10px 10px;
+        margin: 8px 0 6px;
         color: var(--muted);
-        font: italic 400 16px "CMU Serif", serif;
+        font-size: 17px;
+        font-style: italic;
+        font-weight: 400;
       }
 
       .read {
         position: relative;
-        display: grid;
-        grid-template-columns: 1fr auto auto;
+        display: flex;
         align-items: center;
-        gap: 14px;
-        height: 40px;
-        padding: 0 10px;
+        justify-content: space-between;
+        height: 36px;
+        padding: 0 12px;
       }
 
       .read::before {
         position: absolute;
-        inset: 3px 0;
+        inset: 2px 0;
         border: 2px solid var(--ring);
-        background: var(--ring-wash);
+        background: var(--wash);
         content: "";
         opacity: var(--focus, 0);
       }
 
       .read code {
         position: relative;
-        color: var(--code);
-        font: 400 14px "CMU Typewriter Text", ui-monospace, monospace;
+        font: 400 15px "CMU Typewriter Text", monospace;
       }
 
       .read code b {
@@ -306,79 +220,66 @@
         font-weight: 400;
       }
 
-      .read output {
+      .read span {
         position: relative;
         color: var(--muted);
-        font-size: 13px;
-        font-variant-numeric: tabular-nums;
-        text-align: right;
+        font: 400 13px "CMU Typewriter Text", monospace;
       }
 
-      /* The chip repeats marimo's cell-name tag, which names the read's cell
-         in the notebook card. */
-      .read .chip {
-        position: relative;
-        min-width: 112px;
-        padding: 3px 7px;
-        border-radius: 2px;
-        background: var(--chip);
-        color: var(--chip-text);
-        font: 400 12px "CMU Typewriter Text", ui-monospace, monospace;
-        text-align: center;
+      .cursor {
+        position: absolute;
+        z-index: 2;
+        width: 20px;
+        height: 20px;
+        margin: -2px 0 0 -4px;
+        opacity: 0;
+        transform-origin: 4px 2px;
+        filter: drop-shadow(0 1px 1.5px rgb(0 0 0 / 35%));
+        pointer-events: none;
       }
     </style>
   </head>
   <body>
     <div id="canvas">
-      <section class="card is-notebook">
-        <header><span>Notebook</span><span>convolution.py</span></header>
+      <section>
+        <p class="caption">Notebook <code>dataflow.py</code></p>
         <div class="notebook">
           <div class="cell" data-cell="controls"><img alt="" /></div>
-          <div class="cell" data-cell="distributions"><img alt="" /></div>
-          <div class="cell" data-cell="chart"><img alt="" /></div>
+          <div class="cell" data-cell="cascade"><img alt="" /></div>
+          <div class="cell" data-cell="summary"><img alt="" /></div>
         </div>
       </section>
-      <section class="card">
-        <header><span>Animation view</span><span>scene.py</span></header>
-        <div class="view">
-          <div class="movie">
-            <img class="current" alt="" />
-            <img class="next" alt="" />
-            <div class="render"><span></span><i></i></div>
-          </div>
-          <div class="player">
-            <span class="time"></span>
-            <div class="track"><i></i></div>
-            <span class="meta"></span>
-          </div>
-          <div class="reads">
-            <h2>Reads from the notebook</h2>
-            <div class="read" data-read="joint">
-              <code>value(<b>"joint"</b>)</code><output>6 × 6 table</output><span class="chip">distributions</span>
-            </div>
-            <div class="read" data-read="probabilities">
-              <code>value(<b>"probabilities"</b>)</code><output>11 sums</output><span class="chip">distributions</span>
-            </div>
-            <div class="read" data-read="mean">
-              <code>value(<b>"mean"</b>)</code><output></output><span class="chip">distributions</span>
-            </div>
-            <div class="read" data-read="figure">
-              <code>output(<b>"distribution_figure"</b>)</code><output>matplotlib figure</output
-              ><span class="chip">distribution_chart</span>
-            </div>
-          </div>
+      <section>
+        <p class="caption">Animation view <code>scene.py</code></p>
+        <div class="movie">
+          <img class="current" alt="" />
+          <img class="next" alt="" />
+          <div class="render"><span></span><i></i></div>
+        </div>
+        <div class="player">
+          <span class="time"></span>
+          <div class="track"><i></i></div>
+          <span class="meta"></span>
+        </div>
+        <div class="reads">
+          <h2>Reads from the notebook</h2>
+          <div class="read" data-read="nodes"><code>value(<b>"nodes"</b>)</code><span>layout</span></div>
+          <div class="read" data-read="edges"><code>value(<b>"edges"</b>)</code><span>graph</span></div>
+          <div class="read" data-read="backward"><code>value(<b>"backward"</b>)</code><span>topology</span></div>
+          <div class="read" data-read="rerun"><code>value(<b>"rerun"</b>)</code><span>cascade</span></div>
+          <div class="read" data-read="changed"><code>value(<b>"changed.value"</b>)</code><span>controls</span></div>
         </div>
       </section>
+      <svg class="cursor" viewBox="0 0 20 20" aria-hidden="true">
+        <path
+          d="M4 2.2v13.6l3.5-3.3 2.3 5.2 2.4-1-2.3-5.1h4.9z"
+          fill="#111"
+          stroke="#fff"
+          stroke-width="1.4"
+          stroke-linejoin="round"
+        />
+      </svg>
     </div>
-    <svg class="cursor" viewBox="0 0 20 20" aria-hidden="true">
-      <path
-        d="M4 2.2v13.6l3.5-3.3 2.3 5.2 2.4-1-2.3-5.1h4.9z"
-        fill="#111"
-        stroke="#fff"
-        stroke-width="1.4"
-        stroke-linejoin="round"
-      />
-    </svg>
     <script type="module">
       const { manifest, theme } = window.hero;
       document.body.dataset.theme = theme;
@@ -390,30 +291,28 @@
 
       const load = (img, src) =>
         img.getAttribute("src") === src ? Promise.resolve() : ((img.src = src), img.decode());
-      const frame = (state, index) =>
-        `shots/movie-${state}/${String(index + 1).padStart(4, "0")}.png`;
+      const frame = (state, index) => `shots/movie-${state}/${String(index + 1).padStart(4, "0")}.png`;
 
-      await load(cell("distributions").querySelector("img"), `shots/${shots.distributions.file}`);
+      await load(cell("cascade").querySelector("img"), `shots/${shots.cascade.file}`);
 
       // `show` paints one frame of the timeline render.ts computes.
       window.show = async (frameState) => {
-        const { cursor: pointer, focus, movie: shown, reads, render, step } = frameState;
+        const { choice, cursor: pointer, focus, movie: shown, reads, render } = frameState;
         await Promise.all([
-          load(cell("controls").querySelector("img"), `shots/${shots.controls[step].file}`),
-          load(cell("chart").querySelector("img"), `shots/${shots.chart[step].file}`),
+          load(cell("controls").querySelector("img"), `shots/${shots.controls[choice].file}`),
+          load(cell("summary").querySelector("img"), `shots/${shots.summary[choice].file}`),
           load(movie.querySelector(".current"), frame(shown.state, shown.frame)),
           shown.next
             ? load(movie.querySelector(".next"), frame(shown.next.state, shown.next.frame))
             : Promise.resolve(),
         ]);
         movie.querySelector(".next").style.opacity = String(shown.next?.opacity ?? 0);
-        for (const name of ["controls", "distributions", "chart"]) {
+        for (const name of ["controls", "cascade", "summary"]) {
           cell(name).style.setProperty("--focus", String(focus[name] ?? 0));
         }
         for (const row of document.querySelectorAll("[data-read]")) {
           row.style.setProperty("--focus", String(reads[row.dataset.read] ?? 0));
         }
-        document.querySelector('[data-read="mean"] output').textContent = frameState.mean;
 
         // The player follows whichever movie shows more.
         const playing = (shown.next?.opacity ?? 0) > 0.5 ? shown.next : shown;
@@ -424,34 +323,25 @@
         player.querySelector(".track").style.setProperty("--progress", String(progress));
         player.querySelector(".time").textContent =
           `${clock(playing.frame / manifest.fps)} / ${clock(Math.ceil(metadata.duration))}`;
-        player.querySelector(".meta").textContent =
-          `${metadata.width} × ${metadata.height} · ${metadata.fps} fps`;
+        player.querySelector(".meta").textContent = `${metadata.width} × ${metadata.height} · ${metadata.fps} fps`;
 
         const overlay = movie.querySelector(".render");
         overlay.style.opacity = String(render.opacity);
         overlay.style.setProperty("--progress", String(render.progress));
         overlay.querySelector("span").textContent = render.label;
 
-        // The pointer rests on the slider thumb at a fractional step, so it
-        // glides while the slider snaps to 0.1 steps, as a drag does.
+        // The pointer rests on the choice it clicks.
         const controls = cell("controls");
-        const scale = controls.clientWidth / shots.controls[0].width;
-        const at = Math.min(Math.max(pointer.step, 0), shots.controls.length - 1);
-        const low = shots.controls[Math.floor(at)].thumb;
-        const high = shots.controls[Math.ceil(at)].thumb;
-        const fraction = at - Math.floor(at);
+        const scale = controls.clientWidth / shots.controls[choice].width;
+        const target = shots.choices[pointer.target];
         const box = controls.getBoundingClientRect();
         const origin = canvas.getBoundingClientRect();
-        const x = box.left - origin.left + (low.x + (high.x - low.x) * fraction) * scale;
-        const y = box.top - origin.top + low.y * scale;
-        cursor.style.left = `${x + pointer.dx}px`;
-        cursor.style.top = `${y + pointer.dy}px`;
+        cursor.style.left = `${box.left - origin.left + target.x * scale + pointer.dx}px`;
+        cursor.style.top = `${box.top - origin.top + target.y * scale + pointer.dy}px`;
         cursor.style.opacity = String(pointer.opacity);
         cursor.style.transform = `scale(${pointer.pressed ? 0.9 : 1})`;
       };
 
-      canvas.append(cursor);
-      canvas.style.position = "relative";
       await document.fonts.ready;
       document.body.dataset.ready = "true";
     </script>

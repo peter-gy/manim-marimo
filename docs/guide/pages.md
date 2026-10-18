@@ -24,8 +24,8 @@ describes cell and output hosts.
 ## Several scenes on one page
 
 Add a scene file and a host for it. The
-[Fourier example](../examples/fourier.md) shows the vector animation and a
-spectrum side by side:
+[Fourier example](../examples/fourier.md) plays the vector animation and a
+spectrum on one page:
 
 ```html
 <marimo-output render="scene.py" aria-label="Rotating vectors">...</marimo-output>
