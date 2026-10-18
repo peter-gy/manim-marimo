@@ -46,6 +46,7 @@ pixi run check
 | `docs/scripts/build-examples.ts` | Exports every example into `docs/public/exports/` with its traced shapes, which the `ManimExample` component plays and links |
 | `scripts/hero/`               | The bun scripts that render the README hero                            |
 | `scripts/design/`             | The bun scripts that generate the brand assets into `docs/public/`     |
+| `scripts/release/`            | The checks `publish.yml` runs on a build, a release tag, and PyPI      |
 | `tests/`                      | Read, inspection, starter, worker, and lineage tests                   |
 | `pixi.toml`, `pixi.lock`      | The development environments, one per Python version, and tasks       |
 | `pyproject.toml`              | Package metadata, dependencies, and the build backend                  |

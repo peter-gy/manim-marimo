@@ -193,16 +193,16 @@ def test_availability_reports_a_worker_from_another_release(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ):
     worker = tmp_path / "manim-marimo-worker"
-    worker.write_text("#!/bin/sh\necho 'manim-marimo 0.0.1 with manimgl 1.7.2'\n")
+    worker.write_text("#!/bin/sh\necho 'manim-marimo 0.0.0 with manimgl 1.7.2'\n")
     worker.chmod(0o755)
     monkeypatch.setenv("PATH", f"{tmp_path}{os.pathsep}{os.environ['PATH']}")
 
     availability = provider.availability()
 
     assert not availability.available
-    assert availability.version == "0.0.1"
+    assert availability.version == "0.0.0"
     assert availability.reason == (
-        f"Scenes render with manim-marimo 0.0.1, and Studio runs manim-marimo "
+        f"Scenes render with manim-marimo 0.0.0, and Studio runs manim-marimo "
         f"{version('manim-marimo')}."
     )
 

@@ -1,6 +1,6 @@
 [project]
 name = "manim-marimo"
-version = "0.1.0"
+version = "0.0.1"
 description = "Manim animations of marimo notebook results, as marimo-studio views"
 readme = "README.md"
 license = "Apache-2.0"
