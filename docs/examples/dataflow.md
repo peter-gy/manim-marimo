@@ -21,12 +21,7 @@ slider reruns.
   name="dataflow"
   notebook="examples/dataflow.py"
   scene="examples/studio/dataflow/animation/scene.py"
-  stage="movie"
->
-
-<<< ../../examples/studio/dataflow/animation/scene.py{python:line-numbers}
-
-</ManimExample>
+/>
 
 Open the notebook and its view in Studio from a clone of the repository:
 
@@ -76,8 +71,8 @@ cells to their ranks. It sorts nothing and walks no graph itself.
 ## The page
 
 The view's page places the notebook's `controls` and `summary` cells under the
-movie. A zero-python export prepares one movie per slider, and the **Page**
-stage above switches between them.
+movie. A zero-python export prepares one movie per slider, and the
+**Exported page** link under the movie opens it.
 
 ```html
 <marimo-output render="scene.py" aria-label="The notebook's cells, sorted and rerun">...</marimo-output>

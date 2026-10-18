@@ -50,5 +50,5 @@ In the Animation view, move a control and confirm every render host passes
 through `stale` back to `ready` with a new movie. The epidemic example is the
 load test for tracing: two hundred moving shapes, rings, and links. After a
 change to `_lineage.py`, run `pixi run docs-examples`, which fails when a
-render warns, then pause its Movie stage in the docs and point at people
+render warns, then pause its movie in the docs and point at people
 during the peak and while they move.

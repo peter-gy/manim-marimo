@@ -43,7 +43,7 @@ pixi run check
 | `skills/manim-marimo/`, `plugin.json` | The agent skill the wheel ships as an Agent Plugin           |
 | `examples/`                   | Four notebooks with Animation views, used by docs and manual checks     |
 | `docs/`                       | The VitePress documentation site                                       |
-| `docs/scripts/build-examples.ts` | Exports every example into `docs/public/exports/` with its traced shapes, which the `ManimExample` component embeds |
+| `docs/scripts/build-examples.ts` | Exports every example into `docs/public/exports/` with its traced shapes, which the `ManimExample` component plays and links |
 | `scripts/hero/`               | The bun scripts that render the README hero                            |
 | `scripts/design/`             | The bun scripts that generate the brand assets into `docs/public/`     |
 | `tests/`                      | Read, inspection, starter, worker, and lineage tests                   |

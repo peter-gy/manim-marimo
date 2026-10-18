@@ -40,5 +40,5 @@ notebook with Studio. Open the **animation** view, then change a control.
   </a>
 </div>
 
-Each example page embeds its zero-python export. Step from the notebook
-through the scene and the movie to the exported page, and change its control.
+Each example page plays its movie. Pause it and point at a shape to see the
+notebook result it shows.

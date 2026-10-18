@@ -17,12 +17,7 @@ and traces the tip of their chain, after 3Blue1Brown's
   name="fourier"
   notebook="examples/fourier.py"
   scene="examples/studio/fourier/animation/scene.py"
-  stage="movie"
->
-
-<<< ../../examples/studio/fourier/animation/scene.py{python:line-numbers}
-
-</ManimExample>
+/>
 
 Open the notebook and its view in Studio from a clone of the repository:
 

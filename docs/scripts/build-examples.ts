@@ -1,4 +1,4 @@
-// Export the examples the documentation site embeds into
+// Export the examples the documentation site plays and links into
 // docs/public/exports/NAME/. Usage: pixi run docs-examples
 //
 //   page/       the Animation view as a zero-python static site, with one
@@ -28,8 +28,7 @@ const scene = "scene.py";
 const maxValueBytes = 64 * 1024;
 
 // marimo embeds the user's display theme in its exports. "system" follows the
-// embedding frame's color-scheme, so the notebook and the page take the docs
-// site's light or dark theme.
+// reader's color scheme, so the linked notebook and page match the docs site.
 const config = await mkdtemp(join(tmpdir(), "marimo-config-"));
 await mkdir(join(config, "marimo"));
 await writeFile(join(config, "marimo/marimo.toml"), '[display]\ntheme = "system"\n');

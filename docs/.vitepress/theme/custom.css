@@ -250,7 +250,8 @@ body {
 
 /* Home */
 .VPHome {
-  padding-bottom: 72px;
+  margin-bottom: 64px !important;
+  padding-bottom: 0;
 }
 
 .VPHomeHero {
@@ -332,12 +333,6 @@ body {
   margin-inline: auto;
 }
 
-.VPHome .vp-doc h2 {
-  margin-top: 72px;
-  border-top: 0;
-  padding-top: 0;
-}
-
 .vp-doc .hero-figure {
   --figure-width: min(1152px, 100vw - 48px);
   width: var(--figure-width);
@@ -360,52 +355,6 @@ body {
   display: block;
 }
 
-/* Pointing at a route draws its rule left to right, as Manim's Create draws
-   a line. */
-.vp-doc .routes {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 0 40px;
-  margin-top: 20px;
-}
-
-.vp-doc .routes a {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  padding: 16px 0 18px;
-  border-top: 1px solid var(--vp-c-divider);
-  color: var(--vp-c-text-2);
-  font-size: 15.5px;
-  line-height: 1.55;
-  text-decoration: none;
-}
-
-.vp-doc .routes a::before {
-  position: absolute;
-  top: -1px;
-  left: 0;
-  width: 100%;
-  height: var(--mm-stroke);
-  background: var(--mm-scene);
-  content: "";
-  transform: scaleX(0);
-  transform-origin: left;
-  transition: transform 0.45s cubic-bezier(0.65, 0, 0.35, 1);
-}
-
-.vp-doc .routes a:hover::before,
-.vp-doc .routes a:focus-visible::before {
-  transform: scaleX(1);
-}
-
-.vp-doc .routes strong {
-  color: var(--vp-c-text-1);
-  font-size: 19px;
-  font-weight: 400;
-}
-
 @media (max-width: 639px) {
   .VPHomeHero {
     padding-top: calc(var(--vp-nav-height) + 32px) !important;
@@ -413,10 +362,6 @@ body {
 
   .VPHomeHero .tagline {
     font-size: 18px;
-  }
-
-  .vp-doc .routes {
-    grid-template-columns: 1fr;
   }
 }
 

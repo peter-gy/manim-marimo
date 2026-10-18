@@ -8,10 +8,10 @@ import { terms } from "../mark";
 // rotating vectors the Fourier example computes. One turn of the vectors
 // draws the whole ring, and the drawing comes to rest on the mark itself.
 const unit = 760;
-const turn = 7;
+const duration = 12;
+const delay = 0.6;
 const steps = 1440;
 const extent = 600;
-const planeLines = Array.from({ length: 13 }, (_, index) => index * 100 - extent);
 
 const chain = (phase: number): [number, number][] => {
   const points: [number, number][] = [[0, 0]];
@@ -82,9 +82,13 @@ let frame = 0;
 let start = 0;
 let observer: IntersectionObserver | undefined;
 
+// The pen eases in and out, so the drawing starts and settles gently.
+const ease = (t: number): number => (t < 0.5 ? 4 * t * t * t : 1 - (-2 * t + 2) ** 3 / 2);
+
 const tick = (now: number): void => {
   start ||= now;
-  const phase = Math.min((now - start) / 1000 / turn, 1);
+  const t = Math.min(Math.max((now - start) / 1000 - delay, 0) / duration, 1);
+  const phase = t === 1 ? 1 : ease(t);
   draw(phase);
   frame = phase < 1 ? requestAnimationFrame(tick) : 0;
 };
@@ -127,10 +131,6 @@ onBeforeUnmount(() => {
         </mask>
       </defs>
       <g class="fourier-hero__plane" mask="url(#fourier-hero-plane)">
-        <template v-for="position in planeLines" :key="position">
-          <line class="fourier-hero__grid" :x1="position" :y1="-extent" :x2="position" :y2="extent" />
-          <line class="fourier-hero__grid" :x1="-extent" :y1="position" :x2="extent" :y2="position" />
-        </template>
         <line class="fourier-hero__axis" :x1="-extent" y1="0" :x2="extent" y2="0" />
         <line class="fourier-hero__axis" x1="0" :y1="-extent" x2="0" :y2="extent" />
       </g>
@@ -151,7 +151,7 @@ onBeforeUnmount(() => {
           <polygon :ref="(element) => (tips[index] = element as SVGPolygonElement)" :class="{ 'is-small': index > 0 }" />
         </template>
       </g>
-      <circle ref="dot" class="fourier-hero__pen" r="10" />
+      <circle ref="dot" class="fourier-hero__pen" r="8" />
     </svg>
   </a>
 </template>
@@ -176,31 +176,32 @@ onBeforeUnmount(() => {
   vector-effect: non-scaling-stroke;
 }
 
-.fourier-hero__grid {
-  stroke: var(--mm-plane);
-  stroke-width: 1;
-}
-
 .fourier-hero__axis {
   stroke: var(--mm-plane-axis);
-  stroke-width: 1.25;
+  stroke-width: 1;
 }
 
 .fourier-hero__circles circle {
   fill: none;
   stroke: var(--mm-scene);
   stroke-width: 1;
-  stroke-opacity: 0.75;
+  stroke-opacity: 0.28;
 }
 
 .fourier-hero__vectors line {
   stroke: var(--mm-vector);
-  stroke-width: 1.25;
+  stroke-width: 1;
   stroke-linecap: round;
+  stroke-opacity: 0.6;
 }
 
 .fourier-hero__vectors line.is-long {
-  stroke-width: 1.75;
+  stroke-width: 1.5;
+  stroke-opacity: 1;
+}
+
+.fourier-hero__vectors polygon.is-small {
+  fill-opacity: 0.6;
 }
 
 .fourier-hero__vectors polygon {
@@ -210,7 +211,7 @@ onBeforeUnmount(() => {
 .fourier-hero__trace {
   fill: none;
   stroke: var(--mm-notebook);
-  stroke-width: 2.25;
+  stroke-width: 1.75;
   stroke-linecap: round;
   stroke-linejoin: round;
 }
@@ -221,7 +222,7 @@ onBeforeUnmount(() => {
 
 .fourier-hero__circles circle,
 .fourier-hero__vectors .is-small {
-  transition: opacity 0.8s ease;
+  transition: opacity 1.6s ease;
 }
 
 .is-resting .fourier-hero__circles circle,

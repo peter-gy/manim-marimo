@@ -15,11 +15,7 @@ Its Animation view turns the table into that distribution.
   name="convolution"
   notebook="examples/convolution.py"
   scene="examples/studio/convolution/animation/scene.py"
->
-
-<<< ../../examples/studio/convolution/animation/scene.py{python:line-numbers}
-
-</ManimExample>
+/>
 
 Open the notebook and its view in Studio from a clone of the repository:
 
@@ -55,7 +51,7 @@ The view's
 [`states.yaml`](https://github.com/peter-gy/manim-marimo/blob/main/examples/studio/convolution/animation/states.yaml)
 prepares every value of the bias slider. A `zero-python` export renders one
 movie per value, and the exported page swaps movies as the reader moves the
-slider. The **Page** stage above is this export:
+slider. The **Exported page** link under the movie opens this export:
 
 ```sh
 pixi run marimo-studio view export animation --target examples/convolution.py \

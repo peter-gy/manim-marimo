@@ -22,12 +22,7 @@ notebook's `people` table each dot shows, and which line of `scene.py` drew it.
   name="epidemic"
   notebook="examples/epidemic.py"
   scene="examples/studio/epidemic/animation/scene.py"
-  stage="movie"
->
-
-<<< ../../examples/studio/epidemic/animation/scene.py{python:line-numbers}
-
-</ManimExample>
+/>
 
 Open the notebook and its view in Studio from a clone of the repository:
 
@@ -96,7 +91,7 @@ The view's
 [`states.yaml`](https://github.com/peter-gy/manim-marimo/blob/main/examples/studio/epidemic/animation/states.yaml)
 prepares every value of the distancing slider. A `zero-python` export renders
 one movie per value, and the exported page swaps movies as the reader moves the
-slider. The **Page** stage above is this export:
+slider. The **Exported page** link under the movie opens this export:
 
 ```sh
 pixi run marimo-studio view export animation --target examples/epidemic.py \
