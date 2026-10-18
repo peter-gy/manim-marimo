@@ -37,9 +37,10 @@ uvx --with "manim-marimo @ https://github.com/peter-gy/manim-marimo/releases/dow
 
 The workflow checks that the tag matches `pyproject.toml`, builds the wheel and
 sdist, attaches them to a GitHub release with generated notes, and publishes
-them to PyPI through [trusted publishing](https://docs.pypi.org/trusted-publishers/).
-Register `peter-gy/manim-marimo`, workflow `publish.yml`, environment `pypi`
-as a trusted publisher on PyPI before the first release.
+them to the [`manim-marimo`](https://pypi.org/project/manim-marimo/) project on
+PyPI through [trusted publishing](https://docs.pypi.org/trusted-publishers/).
+The project trusts `peter-gy/manim-marimo`, workflow `publish.yml`, and
+environment `pypi`.
 
 ## What a build contains
 
