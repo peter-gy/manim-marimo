@@ -3,17 +3,16 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Convolution of dice · Animation</title>
+  <title>Convolution of dice</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <main id="app-shell">
     <header>
-      <p class="eyebrow">Convolution of dice</p>
       <h1>Convolution of dice</h1>
       <p class="lede">Follow the joint probability table as its diagonals become a distribution.</p>
     </header>
-    <marimo-output render="scene.py" aria-label="Animation">
+    <marimo-output render="scene.py" aria-label="The diagonals of the joint table filling the distribution">
       <video controls playsinline preload="metadata"></video>
       <div class="playback">
         <button class="replay" type="button">Replay</button>
@@ -25,10 +24,10 @@
     <section class="context" aria-label="Notebook context">
       <h2>Explore the computation</h2>
       <marimo-cell name="controls"></marimo-cell>
-      <div style="display: flex;">
-      <marimo-cell name="distribution_chart"></marimo-cell>
-      <marimo-cell name="joint_table"></marimo-cell>
-        </div>
+      <div class="pair">
+        <marimo-cell name="distribution_chart"></marimo-cell>
+        <marimo-cell name="joint_table"></marimo-cell>
+      </div>
     </section>
     <script src="player.js"></script>
   </main>

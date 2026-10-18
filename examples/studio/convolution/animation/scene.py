@@ -1,3 +1,6 @@
+from pathlib import Path
+
+import manimpango
 import numpy as np
 from manimlib import (
     BLUE_C,
@@ -17,6 +20,12 @@ from manimlib import (
 
 from manim_marimo import output, value
 
+FONTS = Path(__file__).with_name("fonts")
+for face in FONTS.glob("*.ttf"):
+    manimpango.register_font(str(face))
+
+SERIF = "CMU Serif"
+
 FAIR = np.full(6, 1 / 6)
 
 
@@ -33,10 +42,10 @@ class Animation(Scene):
             raise ValueError(
                 "joint must be a 6 x 6 table and probabilities must contain 11 sums."
             )
-        title = Text("Convolution adds the diagonals", font="Arial", font_size=36)
+        title = Text("Convolution adds the diagonals", font=SERIF, font_size=36)
         title.to_edge(UP, buff=0.55)
         subtitle = Text(
-            "Every pair contributes to exactly one sum.", font="Arial", font_size=21
+            "Every pair contributes to exactly one sum.", font=SERIF, font_size=21
         )
         subtitle.next_to(title, DOWN, buff=0.25)
         squares = VGroup()
@@ -54,7 +63,7 @@ class Animation(Scene):
                     np.array([-4.1 + 0.54 * j, 1.2 - 0.54 * i, 0], dtype=float)
                 )
                 squares.add(square)
-        grid_label = Text("Joint probability", font="Arial", font_size=21)
+        grid_label = Text("Joint probability", font=SERIF, font_size=21)
         grid_label.move_to(np.array([-2.75, -2.3, 0], dtype=float))
         bars = VGroup()
         labels = VGroup()
@@ -69,10 +78,10 @@ class Animation(Scene):
             )
             bar.move_to(np.array([x, -1.5 + 0.005, 0], dtype=float))
             bars.add(bar)
-            label = Text(str(index + 2), font="Arial", font_size=16)
+            label = Text(str(index + 2), font=SERIF, font_size=16)
             label.move_to(np.array([x, -1.8, 0], dtype=float))
             labels.add(label)
-        chart_label = Text("Distribution of the sum", font="Arial", font_size=21)
+        chart_label = Text("Distribution of the sum", font=SERIF, font_size=21)
         chart_label.move_to(np.array([2.7, -2.3, 0], dtype=float))
         self.play(
             FadeIn(
@@ -102,7 +111,7 @@ class Animation(Scene):
             self.play(*animations, run_time=0.35)
         mean = Text(
             f"Expected sum  {float(value('mean', default=7)):.2f}",
-            font="Arial",
+            font=SERIF,
             font_size=22,
         )
         mean.move_to(np.array([2.7, 1.9, 0], dtype=float))
@@ -111,7 +120,7 @@ class Animation(Scene):
         chart = output("distribution_figure", height=2.6)
         if chart is not None:
             chart.move_to(np.array([2.7, -0.55, 0], dtype=float))
-            caption = Text("The notebook's chart", font="Arial", font_size=21)
+            caption = Text("The notebook's chart", font=SERIF, font_size=21)
             caption.move_to(chart_label)
             self.play(
                 FadeOut(VGroup(bars, labels)),

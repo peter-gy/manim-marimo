@@ -3,8 +3,10 @@
 # https://github.com/3b1b/videos/blob/master/_2020/sir.py. That code is shared
 # under CC BY-NC-SA 4.0, and so is this file. The notebook simulates every
 # person, and this scene choreographs the result.
+from pathlib import Path
 from typing import cast
 
+import manimpango
 import numpy as np
 from manimlib import (
     DOWN,
@@ -32,6 +34,12 @@ from manimlib import (
 )
 
 from manim_marimo import output, value
+
+FONTS = Path(__file__).with_name("fonts")
+for face in FONTS.glob("*.ttf"):
+    manimpango.register_font(str(face))
+
+SERIF = "CMU Serif"
 
 SUSCEPTIBLE, INFECTIOUS, RECOVERED = "#58C4DD", "#FC6255", "#4f5661"
 PALETTE = (SUSCEPTIBLE, INFECTIOUS, RECOVERED)
@@ -118,18 +126,19 @@ class Animation(Scene):
             area.set_fill(color, opacity)
         ticks = VGroup()
         for day in range(0, int(days) + 1, 7):
-            tick = Text(str(day), font_size=15, fill_color=GREY_B)
+            tick = Text(str(day), font=SERIF, font_size=15, fill_color=GREY_B)
             ticks.add(tick.next_to(axes.c2p(day, 0), DOWN, buff=0.15))
         for share in (0.5, 1):
-            tick = Text(f"{share:.0%}", font_size=15, fill_color=GREY_B)
+            tick = Text(f"{share:.0%}", font=SERIF, font_size=15, fill_color=GREY_B)
             ticks.add(tick.next_to(axes.c2p(0, share), LEFT, buff=0.15))
-        day_label = Text("Day", font_size=15, fill_color=GREY_B)
+        day_label = Text("Day", font=SERIF, font_size=15, fill_color=GREY_B)
         ticks.add(day_label.next_to(axes.x_axis, DOWN, buff=0.45))
 
-        title = Text("Simulating an epidemic", font_size=30)
+        title = Text("Simulating an epidemic", font=SERIF, font_size=30)
         title.next_to(axes, UP, buff=1.25).align_to(axes, LEFT)
         setting = Text(
             f"{len(people)} people  ·  {distancing:.0%} keep their distance",
+            font=SERIF,
             font_size=17,
             fill_color=GREY_B,
         )
@@ -139,17 +148,25 @@ class Animation(Scene):
         names = ("Susceptible", "Infectious", "Recovered")
         for name, color in zip(names, PALETTE, strict=True):
             swatch = Square(side_length=0.16).set_fill(color, 1).set_stroke(width=0)
-            label = Text(name, font_size=17, fill_color=GREY_B)
+            label = Text(name, font=SERIF, font_size=17, fill_color=GREY_B)
             label.next_to(swatch, RIGHT, 0.12)
-            share = DecimalNumber(0, num_decimal_places=0, unit="%", font_size=20)
+            share = DecimalNumber(
+                0,
+                num_decimal_places=0,
+                unit="%",
+                font_size=20,
+                text_config={"font": SERIF},
+            )
             shares.append(share.next_to(label, RIGHT, 0.14))
             legend.add(VGroup(swatch, label, share))
         legend.arrange(RIGHT, buff=0.42).next_to(axes, DOWN, buff=0.7)
         legend.align_to(axes, LEFT)
 
         clock = ValueTracker(0)
-        today = Integer(0, font_size=26)
-        counter = VGroup(Text("Day", font_size=22, fill_color=GREY_B), today)
+        today = Integer(0, font_size=26, text_config={"font": SERIF})
+        counter = VGroup(
+            Text("Day", font=SERIF, font_size=22, fill_color=GREY_B), today
+        )
         counter.arrange(RIGHT, buff=0.14).next_to(city, UP, buff=0.18)
         counter.align_to(city, LEFT)
         origin = axes.get_origin()
@@ -214,7 +231,7 @@ class Animation(Scene):
         self.add(areas, world)
         zero = next((k for k, p in enumerate(people) if p["infected"] == 0), None)
         if zero is not None:
-            note = Text("Patient zero", font_size=16, fill_color=INFECTIOUS)
+            note = Text("Patient zero", font=SERIF, font_size=16, fill_color=INFECTIOUS)
             note.next_to(crowd[zero], UP, buff=0.22)
             self.play(FadeIn(note, shift=0.1 * UP), run_time=0.4)
             self.wait(0.8)
@@ -228,7 +245,9 @@ class Animation(Scene):
         )
         marker.set_stroke(GREY_B, 1.5)
         peak = Text(
-            f"Peak {float(summary['peak']):.0%} on day {peak_day:g}", font_size=17
+            f"Peak {float(summary['peak']):.0%} on day {peak_day:g}",
+            font=SERIF,
+            font_size=17,
         )
         peak.next_to(marker, UP, buff=0.12)
         self.play(
@@ -252,6 +271,7 @@ class Animation(Scene):
             caption = Text(
                 f"{float(summary['infected']):.0%} infected  ·  "
                 f"each early case infects {float(summary['reproduction']):.1f}",
+                font=SERIF,
                 font_size=17,
                 fill_color=GREY_B,
             )

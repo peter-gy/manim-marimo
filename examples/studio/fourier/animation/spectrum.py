@@ -1,57 +1,83 @@
+from pathlib import Path
+
+import manimpango
 import numpy as np
 from manimlib import (
-    BLUE_C,
     DOWN,
-    GREY_B,
+    LEFT,
+    UL,
     UP,
+    Dot,
     FadeIn,
-    GrowFromEdge,
     LaggedStart,
     Line,
-    Rectangle,
     Scene,
+    ShowCreation,
     Text,
     VGroup,
 )
 
 from manim_marimo import value
 
+FONTS = Path(__file__).with_name("fonts")
+for face in FONTS.glob("*.ttf"):
+    manimpango.register_font(str(face))
+
+SERIF = "CMU Serif"
+INK = "#ececec"
+MUTED = "#848b94"
+SCENE = "#58c4dd"
+
 
 class Spectrum(Scene):
     def construct(self):
-        frequencies = np.asarray(value("frequencies", default=[0]), dtype=int)
-        radii = np.asarray(value("radii", default=[1]), dtype=float)
+        frequencies = np.asarray(value("frequencies", default=[1, -1]), dtype=int)
+        radii = np.asarray(value("radii", default=[0.25, 0.1]), dtype=float)
         order = np.argsort(frequencies)
         frequencies, radii = frequencies[order], radii[order]
-        title = Text("One radius for each frequency", font="Arial", font_size=34)
-        title.to_edge(UP, buff=0.6)
-        width = min(0.8, 11 / len(radii))
-        scale = 3.6 / max(float(radii.max()), 1e-9)
-        baseline = -1.6
-        axis = Line(
-            np.array([-6, baseline, 0]), np.array([6, baseline, 0]), stroke_color=GREY_B
+
+        title = Text("One radius for each frequency", font=SERIF, font_size=44)
+        title.set_fill(INK).to_corner(UL, buff=0.7)
+        subtitle = Text(
+            "The notebook's coefficients, from the slowest turn outward",
+            font=SERIF,
+            font_size=26,
+            fill_color=MUTED,
         )
-        bars = VGroup()
-        labels = VGroup()
-        for index, (frequency, radius) in enumerate(
-            zip(frequencies, radii, strict=True)
-        ):
-            x = (index - (len(radii) - 1) / 2) * width * 1.15
-            bar = Rectangle(
-                width=width,
-                height=max(float(radius) * scale, 0.02),
-                fill_color=BLUE_C,
-                fill_opacity=0.9,
-                stroke_width=0,
-            )
-            bar.move_to(np.array([x, baseline, 0]), aligned_edge=DOWN)
-            bars.add(bar)
-            label = Text(str(frequency), font="Arial", font_size=16, color=GREY_B)
-            label.next_to(bar, DOWN, buff=0.12).set_y(baseline - 0.25)
-            labels.add(label)
-        self.play(FadeIn(VGroup(title, axis, labels)), run_time=0.6)
+        subtitle.next_to(title, DOWN, buff=0.16, aligned_edge=LEFT)
+
+        span = max(int(np.abs(frequencies).max()), 1)
+        baseline = -2.4
+        height = 4.4 / max(float(radii.max()), 1e-9)
+
+        def x_of(frequency: int) -> float:
+            return 6 * frequency / span
+
+        axis = Line(np.array([-6.4, baseline, 0]), np.array([6.4, baseline, 0]))
+        axis.set_stroke(INK, width=1.2, opacity=0.4)
+        stems = VGroup()
+        for frequency, radius in zip(frequencies, radii, strict=True):
+            top = np.array([x_of(frequency), baseline + radius * height, 0])
+            stem = Line(np.array([x_of(frequency), baseline, 0]), top)
+            stem.set_stroke(SCENE, width=2)
+            stems.add(VGroup(stem, Dot(top, radius=0.045, fill_color=SCENE)))
+        ticks = VGroup()
+        step = max(1, span // 4)
+        for frequency in range(-span, span + 1, step):
+            tick = Text(str(frequency), font=SERIF, font_size=20, fill_color=MUTED)
+            tick.next_to(np.array([x_of(frequency), baseline, 0]), DOWN, buff=0.18)
+            ticks.add(tick)
+
+        self.play(FadeIn(title, shift=0.2 * UP), FadeIn(subtitle), run_time=0.8)
+        self.play(ShowCreation(axis), FadeIn(ticks), run_time=0.6)
         self.play(
-            LaggedStart(*(GrowFromEdge(bar, DOWN) for bar in bars), lag_ratio=0.08),
-            run_time=2,
+            LaggedStart(
+                *(
+                    ShowCreation(stems[index])
+                    for index in np.argsort(np.abs(frequencies), kind="stable")
+                ),
+                lag_ratio=0.03,
+            ),
+            run_time=2.4,
         )
-        self.wait(0.8)
+        self.wait(1)

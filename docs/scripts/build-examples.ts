@@ -13,18 +13,27 @@
 // Each export replaces its previous copy only after every part validates.
 import { execFile } from "node:child_process";
 import { copyFile, mkdir, mkdtemp, readFile, rename, rm, stat, writeFile } from "node:fs/promises";
+import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
 import { promisify } from "node:util";
 
 const run = promisify(execFile);
 const docs = resolve(import.meta.dirname, "..");
 const root = resolve(docs, "..");
-const examples = ["convolution", "epidemic"];
+const examples = ["dataflow", "fourier", "convolution", "epidemic"];
 const view = "animation";
 const scene = "scene.py";
 // The reader sees a value beside the shape that shows it, so values larger than
 // a tooltip, such as every person's path, stay in the page export.
 const maxValueBytes = 64 * 1024;
+
+// marimo embeds the user's display theme in its exports. "system" follows the
+// embedding frame's color-scheme, so the notebook and the page take the docs
+// site's light or dark theme.
+const config = await mkdtemp(join(tmpdir(), "marimo-config-"));
+await mkdir(join(config, "marimo"));
+await writeFile(join(config, "marimo/marimo.toml"), '[display]\ntheme = "system"\n');
+const environment = { ...process.env, NO_COLOR: "1", XDG_CONFIG_HOME: config };
 
 interface ExportResult {
   preflight: { ok: boolean };
@@ -97,7 +106,7 @@ async function exportExample(name: string, staging: string): Promise<void> {
   const { stdout } = await run(
     "marimo-studio",
     ["view", "export", view, "--target", notebook, "--output", page, "--runtime", "zero-python", "--json"],
-    { cwd: root, env: { ...process.env, NO_COLOR: "1" }, maxBuffer: 64 * 1024 * 1024 },
+    { cwd: root, env: environment, maxBuffer: 64 * 1024 * 1024 },
   );
   const result = JSON.parse(stdout) as ExportResult;
   if (result.runtime !== "zero-python" || result.view !== view || result.preflight?.ok !== true) {
@@ -113,7 +122,7 @@ async function exportExample(name: string, staging: string): Promise<void> {
   console.log(`Exporting ${notebook} as static HTML`);
   const notebookHtml = join(staging, "notebook/index.html");
   await mkdir(join(staging, "notebook"));
-  await run("marimo", ["export", "html", notebook, "--output", notebookHtml], { cwd: root });
+  await run("marimo", ["export", "html", notebook, "--output", notebookHtml], { cwd: root, env: environment });
   if (!(await readFile(notebookHtml, "utf8")).includes("<marimo-code hidden")) {
     throw new Error(`The ${notebook} notebook export is missing its source.`);
   }
@@ -220,3 +229,4 @@ for (const name of examples) {
     await rm(staging, { force: true, recursive: true });
   }
 }
+await rm(config, { force: true, recursive: true });

@@ -48,9 +48,11 @@ libwebp = ">=1.6"
 
 [feature.media.tasks]
 hero-install = { cmd = "bun install --frozen-lockfile && bunx playwright install chromium", cwd = "scripts/hero", description = "Install the README hero's scripts and Chromium" }
-hero-capture = { cmd = "bun capture.ts", cwd = "scripts/hero", depends-on = ["hero-install"], description = "Render the convolution movies and capture the notebook cells" }
+hero-capture = { cmd = "bun capture.ts", cwd = "scripts/hero", depends-on = ["hero-install"], description = "Render the dataflow movies and capture the notebook cells" }
 hero-render = { cmd = "bun render.ts", cwd = "scripts/hero", depends-on = ["hero-install"], description = "Compose the README hero from the captured shots" }
 hero = { cmd = "bun capture.ts && bun render.ts", cwd = "scripts/hero", depends-on = ["hero-install"], description = "Capture and compose the README hero" }
+design-install = { cmd = "bun install --frozen-lockfile && bunx playwright install chromium", cwd = "scripts/design", description = "Install the brand scripts and Chromium" }
+design = { cmd = "bun brand.ts", cwd = "scripts/design", depends-on = ["design-install"], description = "Generate the brand assets and the examples' fonts" }
 
 [feature.py310.dependencies]
 python = "3.10.*"
@@ -84,11 +86,11 @@ test = { cmd = "pytest", description = "Run every test, including scene renders"
 check = { depends-on = ["lint", "typecheck", "test"], description = "Run every check CI runs" }
 
 example = { cmd = "marimo-studio validate --target examples/{{ name }}.py && marimo-studio view build animation --target examples/{{ name }}.py", args = [{ arg = "name" }], description = "Validate and build one example view" }
-examples = { depends-on = [{ task = "example", args = ["fourier"] }, { task = "example", args = ["convolution"] }, { task = "example", args = ["epidemic"] }], description = "Validate and build every example view" }
+examples = { depends-on = [{ task = "example", args = ["dataflow"] }, { task = "example", args = ["fourier"] }, { task = "example", args = ["convolution"] }, { task = "example", args = ["epidemic"] }], description = "Validate and build every example view" }
 edit = { cmd = "marimo edit examples/{{ example }}.py --no-sandbox --watch", args = [{ arg = "example", default = "fourier" }], description = "Open an example notebook in Studio" }
 build = { cmd = "uv build", description = "Build the wheel and sdist into dist/" }
 
 docs-install = { cmd = "pnpm install --frozen-lockfile", cwd = "docs", description = "Install the documentation site" }
-docs-examples = { cmd = "node scripts/build-examples.ts", cwd = "docs", inputs = ["examples/convolution.py", "examples/epidemic.py", "examples/studio/convolution/**", "examples/studio/epidemic/**", "src/manim_marimo/**", "docs/scripts/build-examples.ts", "pixi.lock"], outputs = ["docs/public/exports/convolution/**", "docs/public/exports/epidemic/**"], description = "Export the examples the docs embed" }
+docs-examples = { cmd = "node scripts/build-examples.ts", cwd = "docs", inputs = ["examples/*.py", "examples/studio/**", "src/manim_marimo/**", "docs/scripts/build-examples.ts", "pixi.lock"], outputs = ["docs/public/exports/**"], description = "Export the examples the docs embed" }
 docs-dev = { cmd = "pnpm dev", cwd = "docs", depends-on = ["docs-install", "docs-examples"], description = "Serve the documentation with live reload" }
 docs-build = { cmd = "pnpm build", cwd = "docs", depends-on = ["docs-install", "docs-examples"], description = "Build the documentation site" }

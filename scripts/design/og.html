@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>manim-marimo Open Graph image</title>
+    <style>
+      @font-face {
+        font-family: "CMU Serif";
+        font-weight: 400;
+        src: url("node_modules/computer-modern/fonts/cmu-serif-500-roman.woff2") format("woff2");
+      }
+
+      html,
+      body {
+        width: 1200px;
+        height: 630px;
+        margin: 0;
+        overflow: hidden;
+        background: #11161c;
+        color: #ececec;
+        font-family: "CMU Serif", serif;
+      }
+
+      main {
+        position: relative;
+        display: grid;
+        grid-template-columns: 640px 1fr;
+        height: 100%;
+      }
+
+      .copy {
+        display: flex;
+        flex-direction: column;
+        padding: 78px 0 0 84px;
+      }
+
+      .lockup img {
+        display: block;
+        height: 46px;
+        margin-left: -6px;
+      }
+
+      h1 {
+        margin: 88px 0 0;
+        font-size: 66px;
+        font-weight: 400;
+        line-height: 1.06;
+        letter-spacing: -0.005em;
+      }
+
+      .notebook {
+        color: #83c167;
+        white-space: nowrap;
+      }
+
+      .scene {
+        color: #58c4dd;
+      }
+
+      p {
+        margin: 34px 0 0;
+        color: #b6bcc3;
+        font-size: 26px;
+        line-height: 1.5;
+      }
+
+      .figure {
+        position: relative;
+      }
+
+      .figure svg {
+        position: absolute;
+        top: 30px;
+        right: 22px;
+        width: 560px;
+        height: 560px;
+        overflow: visible;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <section class="copy">
+        <div class="lockup"><img src="../../docs/public/brand/manim-marimo-lockup-horizontal-dark.svg" alt="manim-marimo" /></div>
+        <h1>Animate<br /><span class="notebook">marimo notebooks</span><br />with <span class="scene">Manim</span></h1>
+        <p>The notebook computes.<br />A Manim scene animates the result.</p>
+      </section>
+      <div class="figure"><svg viewBox="-470 -470 940 940" aria-hidden="true"></svg></div>
+    </main>
+    <script type="module">
+      const { terms } = window.brand;
+
+      // The hero at rest: the ring the vectors drew, one vector from the
+      // center to the pen, and the circle that vector turns on.
+      const unit = 640;
+      const pen = (t) => {
+        let x = 0;
+        let y = 0;
+        for (const [k, re, im] of terms) {
+          const a = 2 * Math.PI * k * t;
+          x += (re * Math.cos(a) - im * Math.sin(a)) * unit;
+          y -= (re * Math.sin(a) + im * Math.cos(a)) * unit;
+        }
+        return [x, y];
+      };
+      const ring = Array.from({ length: 1441 }, (_, i) => pen(i / 1440));
+      const [px, py] = ring[0];
+      const reach = Math.hypot(px, py);
+      let body = `<defs><radialGradient id="fade"><stop offset="0.3" stop-color="#fff"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></radialGradient><mask id="plane"><rect x="-470" y="-470" width="940" height="940" fill="url(#fade)"/></mask></defs><g mask="url(#plane)">`;
+      for (let v = -400; v <= 400; v += 100) {
+        body += `<line x1="${v}" y1="-470" x2="${v}" y2="470" stroke="#29abca" stroke-opacity="0.24"/><line x1="-470" y1="${v}" x2="470" y2="${v}" stroke="#29abca" stroke-opacity="0.24"/>`;
+      }
+      body += `<line x1="-470" y1="0" x2="470" y2="0" stroke="#fff" stroke-opacity="0.34"/><line x1="0" y1="-470" x2="0" y2="470" stroke="#fff" stroke-opacity="0.34"/></g>`;
+      body += `<circle cx="0" cy="0" r="${reach}" fill="none" stroke="#58c4dd" stroke-width="1.2" stroke-opacity="0.6"/>`;
+      body += `<polyline points="${ring.map(([x, y]) => `${x.toFixed(1)},${y.toFixed(1)}`).join(" ")}" fill="none" stroke="#83c167" stroke-width="3" stroke-linejoin="round"/>`;
+      const ux = px / reach;
+      const uy = py / reach;
+      const tipX = px - ux * 14;
+      const tipY = py - uy * 14;
+      const bx = tipX - ux * 26;
+      const by = tipY - uy * 26;
+      body += `<line x1="0" y1="0" x2="${bx}" y2="${by}" stroke="#ececec" stroke-width="2.5" stroke-linecap="round"/><polygon points="${tipX},${tipY} ${bx - uy * 10},${by + ux * 10} ${bx + uy * 10},${by - ux * 10}" fill="#ececec"/>`;
+      body += `<circle cx="${px}" cy="${py}" r="10" fill="#ffff00"/>`;
+      document.querySelector(".figure svg").innerHTML = body;
+      await document.querySelector(".lockup img").decode();
+      await document.fonts.ready;
+      document.body.dataset.ready = "true";
+    </script>
+  </body>
+</html>

@@ -1,21 +1,30 @@
-:root { color-scheme: light dark; font-family: ui-sans-serif, system-ui, sans-serif; color: CanvasText; background: Canvas; }
+/* The page in the documentation's type and colors: Computer Modern, and the
+   background every scene renders on in dark mode. */
+@font-face { font-family: "CMU Serif"; src: url("assets/fonts/cmu-serif-500-roman.woff2") format("woff2"); font-display: swap; }
+@font-face { font-family: "CMU Serif"; font-style: italic; src: url("assets/fonts/cmu-serif-500-italic.woff2") format("woff2"); font-display: swap; }
+@font-face { font-family: "CMU Typewriter Text"; src: url("assets/fonts/cmu-typewriter-text-500-roman.woff2") format("woff2"); font-display: swap; }
+:root { color-scheme: light dark; --page: #ffffff; --ink: #16191d; --muted: #69717a; --rule: #e6e8eb; --control: #d5d9dd; --scene: #11161c; font-family: "CMU Serif", Georgia, serif; color: var(--ink); background: var(--page); }
+@media (prefers-color-scheme: dark) { :root { --page: #11161c; --ink: #ececec; --muted: #848b94; --rule: #222932; --control: #333b45; } }
 * { box-sizing: border-box; }
 body { margin: 0; }
-main { max-width: 1120px; margin: 0 auto; padding: 36px 32px 64px; }
+main { max-width: 1120px; margin: 0 auto; padding: 40px 32px 64px; }
 header { margin-bottom: 28px; }
-.eyebrow { font-size: 12px; letter-spacing: .12em; text-transform: uppercase; color: color-mix(in srgb, CanvasText 60%, Canvas); }
-h1 { font: 500 clamp(30px, 5vw, 46px)/1.15 ui-serif, Georgia, serif; margin: 10px 0 16px; }
-.lede { max-width: 640px; line-height: 1.6; color: color-mix(in srgb, CanvasText 72%, Canvas); }
-video { display: block; width: 100%; aspect-ratio: 16/9; background: #11161c; border-radius: 4px; }
+h1 { font-size: clamp(32px, 5vw, 46px); font-weight: 400; line-height: 1.12; margin: 0 0 14px; }
+.lede { max-width: 640px; margin: 0; color: var(--muted); font-size: 19px; line-height: 1.6; }
+video { display: block; width: 100%; aspect-ratio: 16/9; background: var(--scene); }
 marimo-output[data-state="stale"] video { opacity: .6; transition: opacity .2s; }
-.playback { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 20px; padding: 14px 0; font-size: 13px; }
-button, select { font: inherit; color: inherit; background: Canvas; border: 1px solid color-mix(in srgb, CanvasText 25%, Canvas); border-radius: 4px; padding: 5px 10px; }
+.playback { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 20px; padding: 14px 0; font-size: 15px; }
+button, select { font: inherit; color: inherit; background: transparent; border: 1px solid var(--control); border-radius: 2px; padding: 4px 10px; }
 button { cursor: pointer; }
+button:hover, select:hover { border-color: var(--muted); }
 label { display: flex; align-items: center; gap: 6px; }
+input[type="checkbox"] { accent-color: #58c4dd; }
 a { color: inherit; text-underline-offset: 3px; }
-.details { font-size: 12px; color: color-mix(in srgb, CanvasText 55%, Canvas); margin: 0; }
-.context { display: grid; gap: 24px; margin-top: 36px; border-top: 1px solid color-mix(in srgb, CanvasText 15%, Canvas); padding-top: 24px; }
+code { font-family: "CMU Typewriter Text", ui-monospace, monospace; }
+.details { margin: 0; color: var(--muted); font-size: 14px; }
+.context { display: grid; gap: 24px; margin-top: 36px; border-top: 1px solid var(--rule); padding-top: 28px; }
+.context h2 { margin: 0; color: var(--muted); font-size: 19px; font-style: italic; font-weight: 400; }
+.pair { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 24px; align-items: start; }
 marimo-cell { display: block; min-width: 0; max-width: 100%; overflow-x: auto; }
 marimo-output::part(toolbar) { font-size: 12px; }
 @media (max-width: 600px) { main { padding: 24px 16px 40px; } .playback { gap: 12px; } }
-.pair { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 24px; align-items: start; }

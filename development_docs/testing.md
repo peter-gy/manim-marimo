@@ -43,7 +43,7 @@ a change to the provider, the starter, or a scene:
 
 ```sh
 pixi run examples
-pixi run edit epidemic
+pixi run edit dataflow
 ```
 
 In the Animation view, move a control and confirm every render host passes
