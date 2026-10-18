@@ -7,8 +7,8 @@ import { mark, wordmark } from "../brand";
 // The hero draws manim-marimo's mark, marimo's looped circle, with the rotating
 // vectors the Fourier example computes. It then writes the wordmark below it,
 // each contour of each letter traced by its own chain of rotating vectors
-// from that contour's Fourier series. The finished word fills in, holds, and
-// fades, and the drawing starts again.
+// from that contour's Fourier series. The finished word fills in, and the
+// drawing stays.
 
 // Seconds on the hero's clock.
 const timeline = {
@@ -16,9 +16,8 @@ const timeline = {
   settle: [8, 9.2],
   word: [8.6, 16.6],
   fill: [16.6, 17.8],
-  leave: [22, 23.2],
-  loop: 23.6,
 } as const;
+const end = timeline.fill[1];
 
 // Layout in viewBox units: the ring is `unit` wide, and the wordmark
 // `wordWidth` wide, centered beneath it.
@@ -115,7 +114,6 @@ const letterCircles: SVGCircleElement[] = [];
 const letterShafts: SVGLineElement[] = [];
 const letterTips: SVGPolygonElement[] = [];
 const root = ref<SVGSVGElement>();
-const scene = ref<SVGGElement>();
 const markTrace = ref<SVGPolylineElement>();
 const markPen = ref<SVGCircleElement>();
 const markSmall = ref<SVGGElement>();
@@ -206,7 +204,6 @@ const drawWord = (t: number): void => {
 const draw = (t: number): void => {
   drawMark(t);
   drawWord(t);
-  scene.value?.setAttribute("opacity", (1 - ease(progress(t, timeline.leave))).toFixed(3));
 };
 
 // The clock runs only while the hero is on screen and the tab is visible.
@@ -216,10 +213,17 @@ let previous = 0;
 let visible = false;
 
 const tick = (now: number): void => {
-  clock = (clock + (previous ? (now - previous) / 1000 : 0)) % timeline.loop;
+  clock = Math.min(clock + (previous ? (now - previous) / 1000 : 0), end);
   previous = now;
   draw(clock);
-  frame = requestAnimationFrame(tick);
+  if (clock < end) {
+    frame = requestAnimationFrame(tick);
+    return;
+  }
+  // The finished drawing stays.
+  frame = 0;
+  observer?.disconnect();
+  document.removeEventListener("visibilitychange", visibility);
 };
 
 const play = (): void => {
@@ -250,7 +254,7 @@ onMounted(() => {
   requestAnimationFrame(() => {
     // Readers who ask for reduced motion see the finished mark and word.
     if (matchMedia("(prefers-reduced-motion: reduce)").matches) {
-      draw(timeline.fill[1]);
+      draw(end);
       return;
     }
     draw(0);
@@ -288,7 +292,7 @@ onBeforeUnmount(() => {
           <rect :x="-unit * 0.62" :y="-unit * 0.62" :width="unit * 1.24" :height="unit * 1.24" fill="url(#fourier-hero-fade)" />
         </mask>
       </defs>
-      <g ref="scene">
+      <g>
         <g class="fourier-hero__plane" mask="url(#fourier-hero-plane)">
           <line class="fourier-hero__axis" :x1="-unit * 0.62" y1="0" :x2="unit * 0.62" y2="0" />
           <line class="fourier-hero__axis" x1="0" :y1="-unit * 0.62" x2="0" :y2="unit * 0.62" />

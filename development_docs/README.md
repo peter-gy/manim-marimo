@@ -81,7 +81,7 @@ dataflow scene changes pace.
 | Color    | ManimGL's palette. Notebook results are green, scenes are blue, and yellow surrounds what has focus |
 | Type     | Computer Modern from the `computer-modern` package: CMU Serif for text, CMU Bright for navigation, CMU Typewriter for code |
 | Surfaces | A stroke and the same color as a faint fill, with square corners                           |
-| Hero     | `FourierHero.vue` draws the mark and writes the wordmark with rotating vectors, from the generated `brand.ts`, and loops |
+| Hero     | `FourierHero.vue` draws the mark and writes the wordmark with rotating vectors, from the generated `brand.ts`, once |
 
 Code blocks use the `manim-dark` and `manim-light` Shiki themes in
 `docs/.vitepress/config.mts`. Recompose the README hero with
