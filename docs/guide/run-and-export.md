@@ -45,6 +45,13 @@ Prepare every value a control can take. A slider stepped to a value without a
 prepared state keeps the previous movie. Each state renders a full movie, so
 the export time grows with the number of states.
 
+The export stores the values every state's scenes read, and the whole set holds
+at most 100,000 JSON values: numbers, strings, list and object entries. The
+[epidemic example](../examples/epidemic.md) keeps four states of two hundred
+people's paths in budget by recording positions twice a day as flat lists, and
+its scene interpolates between them. Keep large per-frame data compact the
+same way, or prepare fewer states.
+
 `view preflight` prepares and renders every state as an export does, then
 discards the site. Both commands warn with `prepared-states-skip-control-values`
 for each control whose values the states skip, with the count and the first

@@ -24,6 +24,27 @@ hero:
   <img class="only-dark" src="/media/hero-dark.webp" alt="">
 </figure>
 
+## Two hundred people, traced
+
+The [epidemic example](./examples/epidemic.md) simulates a city of two hundred
+people in the notebook, after 3Blue1Brown's *Simulating an epidemic*. The scene
+plays the infection spreading person to person. Pause the movie and point at
+anyone: it names the row of the notebook's `people` table behind that dot, the
+cell that computed it, and the line of `scene.py` that drew it.
+
+<div class="wide">
+<ManimExample
+  name="epidemic"
+  notebook="examples/epidemic.py"
+  scene="examples/studio/epidemic/animation/scene.py"
+  stage="movie"
+>
+
+<<< ../examples/studio/epidemic/animation/scene.py{python:line-numbers}
+
+</ManimExample>
+</div>
+
 ## Notebook results in a scene
 
 The [convolution example](./examples/convolution.md) computes a joint

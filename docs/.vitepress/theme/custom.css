@@ -159,6 +159,13 @@
   margin: 0 0 8px calc((100% - var(--figure-width)) / 2);
 }
 
+/* A wide example on the home page breaks out of the reading column too. */
+.vp-doc .wide {
+  --figure-width: min(1152px, 100vw - 48px);
+  width: var(--figure-width);
+  margin-left: calc((100% - var(--figure-width)) / 2);
+}
+
 .vp-doc .hero-figure img {
   display: block;
   width: 100%;
@@ -280,6 +287,31 @@
 
 .vp-doc .movies video.movie {
   margin: 0;
+}
+
+/* A featured example: its movie, then one line naming it. */
+.vp-doc a.feature {
+  display: grid;
+  gap: 10px;
+  margin: 24px 0 28px;
+  color: var(--vp-c-text-2);
+  font-size: 14px;
+  line-height: 1.55;
+  text-decoration: none;
+}
+
+.vp-doc a.feature video.movie {
+  margin: 0;
+}
+
+.vp-doc a.feature strong {
+  margin-right: 6px;
+  color: var(--vp-c-text-1);
+  font-weight: 600;
+}
+
+.vp-doc a.feature:hover strong {
+  color: var(--vp-c-brand-1);
 }
 
 .VPFooter {

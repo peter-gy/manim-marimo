@@ -93,6 +93,18 @@ Rules that inspection and the build enforce:
   Studio draws the figure at that height, so its text reads at the scene's own
   font sizes.
 
+## Keep large scenes fast
+
+A scene that moves hundreds of shapes renders in Python once per frame:
+
+- Compute each frame's positions with NumPy in one updater, then move the
+  shapes in one loop.
+- Change colors, rings, and links only for the shapes whose state changed.
+- Set `DecimalNumber` and `Integer` only when the shown number changes.
+- A static export stores the values of every prepared state, at most 100,000
+  JSON values in total. Send per-frame data as flat lists at a few samples per
+  second and interpolate in the scene.
+
 ## Shapes trace to notebook results
 
 Each render records which read every shape shows, and Studio's preview makes

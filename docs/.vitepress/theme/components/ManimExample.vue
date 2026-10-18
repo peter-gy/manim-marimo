@@ -1,21 +1,46 @@
 <script setup lang="ts">
 import { withBase } from "vitepress";
-import { computed, onMounted, ref } from "vue";
+import { computed, nextTick, onBeforeUnmount, onMounted, ref } from "vue";
 
 // One example as its stages: the notebook computes, the scene reads its
 // results, Studio renders the movie, and the zero-python export serves the
 // page. docs/scripts/build-examples.ts writes the exports under
 // public/exports/NAME/, and the default slot holds the scene's source.
-const props = defineProps<{
-  name: string;
-  notebook: string;
-  scene: string;
-}>();
+const props = withDefaults(
+  defineProps<{
+    name: string;
+    notebook: string;
+    scene: string;
+    stage?: "notebook" | "scene" | "movie" | "page";
+  }>(),
+  { stage: "page" },
+);
+
+// A traced shape of the movie: [x, y, width, height, start, end, reads, label,
+// path, line], in fractions of the frame and seconds. Poster shapes have no
+// times.
+type Source = [string | null, number | null];
+type MovieRegion = [number, number, number, number, number, number | null, string[], string | null, ...Source];
+type PosterRegion = [number, number, number, number, string[], string | null, ...Source];
 
 interface Example {
   inputs: Record<string, unknown>;
   movie: { duration: number; fps: number; height: number; width: number };
   reads: string[];
+  trace?: {
+    cells: Record<string, string>;
+    values: Record<string, unknown>;
+    movie: MovieRegion[];
+    poster: PosterRegion[];
+  };
+}
+
+interface Shape {
+  box: [number, number, number, number];
+  reads: string[];
+  label: string | null;
+  path: string | null;
+  line: number | null;
 }
 
 const repository = "https://github.com/peter-gy/marimo-manim/blob/main";
@@ -45,7 +70,7 @@ const stages = [
     file: "animation.mp4",
     source: `${repository}/${props.scene}`,
     open: withBase(`${root}/render/animation.mp4`),
-    caption: "Studio renders the scene with the notebook's current results.",
+    caption: "Pause the movie and point at a shape to see the notebook result it shows. Click it to open the line that drew it.",
   },
   {
     key: "page",
@@ -58,12 +83,12 @@ const stages = [
 ] as const;
 
 type Key = (typeof stages)[number]["key"];
-const selectedKey = ref<Key>("page");
+const selectedKey = ref<Key>(props.stage);
 const selected = computed(() => stages.find(({ key }) => key === selectedKey.value) ?? stages[3]);
 const loaded = ref<Record<string, boolean>>({});
 // A frame mounts the first time its stage opens and stays mounted, so
 // switching stages keeps the page's state and the notebook's scroll position.
-const opened = ref<Key[]>(["page"]);
+const opened = ref<Key[]>([props.stage]);
 const frames = computed(() =>
   stages.filter(({ key }) => (key === "notebook" || key === "page") && opened.value.includes(key)),
 );
@@ -103,14 +128,233 @@ const inputs = computed(() =>
     .join(", "),
 );
 
+// Tracing: while the movie is paused, the shape under the pointer shows the
+// notebook results it reads, the cell that computed them, and the scene line
+// that drew it, as Lens does in Studio's preview.
+const video = ref<HTMLVideoElement>();
+const stageElement = ref<HTMLElement>();
+const source = ref<HTMLElement>();
+const paused = ref(true);
+const screen = ref({ left: 0, top: 0, width: 0, height: 0 });
+const hovered = ref<Shape>();
+const pointer = ref({ x: 0, y: 0 });
+
+const traced = computed(() => (example.value?.trace?.movie.length ?? 0) + (example.value?.trace?.poster.length ?? 0));
+
+const shapesAt = (time: number, ended: boolean): Shape[] => {
+  const trace = example.value?.trace;
+  if (!trace) {
+    return [];
+  }
+  if (ended && trace.poster.length > 0) {
+    return trace.poster.map(([x, y, width, height, reads, label, path, line]) => ({
+      box: [x, y, width, height],
+      reads,
+      label,
+      path,
+      line,
+    }));
+  }
+  return trace.movie
+    .filter(([, , , , start, end]) => start <= time + 1e-3 && (end === null || time < end))
+    .map(([x, y, width, height, , , reads, label, path, line]) => ({
+      box: [x, y, width, height],
+      reads,
+      label,
+      path,
+      line,
+    }));
+};
+
+const measure = (): void => {
+  const element = video.value;
+  const container = stageElement.value;
+  if (!element || !container || !element.videoWidth) {
+    return;
+  }
+  const outer = container.getBoundingClientRect();
+  const inner = element.getBoundingClientRect();
+  // The element keeps the movie's aspect ratio, so the picture fills it.
+  screen.value = { left: inner.left - outer.left, top: inner.top - outer.top, width: inner.width, height: inner.height };
+};
+
+const shapeUnder = (clientX: number, clientY: number): Shape | undefined => {
+  const element = video.value;
+  if (!element || !paused.value) {
+    return undefined;
+  }
+  const bounds = element.getBoundingClientRect();
+  const x = (clientX - bounds.left) / bounds.width;
+  const y = (clientY - bounds.top) / bounds.height;
+  // The browser's controls cover the bottom of the picture.
+  if (x < 0 || x > 1 || y < 0 || clientY > bounds.bottom - 48) {
+    return undefined;
+  }
+  const ended = element.ended || element.currentTime >= element.duration - 0.05;
+  let found: Shape | undefined;
+  for (const shape of shapesAt(element.currentTime, ended)) {
+    const [left, top, width, height] = shape.box;
+    if (x >= left && x <= left + width && y >= top && y <= top + height) {
+      if (!found || width * height < found.box[2] * found.box[3]) {
+        found = shape;
+      }
+    }
+  }
+  return found;
+};
+
+let last: { x: number; y: number } | undefined;
+
+const point = (clientX: number, clientY: number): void => {
+  measure();
+  last = { x: clientX, y: clientY };
+  hovered.value = shapeUnder(clientX, clientY);
+  const container = stageElement.value?.getBoundingClientRect();
+  if (container) {
+    pointer.value = { x: clientX - container.left, y: clientY - container.top };
+  }
+};
+
+const hover = (event: PointerEvent): void => {
+  if (event.pointerType !== "touch") {
+    point(event.clientX, event.clientY);
+  }
+};
+
+// After a seek the shapes under a still pointer change.
+const seeked = (): void => {
+  if (last) {
+    point(last.x, last.y);
+  }
+};
+
+const targetOf = (read: string): string | undefined =>
+  Object.keys({ ...example.value?.trace?.cells, ...example.value?.trace?.values })
+    .filter((target) => read === target || read.startsWith(`${target}.`) || read.startsWith(`${target}[`))
+    .sort((a, b) => b.length - a.length)[0];
+
+// Resolve the steps a read adds to its target, such as [17] in people[17].
+const valueOf = (read: string): unknown => {
+  const target = targetOf(read);
+  const values = example.value?.trace?.values ?? {};
+  if (target === undefined || !(target in values)) {
+    return undefined;
+  }
+  let value: unknown = values[target];
+  for (const [, field, index, quoted] of read.slice(target.length).matchAll(/\.([A-Za-z]\w*)|\[(\d+)\]|\[("(?:[^"\\]|\\.)*")\]/g)) {
+    const key = field ?? (index !== undefined ? Number(index) : JSON.parse(quoted));
+    if (value === null || typeof value !== "object") {
+      return undefined;
+    }
+    value = (value as Record<string | number, unknown>)[key];
+  }
+  return value;
+};
+
+const format = (value: unknown): string => {
+  const text = JSON.stringify(value, (_, item) =>
+    typeof item === "number" && !Number.isInteger(item) ? Number(item.toFixed(3)) : item,
+  );
+  if (text === undefined) {
+    return "";
+  }
+  const spaced = text.replace(/"(\w+)":/g, "$1: ").replace(/,(?=\S)/g, ", ");
+  return spaced.length > 96 ? `${spaced.slice(0, 95)}…` : spaced;
+};
+
+const card = computed(() => {
+  const shape = hovered.value;
+  if (!shape) {
+    return undefined;
+  }
+  // The most specific read, such as people[17] beside city_size, shows its value.
+  const read = [...shape.reads].sort((a, b) => b.length - a.length)[0] ?? "";
+  const target = targetOf(read);
+  return {
+    reads: shape.reads.slice(0, 3).join(" · "),
+    more: Math.max(shape.reads.length - 3, 0),
+    value: format(valueOf(read)),
+    cell: target ? example.value?.trace?.cells[target] : undefined,
+    file: shape.path ? file(shape.path) : file(props.scene),
+    line: shape.line,
+    label: shape.label,
+  };
+});
+
+const outline = computed(() => {
+  const shape = hovered.value;
+  if (!shape) {
+    return undefined;
+  }
+  const { left, top, width, height } = screen.value;
+  const [x, y, w, h] = shape.box;
+  return {
+    left: `${left + x * width - 3}px`,
+    top: `${top + y * height - 3}px`,
+    width: `${w * width + 6}px`,
+    height: `${h * height + 6}px`,
+  };
+});
+
+const cardPosition = computed(() => {
+  const { x, y } = pointer.value;
+  const container = stageElement.value;
+  const right = container ? container.clientWidth - x < 340 : false;
+  return right ? { right: `${(container?.clientWidth ?? 0) - x + 14}px`, top: `${y + 14}px` } : { left: `${x + 14}px`, top: `${y + 14}px` };
+});
+
+// A click on a shape opens the scene at the line that drew it. On a touch
+// screen the first tap shows the shape, and a second tap on it follows it.
+const follow = async (event: PointerEvent | MouseEvent): Promise<void> => {
+  const shape = shapeUnder(event.clientX, event.clientY);
+  if (!shape?.line) {
+    return;
+  }
+  event.preventDefault();
+  event.stopPropagation();
+  const shown = hovered.value;
+  const same = shown?.line === shape.line && shown?.box.join() === shape.box.join();
+  if ("pointerType" in event && event.pointerType === "touch" && !same) {
+    point(event.clientX, event.clientY);
+    return;
+  }
+  if (shape.path && shape.path !== file(props.scene)) {
+    return;
+  }
+  select("scene");
+  await nextTick();
+  const container = source.value;
+  const line = container?.querySelectorAll<HTMLElement>("code .line")[shape.line - 1];
+  if (!container || !line) {
+    return;
+  }
+  for (const marked of container.querySelectorAll(".manim-example__traced")) {
+    marked.classList.remove("manim-example__traced");
+  }
+  line.classList.add("manim-example__traced");
+  container.scrollTop = line.offsetTop - container.clientHeight / 3;
+};
+
+let resize: ResizeObserver | undefined;
+
 // The frames load after mount, so the static build carries no frame sources.
 onMounted(async () => {
   mounted.value = true;
-  const response = await fetch(withBase(`${root}/example.json`));
-  if (response.ok) {
-    example.value = (await response.json()) as Example;
+  resize = new ResizeObserver(measure);
+  if (stageElement.value) {
+    resize.observe(stageElement.value);
+  }
+  try {
+    const response = await fetch(withBase(`${root}/example.json`));
+    if (response.ok) {
+      example.value = (await response.json()) as Example;
+    }
+  } catch {
+    // The movie plays without its traced shapes.
   }
 });
+
+onBeforeUnmount(() => resize?.disconnect());
 </script>
 
 <template>
@@ -155,20 +399,43 @@ onMounted(async () => {
           @load="loaded[stage.key] = true"
         />
       </template>
-      <div v-show="selected.key === 'scene'" class="manim-example__source">
+      <div v-show="selected.key === 'scene'" ref="source" class="manim-example__source">
         <slot />
       </div>
       <div v-show="selected.key === 'movie'" class="manim-example__movie">
-        <div class="manim-example__frame">
+        <div
+          ref="stageElement"
+          class="manim-example__frame"
+          @pointermove="hover"
+          @pointerleave="hovered = undefined"
+          @click.capture="follow"
+        >
           <video
             v-if="mounted && selected.key === 'movie'"
+            ref="video"
             :src="withBase(`${root}/render/animation.mp4`)"
             :poster="withBase(`${root}/render/poster.png`)"
+            :class="{ 'manim-example__tracing': hovered }"
             controls
             muted
             playsinline
             autoplay
+            @loadedmetadata="measure"
+            @seeked="seeked"
+            @play="(paused = false), (hovered = undefined)"
+            @pause="paused = true"
           />
+          <div v-if="outline" class="manim-example__outline" :style="outline" aria-hidden="true" />
+          <div v-if="card" class="manim-example__card" :style="cardPosition" aria-hidden="true">
+            <code class="manim-example__read">{{ card.reads }}</code>
+            <span v-if="card.more > 0" class="manim-example__more">and {{ card.more }} more</span>
+            <code v-if="card.value" class="manim-example__value">{{ card.value }}</code>
+            <span class="manim-example__origin">
+              <template v-if="card.cell">cell <strong>{{ card.cell }}</strong> · </template>
+              <template v-if="card.line">{{ card.file }} line {{ card.line }}</template>
+              <template v-if="card.label"> · {{ card.label }}</template>
+            </span>
+          </div>
         </div>
         <dl v-if="example">
           <div>
@@ -187,6 +454,10 @@ onMounted(async () => {
               {{ example.movie.width }} × {{ example.movie.height }} · {{ example.movie.fps }} fps ·
               {{ seconds(example.movie.duration) }}
             </dd>
+          </div>
+          <div v-if="traced">
+            <dt>Traced</dt>
+            <dd>{{ traced.toLocaleString("en") }} shape regions, each naming the notebook result it shows</dd>
           </div>
         </dl>
       </div>
@@ -313,6 +584,7 @@ onMounted(async () => {
 
 /* The scene's code block fills the viewport and scrolls inside it. */
 .manim-example__source {
+  position: relative;
   height: 100%;
   overflow: auto;
   background: var(--vp-code-block-bg);
@@ -328,6 +600,12 @@ onMounted(async () => {
   padding: 20px 0 !important;
 }
 
+.manim-example__source :deep(.manim-example__traced) {
+  display: inline-block;
+  width: 100%;
+  background: var(--vp-c-brand-soft);
+}
+
 .manim-example__movie {
   display: flex;
   flex-direction: column;
@@ -341,6 +619,7 @@ onMounted(async () => {
 /* The movie keeps its own frame: it scales to fit the space above the
    details without letterboxing. */
 .manim-example__frame {
+  position: relative;
   display: flex;
   flex: 1 1 auto;
   min-height: 0;
@@ -355,6 +634,59 @@ onMounted(async () => {
   max-width: 100%;
   max-height: 100%;
   border-radius: 4px;
+}
+
+.manim-example__frame video.manim-example__tracing {
+  cursor: pointer;
+}
+
+.manim-example__outline {
+  position: absolute;
+  border: 1.5px solid var(--vp-c-brand-1);
+  border-radius: 3px;
+  pointer-events: none;
+}
+
+.manim-example__card {
+  position: absolute;
+  z-index: 1;
+  display: grid;
+  gap: 3px;
+  max-width: 320px;
+  padding: 10px 12px;
+  border: 1px solid var(--vp-c-divider);
+  border-radius: 6px;
+  background: var(--vp-c-bg);
+  pointer-events: none;
+}
+
+.manim-example__card code {
+  padding: 0;
+  background: transparent;
+  font-size: 12.5px;
+  line-height: 18px;
+  overflow-wrap: anywhere;
+}
+
+.manim-example__read {
+  color: var(--vp-c-text-1);
+  font-weight: 600;
+}
+
+.manim-example__value {
+  color: var(--vp-c-text-2);
+}
+
+.manim-example__more,
+.manim-example__origin {
+  color: var(--vp-c-text-3);
+  font-size: 12px;
+  line-height: 18px;
+}
+
+.manim-example__origin strong {
+  color: var(--vp-c-text-2);
+  font-weight: 500;
 }
 
 .manim-example__movie dl {
@@ -385,7 +717,7 @@ onMounted(async () => {
   font-variant-numeric: tabular-nums;
 }
 
-.manim-example__movie code {
+.manim-example__movie dd code {
   padding: 0;
   background: transparent;
   color: var(--vp-c-text-1);

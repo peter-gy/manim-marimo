@@ -91,11 +91,11 @@ test = { cmd = "pytest", description = "Run every test, including scene renders"
 check = { depends-on = ["lint", "typecheck", "test"], description = "Run every check CI runs" }
 
 example = { cmd = "marimo-studio validate --target examples/{{ name }}.py && marimo-studio view build animation --target examples/{{ name }}.py", args = [{ arg = "name" }], description = "Validate and build one example view" }
-examples = { depends-on = [{ task = "example", args = ["fourier"] }, { task = "example", args = ["convolution"] }], description = "Validate and build both example views" }
+examples = { depends-on = [{ task = "example", args = ["fourier"] }, { task = "example", args = ["convolution"] }, { task = "example", args = ["epidemic"] }], description = "Validate and build every example view" }
 edit = { cmd = "marimo edit examples/{{ example }}.py --no-sandbox --watch", args = [{ arg = "example", default = "fourier" }], description = "Open an example notebook in Studio" }
 build = { cmd = "uv build", description = "Build the wheel and sdist into dist/" }
 
 docs-install = { cmd = "pnpm install --frozen-lockfile", cwd = "docs", description = "Install the documentation site" }
-docs-examples = { cmd = "node scripts/build-examples.ts", cwd = "docs", inputs = ["examples/convolution.py", "examples/studio/convolution/**", "src/marimo_manim/**", "docs/scripts/build-examples.ts", "pixi.lock"], outputs = ["docs/public/exports/convolution/**"], description = "Export the convolution example the docs embed" }
+docs-examples = { cmd = "node scripts/build-examples.ts", cwd = "docs", inputs = ["examples/convolution.py", "examples/epidemic.py", "examples/studio/convolution/**", "examples/studio/epidemic/**", "src/marimo_manim/**", "docs/scripts/build-examples.ts", "pixi.lock"], outputs = ["docs/public/exports/convolution/**", "docs/public/exports/epidemic/**"], description = "Export the examples the docs embed" }
 docs-dev = { cmd = "pnpm dev", cwd = "docs", depends-on = ["docs-install", "docs-examples"], description = "Serve the documentation with live reload" }
 docs-build = { cmd = "pnpm build", cwd = "docs", depends-on = ["docs-install", "docs-examples"], description = "Build the documentation site" }

@@ -26,10 +26,10 @@ pixi run check
 | `check`               | `lint`, `typecheck`, and `test`, as CI does            |
 | `format`              | ruff fixes and formatting                              |
 | `example <name>`      | Validates and builds one example view                  |
-| `examples`            | Validates and builds both example views                |
+| `examples`            | Validates and builds every example view                |
 | `edit <example>`      | Opens `examples/<example>.py` in Studio, with Lens to select traced shapes |
 | `build`               | Builds the wheel and sdist into `dist/`                |
-| `docs-examples`       | Exports the convolution example the docs embed         |
+| `docs-examples`       | Exports the epidemic and convolution examples the docs embed |
 | `docs-dev`, `docs-build` | Serves or builds the VitePress site in `docs/`      |
 | `hero`                | Captures and renders the README hero                   |
 
@@ -40,9 +40,9 @@ pixi run check
 | `src/marimo_manim/`           | The provider, the scene API, and the render worker                     |
 | `src/marimo_manim/starters/`  | Files of the `marimo-manim/manim:default` starter                      |
 | `skills/marimo-manim/`, `plugin.json` | The agent skill the wheel ships as an Agent Plugin           |
-| `examples/`                   | Two notebooks with Animation views, used by docs and manual checks      |
+| `examples/`                   | Three notebooks with Animation views, used by docs and manual checks    |
 | `docs/`                       | The VitePress documentation site                                       |
-| `docs/scripts/build-examples.ts` | Exports the convolution example into `docs/public/exports/`, which the `ManimExample` component embeds |
+| `docs/scripts/build-examples.ts` | Exports the epidemic and convolution examples into `docs/public/exports/` with their traced shapes, which the `ManimExample` component embeds |
 | `scripts/hero/`               | The bun scripts that render the README hero                            |
 | `tests/`                      | Read, inspection, starter, worker, and lineage tests                   |
 | `pixi.toml`, `pixi.lock`      | The development environments, one per Python version, and tasks       |

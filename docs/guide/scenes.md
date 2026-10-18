@@ -119,6 +119,23 @@ table it shows.
 [Traced shapes](../reference/provider.md#traced-shapes) lists what the tracer
 records.
 
+## Scenes with many shapes
+
+A scene that moves hundreds of shapes spends its render in Python, once per
+frame. The [epidemic example](../examples/epidemic.md) moves two hundred people
+through a 19-second movie at 1080p and 30 frames per second, and renders it in
+less time than it plays, by keeping that Python small:
+
+- Compute every position of a frame at once with NumPy, then move each shape
+  in one loop of `move_to()` calls inside a single updater.
+- Change a shape's color, a ring, or a link only when its state changes, and
+  update the few that are active.
+- Set a `DecimalNumber` or `Integer` only when the number it shows changes.
+  Each new value redraws its glyphs.
+
+Tracing records the boxes of the moving shapes at most twelve times a second,
+so a higher frame rate does not multiply its cost.
+
 ## One scene per file
 
 The file's scene is the one `Scene` subclass it defines that no other class in

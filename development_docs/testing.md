@@ -37,13 +37,17 @@ libraries glcontext loads.
 
 ## Examples
 
-Both example notebooks are part of the contract. Build and validate them after
+The example notebooks are part of the contract. Build and validate them after
 a change to the provider, the starter, or a scene:
 
 ```sh
 pixi run examples
-pixi run edit fourier
+pixi run edit epidemic
 ```
 
 In the Animation view, move a control and confirm every render host passes
-through `stale` back to `ready` with a new movie.
+through `stale` back to `ready` with a new movie. The epidemic example is the
+load test for tracing: two hundred moving shapes, rings, and links. After a
+change to `_lineage.py`, run `pixi run docs-examples`, which fails when a
+render warns, then pause its Movie stage in the docs and point at people
+during the peak and while they move.

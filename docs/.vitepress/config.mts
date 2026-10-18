@@ -69,6 +69,7 @@ export default defineConfig({
         items: [
           { text: "Overview", link: "/examples/" },
           { text: "Fourier drawing", link: "/examples/fourier" },
+          { text: "Simulating an epidemic", link: "/examples/epidemic" },
           { text: "Convolution of dice", link: "/examples/convolution" },
         ],
       },

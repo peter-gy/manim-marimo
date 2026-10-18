@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Simulating an epidemic · Animation</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main id="app-shell">
+    <header>
+      <p class="eyebrow">Simulating an epidemic</p>
+      <h1>Two hundred people, one infection</h1>
+      <p class="lede">Watch the infection spread person to person, and move the slider to see how keeping distance flattens the curve.</p>
+    </header>
+    <marimo-output render="scene.py" aria-label="Animation">
+      <video controls playsinline preload="metadata"></video>
+      <div class="playback">
+        <button class="replay" type="button">Replay</button>
+        <label><input class="loop" type="checkbox"> Loop</label>
+        <label>Speed <select class="speed"><option value="0.5">0.5×</option><option value="1" selected>1×</option><option value="1.5">1.5×</option><option value="2">2×</option></select></label>
+      </div>
+      <p class="details"></p>
+    </marimo-output>
+    <section class="context" aria-label="Notebook context">
+      <h2>Explore the simulation</h2>
+      <marimo-cell name="controls"></marimo-cell>
+      <marimo-cell name="outbreak"></marimo-cell>
+      <marimo-cell name="flattening"></marimo-cell>
+    </section>
+    <script src="player.js"></script>
+  </main>
+</body>
+</html>

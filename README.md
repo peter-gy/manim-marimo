@@ -67,6 +67,12 @@ from rotating vectors.
 
 ## Examples
 
+[![Two hundred simulated people at the peak of an epidemic, with infection rings around the infectious, beside the stacked shares of susceptible, infectious, and recovered people](docs/public/media/epidemic.webp)](https://peter-gy.github.io/marimo-manim/examples/epidemic)
+
+- [Simulating an epidemic](https://peter-gy.github.io/marimo-manim/examples/epidemic):
+  two hundred people simulated in the notebook, after 3Blue1Brown's
+  *Simulating an epidemic*. Pause the movie and point at anyone to trace them
+  to the notebook row that simulated them.
 - [Fourier drawing](https://peter-gy.github.io/marimo-manim/examples/fourier):
   rotating vectors and a spectrum from Fourier coefficients.
 - [Convolution of dice](https://peter-gy.github.io/marimo-manim/examples/convolution):
@@ -74,7 +80,7 @@ from rotating vectors.
   the notebook's own chart.
 
 ```sh
-pixi run edit fourier
+pixi run edit epidemic
 ```
 
 ## Documentation
@@ -86,4 +92,7 @@ pixi run edit fourier
 
 ## License
 
-[Apache License 2.0](LICENSE).
+[Apache License 2.0](LICENSE). The epidemic example's
+[`scene.py`](examples/studio/epidemic/animation/scene.py) adapts code from
+[3b1b/videos](https://github.com/3b1b/videos) and shares its
+[CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/) license.

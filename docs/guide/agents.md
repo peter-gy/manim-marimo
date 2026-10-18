@@ -47,11 +47,14 @@ pixi add --pypi "marimo-lens>=0.2.4"
 ```
 
 Preview shows a Lens dock. Click **Select** and click a shape in the movie,
-such as one cell of the convolution example's joint table. The selection names
-the shape, such as `square: Rectangle`, the read it shows, such as
-`joint[2][3]`, the scene line that created it, and the notebook cell that
-computed the read. Targets follow the shapes as the movie plays, so pause on
-the frame you mean. Then ask:
+such as one person in the [epidemic example](../examples/epidemic.md). The
+selection names the shape, `dot: Dot`, the read it shows, such as `people[17]`,
+the scene line that created it, and the notebook cell that computed the read.
+Targets follow the shapes as the movie plays, so pause on the frame you mean.
+
+![Lens in Studio's preview, with one person of the epidemic selected and a note for the agent asking who infected them](/media/lens-note.webp)
+
+Then ask:
 
 > Use Lens to address my current selection in this Studio view.
 
