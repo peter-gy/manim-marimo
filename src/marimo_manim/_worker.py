@@ -204,6 +204,10 @@ def main() -> int:
         # to the scene file.
         location: dict[str, object] = {"path": job["scene"], "line": 1}
         for frame in frames:
+            # Frames of frozen modules carry names such as "<frozen importlib>",
+            # which would resolve against the working directory, the template.
+            if not Path(frame.filename).is_absolute():
+                continue
             try:
                 relative = Path(frame.filename).resolve().relative_to(root)
             except ValueError:

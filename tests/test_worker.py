@@ -132,6 +132,25 @@ class Animation(Scene):
     )
 
 
+def test_failure_inside_python_import_machinery_reports_the_scene(tmp_path: Path):
+    template = tmp_path / "template"
+    template.mkdir()
+    with pytest.raises(RenderFailure) as failure:
+        run_scene(
+            SceneJob(
+                str(template),
+                "scene.py",
+                VideoFormat(320, 180, 15),
+                str(tmp_path / "work"),
+                str(tmp_path / "output"),
+                check=True,
+            ),
+            Runner(),
+            60,
+        )
+    assert (failure.value.path, failure.value.line) == ("scene.py", 1)
+
+
 def test_scene_file_renders_its_one_leaf_scene(tmp_path: Path):
     output = run(
         tmp_path,
