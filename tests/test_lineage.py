@@ -1,6 +1,7 @@
 import io
 import json
 import subprocess
+import sys
 from collections.abc import Mapping, Sequence
 from itertools import pairwise
 from pathlib import Path, PurePosixPath
@@ -103,12 +104,11 @@ class SmallBudget(Runner):
     """Run the worker with room for four regions, as a long movie fills 4,000."""
 
     def run(self, command: Sequence[str], **kwargs: Any) -> ProviderCommandResult:
-        *python, _, _, module, job = command
         start = (
             "import runpy, marimo_manim._lineage as lineage; lineage.MAX_REGIONS = 4; "
-            f"runpy.run_module({module!r}, run_name='__main__')"
+            "runpy.run_module('marimo_manim._worker', run_name='__main__')"
         )
-        return super().run([*python, "-c", start, job], **kwargs)
+        return super().run([sys.executable, "-c", start, command[-1]], **kwargs)
 
 
 def render(

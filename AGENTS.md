@@ -12,6 +12,9 @@ views.
   rejects other imports.
 - Keep scene execution in the worker process started through
   `request.runner`, so Studio's deadlines and cancellation stop it.
+- The provider runs in the marimo server with the base package. ManimGL and
+  FFmpeg belong to the `render` extra, and Studio's `find_tool` resolves the
+  `marimo-manim-worker` command in the notebook's pixi environment.
 - Inspection reads source with `ast` and never runs project code.
 - The build publishes the page and its assets, and keeps scenes private in the
   render template.

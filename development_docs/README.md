@@ -12,7 +12,7 @@ test it through the same boundary.
 [pixi](https://pixi.sh/) owns the development environment. From conda-forge it
 installs Python, manimpango built against Pango, the check and docs tools, and
 on Linux the Mesa OpenGL stack that renders scenes without a display. From PyPI
-it installs marimo-manim in editable mode with its dependencies. `pixi.lock`
+it installs marimo-manim in editable mode with its `render` extra. `pixi.lock`
 pins both.
 
 ```sh

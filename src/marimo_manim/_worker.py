@@ -49,6 +49,18 @@ def _use_headless_opengl() -> None:
     """
     if not sys.platform.startswith("linux") or os.environ.get("DISPLAY"):
         return
+    # glcontext opens OpenGL by library name, and libglvnd looks for EGL
+    # drivers in system directories. Point both at Mesa in this interpreter's
+    # conda prefix, such as the notebook's pixi environment, which runs this
+    # worker without activation.
+    prefix = Path(sys.prefix)
+    for variable, path in (
+        ("GLCONTEXT_LINUX_LIBGL", prefix / "lib/libGL.so.1"),
+        ("GLCONTEXT_LINUX_LIBEGL", prefix / "lib/libEGL.so.1"),
+        ("__EGL_VENDOR_LIBRARY_DIRS", prefix / "share/glvnd/egl_vendor.d"),
+    ):
+        if path.exists():
+            os.environ.setdefault(variable, str(path))
     import moderngl
     import pyglet
 
@@ -225,7 +237,25 @@ def _run(job: dict[str, Any]) -> None:
     )
 
 
+def _version() -> int:
+    """Print this worker's version once it can render, as Studio's probe reads it."""
+    from importlib.metadata import PackageNotFoundError, version
+
+    try:
+        manimgl = version("manimgl")
+        import imageio_ffmpeg
+
+        imageio_ffmpeg.get_ffmpeg_exe()
+    except (PackageNotFoundError, RuntimeError, ImportError) as error:
+        print(f"marimo-manim cannot render: {error}", file=sys.stderr)
+        return 1
+    print(f"marimo-manim {version('marimo-manim')} with manimgl {manimgl}")
+    return 0
+
+
 def main() -> int:
+    if sys.argv[1:] == ["--version"]:
+        return _version()
     job = json.loads(Path(sys.argv[1]).read_text(encoding="utf-8"))
     root = Path(job["root"]).resolve()
     report = Path(job["work"], "report.json")

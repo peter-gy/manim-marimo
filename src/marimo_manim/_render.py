@@ -7,7 +7,7 @@ import sys
 from dataclasses import asdict, dataclass, field
 from pathlib import Path
 
-from marimo_studio.view_providers import ProviderRunner
+from marimo_studio.view_providers import ProviderRunner, find_tool
 
 
 @dataclass(frozen=True)
@@ -47,6 +47,17 @@ class RenderFailure(Exception):
     line: int = 1
 
 
+def worker() -> list[str]:
+    """Return the command that renders scenes.
+
+    Studio finds ``marimo-manim-worker`` in the notebook's pixi environment
+    first, then on ``PATH``. Without one, scenes render in Studio's own
+    interpreter.
+    """
+    found = find_tool("marimo-manim-worker")
+    return [found] if found else [sys.executable, "-I", "-m", "marimo_manim._worker"]
+
+
 def run_scene(job: SceneJob, runner: ProviderRunner, timeout: float) -> None:
     """Run ``job`` and raise ``RenderFailure`` at the first scene error."""
     work = Path(job.work)
@@ -55,7 +66,7 @@ def run_scene(job: SceneJob, runner: ProviderRunner, timeout: float) -> None:
     file = work / "job.json"
     file.write_text(json.dumps(asdict(job)), encoding="utf-8")
     completed = runner.run(
-        [sys.executable, "-I", "-m", "marimo_manim._worker", str(file)],
+        [*worker(), str(file)],
         cwd=Path(job.root),
         timeout=timeout,
     )

@@ -28,7 +28,7 @@ from collections.abc import Mapping
 from contextlib import suppress
 from dataclasses import asdict, dataclass, field
 from html.parser import HTMLParser
-from importlib.metadata import PackageNotFoundError, version
+from importlib.metadata import version
 from pathlib import Path, PurePosixPath
 from typing import Any
 
@@ -65,11 +65,23 @@ from marimo_studio.view_providers import (
     copy_inputs,
     create_starter,
     html_sites,
+    probe_tool,
     project_files,
     project_path,
 )
 
-from marimo_manim._render import RenderFailure, SceneJob, VideoFormat, run_scene
+from marimo_manim._render import (
+    RenderFailure,
+    SceneJob,
+    VideoFormat,
+    run_scene,
+    worker,
+)
+
+_INSTALL = (
+    "Add marimo-manim[render] to the notebook's dependencies and open it with "
+    "marimo edit --sandbox=pixi, or install marimo-manim[render] where Studio runs."
+)
 
 _PAGE = PurePosixPath("index.html")
 _VIDEO = PurePosixPath(".marimo-manim/video.json")
@@ -338,18 +350,24 @@ class ManimProvider:
     )
 
     def availability(self) -> ProviderAvailability:
-        try:
-            installed = version("manimgl")
-            import imageio_ffmpeg
-
-            imageio_ffmpeg.get_ffmpeg_exe()
-        except (PackageNotFoundError, RuntimeError, ImportError) as error:
+        # The worker renders with its own marimo-manim, which reads the jobs
+        # this provider writes, so both come from one release.
+        provider = version("marimo-manim")
+        found = probe_tool(
+            [*worker(), "--version"],
+            minimum="0",
+            install=_INSTALL,
+        )
+        if found.available and found.version != provider:
             return ProviderAvailability(
                 False,
-                reason=str(error),
-                action="Install marimo-manim in the environment running Studio.",
+                version=found.version,
+                reason=f"Scenes render with marimo-manim {found.version}, "
+                f"and Studio runs marimo-manim {provider}.",
+                action="Install one marimo-manim release in the notebook's "
+                "environment and where Studio runs.",
             )
-        return ProviderAvailability(True, version=f"manimgl {installed}")
+        return found
 
     def starters(self) -> tuple[ProviderStarter, ...]:
         return tuple(starter.info for starter in _STARTERS)

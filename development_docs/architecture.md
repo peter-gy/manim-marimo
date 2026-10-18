@@ -2,7 +2,7 @@
 
 marimo-manim is one marimo-studio view provider, registered under the
 `marimo_studio.view_provider` entry point as `marimo-manim/manim`. Studio
-discovers it in the notebook's environment and calls it through the public
+discovers it in the marimo server's environment and calls it through the public
 `marimo_studio.view_providers` SDK. Every Studio import comes from that
 module, which `check_provider` verifies.
 
@@ -49,25 +49,39 @@ disk, and only `render()` sees notebook results.
 ## Worker protocol
 
 `run_scene()` writes a `SceneJob` as `job.json` in a work directory and starts
-`python -I -m marimo_manim._worker job.json` through `request.runner`. The
+`marimo-manim-worker job.json` through `request.runner`. The
 runner owns the deadline, output limits, and cancellation, so Studio can stop a
 render whose inputs changed by ending the worker.
 
+The provider and the worker can live in different environments. The server's
+environment needs only the base package, which registers the provider. The
+`render` extra installs ManimGL and FFmpeg with the `marimo-manim-worker`
+script. Studio's `find_tool` resolves that script in the notebook's pixi
+environment first, then on `PATH`, so a notebook opened with `--sandbox=pixi`
+renders with the conda-forge Pango and Mesa its metadata declares. Without the
+script, the provider starts `python -I -m marimo_manim._worker` with its own
+interpreter. `availability()` probes `marimo-manim-worker --version`, which
+prints the worker's release once ManimGL and FFmpeg import, and requires the
+provider's release, because both sides share the `SceneJob` format.
+
 The worker:
 
-1. Writes a ManimGL config with its cache beneath the work directory, then
+1. On Linux without a display, points glcontext and libglvnd at Mesa in its
+   own interpreter's prefix, since script environments run without
+   activation.
+2. Writes a ManimGL config with its cache beneath the work directory, then
    imports `manimlib`. ManimGL parses `sys.argv` at import, so the worker sets
    it first.
-2. Imports the scene file as a module and selects the one `Scene` subclass the
+3. Imports the scene file as a module and selects the one `Scene` subclass the
    file defines that no other class in the file extends.
-3. Binds `SceneReads` while it imports and runs the scene, so module-level
+4. Binds `SceneReads` while it imports and runs the scene, so module-level
    reads and `construct()` see the same values.
-4. In render mode, encodes the movie, rewrites it with `+faststart` so browsers
+5. In render mode, encodes the movie, rewrites it with `+faststart` so browsers
    stream it, renames the last frame to `poster.png`, and writes
    `metadata.json`. In check mode, it skips animations and encoding.
-5. Writes `report.json` with an error message and the deepest stack frame
+6. Writes `report.json` with an error message and the deepest stack frame
    inside the template, so diagnostics point at the author's file and line.
-6. In render mode, writes `lineage.json` with the traced shapes, which
+7. In render mode, writes `lineage.json` with the traced shapes, which
    `render()` returns as `RenderRegion` records of the movie and the poster.
 
 `SceneLineage` traces in two halves. A static pass over each project file

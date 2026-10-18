@@ -1,5 +1,7 @@
+import os
 import subprocess
 from collections.abc import Mapping, Sequence
+from importlib.metadata import version
 from pathlib import Path, PurePosixPath
 
 import pytest
@@ -157,6 +159,31 @@ def test_inspection_reads_scene_source_and_reports_syntax_location(tmp_path: Pat
     assert diagnostic.source.path == PurePosixPath("scene.py")
     assert diagnostic.source.line == 3
     assert not (tmp_path / "executed").exists()
+
+
+def test_availability_reports_a_worker_from_another_release(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+):
+    worker = tmp_path / "marimo-manim-worker"
+    worker.write_text("#!/bin/sh\necho 'marimo-manim 0.0.1 with manimgl 1.7.2'\n")
+    worker.chmod(0o755)
+    monkeypatch.setenv("PATH", f"{tmp_path}{os.pathsep}{os.environ['PATH']}")
+
+    availability = provider.availability()
+
+    assert not availability.available
+    assert availability.version == "0.0.1"
+    assert availability.reason == (
+        f"Scenes render with marimo-manim 0.0.1, and Studio runs marimo-manim "
+        f"{version('marimo-manim')}."
+    )
+
+
+def test_availability_reports_the_release_that_renders_scenes():
+    availability = provider.availability()
+
+    assert availability.available
+    assert availability.version == version("marimo-manim")
 
 
 @pytest.mark.render
