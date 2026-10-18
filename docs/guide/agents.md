@@ -14,7 +14,7 @@ folder of a notebook [set up for manim-marimo](./getting-started.md#install):
 
 ```text
 Read the marimo-studio and manim-marimo skills with
-`uvx --with "manim-marimo @ git+https://github.com/peter-gy/manim-marimo" agent-plugins read <name>`,
+`uvx --with manim-marimo agent-plugins read <name>`,
 then create a notebook that explains Fourier series and an Animation view
 that draws a square wave from rotating vectors.
 ```
@@ -44,7 +44,7 @@ dependencies, then restart Studio:
 
 ```python
 # dependencies = [
-#     "manim-marimo[render] @ git+https://github.com/peter-gy/manim-marimo",
+#     "manim-marimo[render]",
 #     "marimo-lens>=0.2.4",
 # ]
 ```

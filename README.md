@@ -44,7 +44,7 @@ from conda-forge. Declare it in the notebook's script metadata:
 # /// script
 # requires-python = ">=3.10,<3.15"
 # dependencies = [
-#     "manim-marimo[render] @ git+https://github.com/peter-gy/manim-marimo",
+#     "manim-marimo[render]",
 # ]
 #
 # [tool.pixi.workspace]
@@ -56,8 +56,7 @@ from conda-forge. Declare it in the notebook's script metadata:
 ```
 
 ```sh
-uvx --with "manim-marimo @ git+https://github.com/peter-gy/manim-marimo" \
-  marimo edit analysis.py --sandbox=pixi --watch
+uvx --with manim-marimo marimo edit analysis.py --sandbox=pixi --watch
 ```
 
 In Studio, click **Add view** and choose **Manim animation**.
@@ -72,7 +71,7 @@ Claude Code, Codex, or another terminal agent:
 
 ```text
 Read the marimo-studio and manim-marimo skills with
-`uvx --with "manim-marimo @ git+https://github.com/peter-gy/manim-marimo" agent-plugins read <name>`,
+`uvx --with manim-marimo agent-plugins read <name>`,
 then create a notebook that explains Fourier series and an Animation view
 that draws a square wave from rotating vectors.
 ```

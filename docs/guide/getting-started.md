@@ -23,7 +23,7 @@ metadata, the `# /// script` block at the top of `analysis.py`:
 # /// script
 # requires-python = ">=3.10,<3.15"
 # dependencies = [
-#     "manim-marimo[render] @ git+https://github.com/peter-gy/manim-marimo",
+#     "manim-marimo[render]",
 # ]
 #
 # [tool.pixi.workspace]
@@ -57,8 +57,7 @@ Open the notebook in a [pixi sandbox](https://marimo.io/blog/pixi-sandboxes),
 with Studio and manim-marimo in the marimo server:
 
 ```sh
-uvx --with "manim-marimo @ git+https://github.com/peter-gy/manim-marimo" \
-  marimo edit analysis.py --sandbox=pixi --watch
+uvx --with manim-marimo marimo edit analysis.py --sandbox=pixi --watch
 ```
 
 [uv](https://docs.astral.sh/uv/)'s `uvx` runs marimo with manim-marimo and
@@ -72,7 +71,7 @@ Click **Add view**, choose **Manim animation**, and create the view. Or create
 it from a terminal:
 
 ```sh
-uvx --with "manim-marimo @ git+https://github.com/peter-gy/manim-marimo" \
+uvx --with manim-marimo \
   marimo-studio view create animation --target analysis.py \
   --starter manim-marimo/manim:default
 ```

@@ -17,7 +17,7 @@ Read the marimo-studio skill first. It owns connecting to the notebook,
 creating and editing views, building, and browser verification:
 
 ```console
-uvx --with "manim-marimo @ git+https://github.com/peter-gy/manim-marimo" agent-plugins read marimo-studio
+uvx --with manim-marimo agent-plugins read marimo-studio
 ```
 
 This skill adds what is specific to Manim views.
@@ -33,7 +33,7 @@ and on Linux Mesa's OpenGL under `[tool.pixi.target.linux.dependencies]`:
 # /// script
 # requires-python = ">=3.10,<3.15"
 # dependencies = [
-#     "manim-marimo[render] @ git+https://github.com/peter-gy/manim-marimo",
+#     "manim-marimo[render]",
 # ]
 #
 # [tool.pixi.workspace]
@@ -55,7 +55,7 @@ Start Studio with the pixi sandbox. Studio renders every scene with the
 `manim-marimo-worker` command from that environment:
 
 ```console
-uvx --with "manim-marimo @ git+https://github.com/peter-gy/manim-marimo" marimo edit notebook.py --sandbox=pixi --watch
+uvx --with manim-marimo marimo edit notebook.py --sandbox=pixi --watch
 ```
 
 `marimo-studio starters --target notebook.py` reports whether the Manim starter

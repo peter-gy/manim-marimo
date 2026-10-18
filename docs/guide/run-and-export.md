@@ -12,8 +12,7 @@ compares the options.
 ## Run a live view
 
 ```sh
-uvx --with "manim-marimo @ git+https://github.com/peter-gy/manim-marimo" \
-  marimo run analysis.py --sandbox=pixi
+uvx --with manim-marimo marimo run analysis.py --sandbox=pixi
 ```
 
 Each reader gets a notebook session. Studio renders a scene for the results that
@@ -27,7 +26,7 @@ for each combination of control values the view lists, and renders every
 scene once per state:
 
 ```sh
-uvx --with "manim-marimo @ git+https://github.com/peter-gy/manim-marimo" \
+uvx --with manim-marimo \
   marimo-studio view export animation --target analysis.py \
   --output dist/animation --runtime zero-python
 ```
@@ -63,7 +62,7 @@ for each control whose values the states skip, with the count and the first
 skipped values:
 
 ```sh
-uvx --with "manim-marimo @ git+https://github.com/peter-gy/manim-marimo" \
+uvx --with manim-marimo \
   marimo-studio view preflight animation --target analysis.py
 ```
 
@@ -83,8 +82,7 @@ notebook's pixi environment, and manim-marimo renders through Mesa's EGL driver
 when no `DISPLAY` is set:
 
 ```sh
-uvx --with "manim-marimo @ git+https://github.com/peter-gy/manim-marimo" \
-  marimo run analysis.py --sandbox=pixi --host 0.0.0.0
+uvx --with manim-marimo marimo run analysis.py --sandbox=pixi --host 0.0.0.0
 ```
 
 manim-marimo's CI renders every test scene through Mesa's EGL driver on Ubuntu. With a
