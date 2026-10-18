@@ -51,6 +51,7 @@ const stages = [
   {
     key: "notebook",
     label: "Notebook",
+    color: "var(--mm-notebook)",
     file: file(props.notebook),
     source: `${repository}/${props.notebook}`,
     open: withBase(`${root}/notebook/index.html`),
@@ -59,6 +60,7 @@ const stages = [
   {
     key: "scene",
     label: "Scene",
+    color: "var(--mm-scene)",
     file: file(props.scene),
     source: `${repository}/${props.scene}`,
     open: `${repository}/${props.scene}`,
@@ -67,6 +69,7 @@ const stages = [
   {
     key: "movie",
     label: "Movie",
+    color: "var(--mm-focus)",
     file: "animation.mp4",
     source: `${repository}/${props.scene}`,
     open: withBase(`${root}/render/animation.mp4`),
@@ -75,6 +78,7 @@ const stages = [
   {
     key: "page",
     label: "Page",
+    color: "var(--vp-c-text-1)",
     file: "index.html",
     source: `${repository}/${props.scene.replace(/[^/]*$/, "index.html")}`,
     open: withBase(`${root}/page/index.html`),
@@ -362,7 +366,9 @@ onBeforeUnmount(() => resize?.disconnect());
     <div class="manim-example__rail">
       <nav role="tablist" aria-label="Stages of the example">
         <template v-for="(stage, index) in stages" :key="stage.key">
-          <span v-if="index > 0" class="manim-example__arrow" aria-hidden="true">›</span>
+          <svg v-if="index > 0" class="manim-example__arrow" viewBox="0 0 18 8" aria-hidden="true">
+            <path d="M0 4h15M12 1l3 3-3 3" fill="none" stroke="currentColor" stroke-width="1" />
+          </svg>
           <button
             :id="tabId(stage.key)"
             type="button"
@@ -370,6 +376,7 @@ onBeforeUnmount(() => resize?.disconnect());
             :aria-controls="panelId"
             :aria-selected="stage.key === selected.key"
             :tabindex="stage.key === selected.key ? 0 : -1"
+            :style="{ '--stage-color': stage.color }"
             @click="select(stage.key)"
             @keydown="selectFromKeyboard($event, stage.key)"
           >
@@ -493,7 +500,7 @@ onBeforeUnmount(() => resize?.disconnect());
 .manim-example__rail nav {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
   min-width: 0;
   overflow-x: auto;
   scrollbar-width: none;
@@ -507,10 +514,10 @@ onBeforeUnmount(() => resize?.disconnect());
   color: var(--vp-c-text-3);
   cursor: pointer;
   font: inherit;
-  font-size: 13px;
-  font-weight: 500;
-  line-height: 20px;
-  text-decoration: underline 1px transparent;
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 22px;
+  text-decoration: underline 1.5px transparent;
   text-underline-offset: 7px;
 }
 
@@ -520,14 +527,15 @@ onBeforeUnmount(() => resize?.disconnect());
 
 .manim-example__rail button[aria-selected="true"] {
   color: var(--vp-c-text-1);
-  text-decoration-color: currentColor;
+  text-decoration-color: var(--stage-color);
 }
 
 .manim-example__arrow {
+  flex: 0 0 auto;
+  width: 18px;
+  height: 8px;
   color: var(--vp-c-text-3);
-  font-size: 13px;
-  line-height: 20px;
-  opacity: 0.6;
+  opacity: 0.7;
 }
 
 .manim-example__open {
@@ -536,7 +544,7 @@ onBeforeUnmount(() => resize?.disconnect());
   align-items: center;
   gap: 4px;
   color: var(--vp-c-text-3);
-  font-size: 12px;
+  font-size: 15px;
   text-decoration: none;
 }
 
@@ -561,7 +569,7 @@ onBeforeUnmount(() => resize?.disconnect());
   height: clamp(520px, calc(100dvh - var(--vp-nav-height) - 220px), 780px);
   overflow: hidden;
   border: 1px solid var(--vp-c-divider);
-  border-radius: 6px;
+  border-radius: 2px;
   background: var(--vp-c-bg);
 }
 
@@ -579,7 +587,8 @@ onBeforeUnmount(() => resize?.disconnect());
   place-content: center;
   background: var(--vp-c-bg);
   color: var(--vp-c-text-3);
-  font-size: 13px;
+  font-size: 16px;
+  font-style: italic;
 }
 
 /* The scene's code block fills the viewport and scrolls inside it. */
@@ -603,7 +612,8 @@ onBeforeUnmount(() => resize?.disconnect());
 .manim-example__source :deep(.manim-example__traced) {
   display: inline-block;
   width: 100%;
-  background: var(--vp-c-brand-soft);
+  background: color-mix(in srgb, var(--mm-focus) 16%, transparent);
+  box-shadow: inset 2px 0 var(--mm-focus);
 }
 
 .manim-example__movie {
@@ -633,17 +643,17 @@ onBeforeUnmount(() => resize?.disconnect());
   height: auto;
   max-width: 100%;
   max-height: 100%;
-  border-radius: 4px;
 }
 
 .manim-example__frame video.manim-example__tracing {
   cursor: pointer;
 }
 
+/* The shape under the pointer gets Manim's SurroundingRectangle: yellow,
+   square, and clear of the shape. */
 .manim-example__outline {
   position: absolute;
-  border: 1.5px solid var(--vp-c-brand-1);
-  border-radius: 3px;
+  border: 2px solid var(--mm-focus);
   pointer-events: none;
 }
 
@@ -654,23 +664,23 @@ onBeforeUnmount(() => resize?.disconnect());
   gap: 3px;
   max-width: 320px;
   padding: 10px 12px;
-  border: 1px solid var(--vp-c-divider);
-  border-radius: 6px;
-  background: var(--vp-c-bg);
+  border: 1px solid var(--vp-c-border);
+  border-radius: 2px;
+  background: var(--vp-c-bg-elv);
   pointer-events: none;
 }
 
 .manim-example__card code {
   padding: 0;
   background: transparent;
-  font-size: 12.5px;
-  line-height: 18px;
+  font-size: 13.5px;
+  line-height: 19px;
   overflow-wrap: anywhere;
 }
 
 .manim-example__read {
-  color: var(--vp-c-text-1);
-  font-weight: 600;
+  color: var(--mm-notebook);
+  font-weight: 700;
 }
 
 .manim-example__value {
@@ -680,8 +690,8 @@ onBeforeUnmount(() => resize?.disconnect());
 .manim-example__more,
 .manim-example__origin {
   color: var(--vp-c-text-3);
-  font-size: 12px;
-  line-height: 18px;
+  font-size: 14px;
+  line-height: 19px;
 }
 
 .manim-example__origin strong {
@@ -694,8 +704,8 @@ onBeforeUnmount(() => resize?.disconnect());
   flex: 0 0 auto;
   gap: 8px;
   margin: 0;
-  font-size: 13px;
-  line-height: 20px;
+  font-size: 15px;
+  line-height: 22px;
 }
 
 .manim-example__movie dl > div {
@@ -706,6 +716,7 @@ onBeforeUnmount(() => resize?.disconnect());
 
 .manim-example__movie dt {
   color: var(--vp-c-text-3);
+  font-style: italic;
 }
 
 .manim-example__movie dd {
@@ -720,8 +731,8 @@ onBeforeUnmount(() => resize?.disconnect());
 .manim-example__movie dd code {
   padding: 0;
   background: transparent;
-  color: var(--vp-c-text-1);
-  font-size: 12.5px;
+  color: var(--mm-notebook);
+  font-size: 14px;
 }
 
 figcaption {
@@ -731,15 +742,15 @@ figcaption {
   gap: 24px;
   padding-top: 12px;
   color: var(--vp-c-text-2);
-  font-size: 13px;
-  line-height: 20px;
+  font-size: 16px;
+  line-height: 24px;
 }
 
 figcaption a {
   flex: 0 0 auto;
   color: var(--vp-c-text-3);
   font-family: var(--vp-font-family-mono);
-  font-size: 12px;
+  font-size: 14px;
   text-decoration: none;
 }
 

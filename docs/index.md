@@ -5,7 +5,7 @@ titleTemplate: false
 description: Manim animations of marimo notebook results, rendered as marimo-studio views.
 hero:
   name: manim-marimo
-  text: Animate marimo notebooks with Manim
+  text: Animate <span class="notebook">marimo notebooks</span> with <span class="scene">Manim</span>
   tagline: >-
     The notebook computes. A Manim scene animates the result. marimo-studio
     renders the movie beside the notebook's live controls, and renders it

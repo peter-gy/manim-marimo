@@ -1,0 +1,65 @@
+/* Computer Modern, the typeface of TeX and of the math in 3Blue1Brown's
+   videos, from the OFL-licensed CMU families of the computer-modern package. */
+@font-face {
+  font-family: "CMU Serif";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("../../node_modules/computer-modern/fonts/cmu-serif-500-roman.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "CMU Serif";
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: url("../../node_modules/computer-modern/fonts/cmu-serif-500-italic.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "CMU Serif";
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("../../node_modules/computer-modern/fonts/cmu-serif-700-roman.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "CMU Bright";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("../../node_modules/computer-modern/fonts/cmu-bright-500-roman.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "CMU Bright";
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: url("../../node_modules/computer-modern/fonts/cmu-bright-500-italic.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "CMU Bright";
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("../../node_modules/computer-modern/fonts/cmu-bright-600-roman.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "CMU Typewriter Text";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("../../node_modules/computer-modern/fonts/cmu-typewriter-text-500-roman.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "CMU Typewriter Text";
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("../../node_modules/computer-modern/fonts/cmu-typewriter-text-700-roman.woff2") format("woff2");
+}
