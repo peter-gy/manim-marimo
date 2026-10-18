@@ -6,7 +6,7 @@ description: The functions a Manim scene calls to read notebook results.
 # Python API
 
 ```python
-from marimo_manim import cell, output, value
+from manim_marimo import cell, output, value
 ```
 
 Each function reads one notebook result while Studio renders the scene. Write

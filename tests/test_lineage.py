@@ -18,14 +18,14 @@ from marimo_studio.view_providers import (
 )
 from PIL import Image
 
-from marimo_manim._provider import provider
+from manim_marimo._provider import provider
 
 pytestmark = pytest.mark.render
 
 SCENE = """\
 import numpy as np
 from manimlib import Circle, Dot, Scene, Square, ValueTracker, VGroup, linear
-from marimo_manim import output, value
+from manim_marimo import output, value
 
 
 class Animation(Scene):
@@ -81,7 +81,7 @@ class Runner:
 MOVING = """\
 import numpy as np
 from manimlib import Dot, Scene, ValueTracker, linear
-from marimo_manim import value
+from manim_marimo import value
 
 
 class Animation(Scene):
@@ -105,8 +105,8 @@ class SmallBudget(Runner):
 
     def run(self, command: Sequence[str], **kwargs: Any) -> ProviderCommandResult:
         start = (
-            "import runpy, marimo_manim._lineage as lineage; lineage.MAX_REGIONS = 4; "
-            "runpy.run_module('marimo_manim._worker', run_name='__main__')"
+            "import runpy, manim_marimo._lineage as lineage; lineage.MAX_REGIONS = 4; "
+            "runpy.run_module('manim_marimo._worker', run_name='__main__')"
         )
         return super().run([sys.executable, "-c", start, command[-1]], **kwargs)
 
@@ -118,8 +118,8 @@ def render(
     runner: Runner | None = None,
 ) -> tuple[RenderRegion, ...]:
     template = tmp_path / "template"
-    template.joinpath(".marimo-manim").mkdir(parents=True)
-    template.joinpath(".marimo-manim", "video.json").write_text(
+    template.joinpath(".manim-marimo").mkdir(parents=True)
+    template.joinpath(".manim-marimo", "video.json").write_text(
         json.dumps({"width": 320, "height": 180, "fps": 10})
     )
     template.joinpath("scene.py").write_text(scene)
@@ -226,7 +226,7 @@ def scene(body: str) -> str:
     return (
         "import numpy as np\n"
         "from manimlib import *\n"
-        "from marimo_manim import value\n\n\n"
+        "from manim_marimo import value\n\n\n"
         "class Animation(Scene):\n"
         "    def construct(self):\n" + lines
     )
@@ -348,7 +348,7 @@ def test_a_tracing_error_leaves_the_render_unchanged(tmp_path: Path):
         tmp_path,
         """\
 from manimlib import Scene, Text, VGroup
-from marimo_manim import value
+from manim_marimo import value
 
 
 class Caption(VGroup):

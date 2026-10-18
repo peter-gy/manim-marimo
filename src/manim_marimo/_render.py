@@ -50,12 +50,12 @@ class RenderFailure(Exception):
 def worker() -> list[str]:
     """Return the command that renders scenes.
 
-    Studio finds ``marimo-manim-worker`` in the notebook's pixi environment
+    Studio finds ``manim-marimo-worker`` in the notebook's pixi environment
     first, then on ``PATH``. Without one, scenes render in Studio's own
     interpreter.
     """
-    found = find_tool("marimo-manim-worker")
-    return [found] if found else [sys.executable, "-I", "-m", "marimo_manim._worker"]
+    found = find_tool("manim-marimo-worker")
+    return [found] if found else [sys.executable, "-I", "-m", "manim_marimo._worker"]
 
 
 def run_scene(job: SceneJob, runner: ProviderRunner, timeout: float) -> None:

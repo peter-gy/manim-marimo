@@ -1,7 +1,7 @@
 # Contributor guide
 
-marimo-manim is a marimo-studio view provider. Studio owns notebooks, view
-projects, builds, sessions, and delivery. marimo-manim owns one kind of view:
+manim-marimo is a marimo-studio view provider. Studio owns notebooks, view
+projects, builds, sessions, and delivery. manim-marimo owns one kind of view:
 it finds the notebook results Manim scenes read, renders the scenes into
 movies, and ships the starter, the scene API, and the agent skill for authoring
 them. Start a change from the behavior a view author or reader depends on, and
@@ -12,7 +12,7 @@ test it through the same boundary.
 [pixi](https://pixi.sh/) owns the development environment. From conda-forge it
 installs Python, manimpango built against Pango, the check and docs tools, and
 on Linux the Mesa OpenGL stack that renders scenes without a display. From PyPI
-it installs marimo-manim in editable mode with its `render` extra. `pixi.lock`
+it installs manim-marimo in editable mode with its `render` extra. `pixi.lock`
 pins both.
 
 ```sh
@@ -37,9 +37,9 @@ pixi run check
 
 | Path                          | Owns                                                                   |
 | ----------------------------- | ---------------------------------------------------------------------- |
-| `src/marimo_manim/`           | The provider, the scene API, and the render worker                     |
-| `src/marimo_manim/starters/`  | Files of the `marimo-manim/manim:default` starter                      |
-| `skills/marimo-manim/`, `plugin.json` | The agent skill the wheel ships as an Agent Plugin           |
+| `src/manim_marimo/`           | The provider, the scene API, and the render worker                     |
+| `src/manim_marimo/starters/`  | Files of the `manim-marimo/manim:default` starter                      |
+| `skills/manim-marimo/`, `plugin.json` | The agent skill the wheel ships as an Agent Plugin           |
 | `examples/`                   | Three notebooks with Animation views, used by docs and manual checks    |
 | `docs/`                       | The VitePress documentation site                                       |
 | `docs/scripts/build-examples.ts` | Exports the epidemic and convolution examples into `docs/public/exports/` with their traced shapes, which the `ManimExample` component embeds |
@@ -89,7 +89,7 @@ convolution scene changes pace.
 ## Change checklist
 
 - Behavior visible to view authors appears in `docs/`, the starter's
-  `AGENTS.md`, and `skills/marimo-manim/SKILL.md` in the same terms.
+  `AGENTS.md`, and `skills/manim-marimo/SKILL.md` in the same terms.
 - A change to scene reads, renders, or the starter keeps both examples
   building: `pixi run examples`.
 - `pixi run check` passes, and the docs build with `pixi run docs-build`.

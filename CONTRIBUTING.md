@@ -1,6 +1,6 @@
 # Contributing
 
-Thanks for improving marimo-manim. Read the
+Thanks for improving manim-marimo. Read the
 [contributor guide](development_docs/README.md) before a change that crosses
 the provider, the worker, or the starter.
 
@@ -20,7 +20,7 @@ docs tools, and on Linux the Mesa OpenGL stack, all from `pixi.lock`.
 - Describe the behavior a view author or reader sees before and after.
 - Add or update a test through the boundary that behavior crosses: a scene
   read, an inspection record, a starter check, or a worker render.
-- Update `docs/`, the starter's `AGENTS.md`, and `skills/marimo-manim/SKILL.md`
+- Update `docs/`, the starter's `AGENTS.md`, and `skills/manim-marimo/SKILL.md`
   together when authoring behavior changes.
 - Run `pixi run check`, `pixi run examples`, and, for docs changes,
   `pixi run docs-build`.

@@ -1,7 +1,7 @@
 # Architecture
 
-marimo-manim is one marimo-studio view provider, registered under the
-`marimo_studio.view_provider` entry point as `marimo-manim/manim`. Studio
+manim-marimo is one marimo-studio view provider, registered under the
+`marimo_studio.view_provider` entry point as `manim-marimo/manim`. Studio
 discovers it in the marimo server's environment and calls it through the public
 `marimo_studio.view_providers` SDK. Every Studio import comes from that
 module, which `check_provider` verifies.
@@ -10,13 +10,13 @@ module, which `check_provider` verifies.
 
 | Module                         | Owns                                                                  |
 | ------------------------------ | --------------------------------------------------------------------- |
-| `marimo_manim/__init__.py`     | The scene-facing API: `value`, `output`, `cell`                       |
-| `marimo_manim/_reads.py`       | `SceneReads` and the context variable that binds reads during a render |
-| `marimo_manim/_provider.py`    | `ManimProvider`: starters, inspection, build, render                  |
-| `marimo_manim/_render.py`      | `SceneJob` and `run_scene`, the provider side of the worker protocol  |
-| `marimo_manim/_worker.py`      | The worker process that imports a scene and drives ManimGL            |
-| `marimo_manim/_lineage.py`     | Traces shapes to the reads they show and records their boxes per frame |
-| `marimo_manim/starters/default` | Files of the `marimo-manim/manim:default` starter                     |
+| `manim_marimo/__init__.py`     | The scene-facing API: `value`, `output`, `cell`                       |
+| `manim_marimo/_reads.py`       | `SceneReads` and the context variable that binds reads during a render |
+| `manim_marimo/_provider.py`    | `ManimProvider`: starters, inspection, build, render                  |
+| `manim_marimo/_render.py`      | `SceneJob` and `run_scene`, the provider side of the worker protocol  |
+| `manim_marimo/_worker.py`      | The worker process that imports a scene and drives ManimGL            |
+| `manim_marimo/_lineage.py`     | Traces shapes to the reads they show and records their boxes per frame |
+| `manim_marimo/starters/default` | Files of the `manim-marimo/manim:default` starter                     |
 
 ## Provider lifecycle
 
@@ -31,14 +31,14 @@ disk, and only `render()` sees notebook results.
    executes project code.
 2. `build()` copies the page, styles, scripts, and `public/` into the staging
    root, and everything else into the private render template. It writes
-   `.marimo-manim/video.json` with the resolution and frame rate of the
+   `.manim-marimo/video.json` with the resolution and frame rate of the
    selected quality. It then runs every declared scene once in check mode, so a
    scene that fails with its defaults fails the build and Studio keeps the last
    published view. It returns `output_sizes` for each `output()` call with a
    literal `height`, converted from scene units to points at the scale of
    ManimGL's `Text`, so Studio draws those figures at the size they appear.
-3. `render()` writes the request's values as `.marimo-manim/reads/values.json`
-   and each output and cell image beneath `.marimo-manim/reads/` in its private
+3. `render()` writes the request's values as `.manim-marimo/reads/values.json`
+   and each output and cell image beneath `.manim-marimo/reads/` in its private
    template copy, then runs the scene in render mode. It returns the shapes
    the worker traced as `RenderRegion` records of the movie and the poster.
 4. Studio publishes `animation.mp4`, `poster.png`, and `metadata.json`, and
@@ -49,18 +49,18 @@ disk, and only `render()` sees notebook results.
 ## Worker protocol
 
 `run_scene()` writes a `SceneJob` as `job.json` in a work directory and starts
-`marimo-manim-worker job.json` through `request.runner`. The
+`manim-marimo-worker job.json` through `request.runner`. The
 runner owns the deadline, output limits, and cancellation, so Studio can stop a
 render whose inputs changed by ending the worker.
 
 The provider and the worker can live in different environments. The server's
 environment needs only the base package, which registers the provider. The
-`render` extra installs ManimGL and FFmpeg with the `marimo-manim-worker`
+`render` extra installs ManimGL and FFmpeg with the `manim-marimo-worker`
 script. Studio's `find_tool` resolves that script in the notebook's pixi
 environment first, then on `PATH`, so a notebook opened with `--sandbox=pixi`
 renders with the conda-forge Pango and Mesa its metadata declares. Without the
-script, the provider starts `python -I -m marimo_manim._worker` with its own
-interpreter. `availability()` probes `marimo-manim-worker --version`, which
+script, the provider starts `python -I -m manim_marimo._worker` with its own
+interpreter. `availability()` probes `manim-marimo-worker --version`, which
 prints the worker's release once ManimGL and FFmpeg import, and requires the
 provider's release, because both sides share the `SceneJob` format.
 
@@ -163,13 +163,13 @@ it into a `ProviderError` with code `manim-render-failed`.
 
 | Path                       | Where              | Purpose                                 |
 | -------------------------- | ------------------ | --------------------------------------- |
-| `.marimo-manim/video.json` | Template           | Resolution and frame rate from the build |
-| `.marimo-manim/reads/`     | Render template copy | Values JSON and read images            |
-| `.marimo-manim/work/`      | Render template copy | Job, report, ManimGL config and cache  |
+| `.manim-marimo/video.json` | Template           | Resolution and frame rate from the build |
+| `.manim-marimo/reads/`     | Render template copy | Values JSON and read images            |
+| `.manim-marimo/work/`      | Render template copy | Job, report, ManimGL config and cache  |
 | `animation.mp4`            | Render output root | The published movie                     |
 | `poster.png`               | Render output root | The last frame, shown before playback   |
 | `metadata.json`            | Render output root | Duration, frame rate, and resolution    |
-| `.marimo-manim/work/lineage.json` | Render template copy | Traced shapes by frame range and on the last frame |
+| `.manim-marimo/work/lineage.json` | Render template copy | Traced shapes by frame range and on the last frame |
 
 Build checks keep their work directories beneath `request.work_root`, so the
 published template holds only project files and `video.json`.

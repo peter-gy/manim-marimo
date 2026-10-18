@@ -1,10 +1,10 @@
 ---
 layout: home
-title: marimo-manim
+title: manim-marimo
 titleTemplate: false
 description: Manim animations of marimo notebook results, rendered as marimo-studio views.
 hero:
-  name: marimo-manim
+  name: manim-marimo
   text: Animate marimo notebooks with Manim
   tagline: >-
     The notebook computes. A Manim scene animates the result. marimo-studio
@@ -52,7 +52,7 @@ probability table and a chart in the notebook. Its scene reads both by name:
 
 ```python
 import numpy as np
-from marimo_manim import output, value
+from manim_marimo import output, value
 
 FAIR = np.full(6, 1 / 6)
 joint = np.asarray(
@@ -72,8 +72,8 @@ Paste this into Claude Code, Codex, or another terminal agent, from the folder
 of the notebook:
 
 ```text
-Read the marimo-studio and marimo-manim skills with
-`uvx --with "marimo-manim @ git+https://github.com/peter-gy/marimo-manim" agent-plugins read <name>`,
+Read the marimo-studio and manim-marimo skills with
+`uvx --with "manim-marimo @ git+https://github.com/peter-gy/manim-marimo" agent-plugins read <name>`,
 then create a notebook that explains Fourier series and an Animation view
 that draws a square wave from rotating vectors.
 ```

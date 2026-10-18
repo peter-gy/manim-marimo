@@ -43,7 +43,7 @@ interface Shape {
   line: number | null;
 }
 
-const repository = "https://github.com/peter-gy/marimo-manim/blob/main";
+const repository = "https://github.com/peter-gy/manim-marimo/blob/main";
 const root = `/exports/${props.name}`;
 const file = (path: string): string => path.replace(/^.*\//, "");
 

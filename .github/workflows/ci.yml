@@ -59,13 +59,13 @@ jobs:
       - run: pixi run build
       - name: Check the wheel ships the provider, starter, and agent skill
         run: |
-          contents="$(unzip -Z1 dist/marimo_manim-*.whl)"
+          contents="$(unzip -Z1 dist/manim_marimo-*.whl)"
           for path in \
-            marimo_manim/_provider.py \
-            marimo_manim/starters/default/files/scene.py \
-            'marimo_manim-*.agent-plugin/plugin.json' \
-            'marimo_manim-*.agent-plugin/skills/marimo-manim/SKILL.md'; do
+            manim_marimo/_provider.py \
+            manim_marimo/starters/default/files/scene.py \
+            'manim_marimo-*.agent-plugin/plugin.json' \
+            'manim_marimo-*.agent-plugin/skills/manim-marimo/SKILL.md'; do
             grep -q "^${path//\*/.*}$" <<<"$contents" || { echo "missing $path"; exit 1; }
           done
-          grep -q 'manim = marimo_manim._provider:provider' \
-            <(unzip -p dist/marimo_manim-*.whl '*.dist-info/entry_points.txt')
+          grep -q 'manim = manim_marimo._provider:provider' \
+            <(unzip -p dist/manim_marimo-*.whl '*.dist-info/entry_points.txt')

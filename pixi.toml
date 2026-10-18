@@ -1,9 +1,9 @@
-# The development environment of marimo-manim. Python, the libraries ManimGL
+# The development environment of manim-marimo. Python, the libraries ManimGL
 # links against, and the tools for checks and docs come from conda-forge. The
-# package and its Python dependencies come from PyPI, with marimo-manim
+# package and its Python dependencies come from PyPI, with manim-marimo
 # installed in editable mode. Every task runs through `pixi run`.
 [workspace]
-name = "marimo-manim"
+name = "manim-marimo"
 channels = ["conda-forge"]
 platforms = ["linux-64", "linux-aarch64", "osx-64", "osx-arm64"]
 requires-pixi = ">=0.82"
@@ -15,7 +15,7 @@ python = ">=3.10,<3.15"
 manimpango = ">=0.6"
 
 [pypi-dependencies]
-marimo-manim = { path = ".", editable = true, extras = ["render"] }
+manim-marimo = { path = ".", editable = true, extras = ["render"] }
 
 # ManimGL needs an OpenGL context. macOS provides one. On Linux, Mesa renders
 # in software through EGL, so scenes render on servers and CI runners without
@@ -89,6 +89,6 @@ edit = { cmd = "marimo edit examples/{{ example }}.py --no-sandbox --watch", arg
 build = { cmd = "uv build", description = "Build the wheel and sdist into dist/" }
 
 docs-install = { cmd = "pnpm install --frozen-lockfile", cwd = "docs", description = "Install the documentation site" }
-docs-examples = { cmd = "node scripts/build-examples.ts", cwd = "docs", inputs = ["examples/convolution.py", "examples/epidemic.py", "examples/studio/convolution/**", "examples/studio/epidemic/**", "src/marimo_manim/**", "docs/scripts/build-examples.ts", "pixi.lock"], outputs = ["docs/public/exports/convolution/**", "docs/public/exports/epidemic/**"], description = "Export the examples the docs embed" }
+docs-examples = { cmd = "node scripts/build-examples.ts", cwd = "docs", inputs = ["examples/convolution.py", "examples/epidemic.py", "examples/studio/convolution/**", "examples/studio/epidemic/**", "src/manim_marimo/**", "docs/scripts/build-examples.ts", "pixi.lock"], outputs = ["docs/public/exports/convolution/**", "docs/public/exports/epidemic/**"], description = "Export the examples the docs embed" }
 docs-dev = { cmd = "pnpm dev", cwd = "docs", depends-on = ["docs-install", "docs-examples"], description = "Serve the documentation with live reload" }
 docs-build = { cmd = "pnpm build", cwd = "docs", depends-on = ["docs-install", "docs-examples"], description = "Build the documentation site" }

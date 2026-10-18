@@ -23,8 +23,8 @@ from marimo_studio.view_providers import (
 )
 from marimo_studio.view_providers.testing import check_provider
 
-import marimo_manim.starters.default
-from marimo_manim._provider import provider
+import manim_marimo.starters.default
+from manim_marimo._provider import provider
 
 IMAGES = ("image/png", "image/jpeg", "image/webp")
 
@@ -56,7 +56,7 @@ def inspect_project(root: Path, page: str, files: dict[str, str]):
     for name, source in files.items():
         root.joinpath(name).parent.mkdir(parents=True, exist_ok=True)
         root.joinpath(name).write_text(source)
-    project = ViewProject("test", root, root / "view.toml", "marimo-manim/manim", {})
+    project = ViewProject("test", root, root / "view.toml", "manim-marimo/manim", {})
     return provider.inspect(
         InspectionRequest(project, UnusedRunner(), ProviderCancellation(), root, 10)
     )
@@ -70,18 +70,18 @@ def test_each_page_render_host_declares_its_scene_with_the_reads_it_reaches(
         '<marimo-output render="intro.py"></marimo-output>\n'
         '<marimo-output render="scenes/main.py"></marimo-output>\n',
         {
-            "intro.py": 'from marimo_manim import value\ntitle = value("title")\n',
+            "intro.py": 'from manim_marimo import value\ntitle = value("title")\n',
             "scenes/main.py": (
-                "import marimo_manim as mm\n"
+                "import manim_marimo as mm\n"
                 "from helpers.layout import grid\n"
                 'figure = mm.output("figure")\n'
             ),
             "helpers/__init__.py": "",
             "helpers/layout.py": (
-                "from marimo_manim import cell as place\n"
+                "from manim_marimo import cell as place\n"
                 'chart = place("distribution_chart")\n'
             ),
-            "unused.py": 'from marimo_manim import value\nvalue("unused")\n',
+            "unused.py": 'from manim_marimo import value\nvalue("unused")\n',
         },
     )
     intro = PurePosixPath("intro.py")
@@ -137,7 +137,7 @@ def test_inspection_warns_about_a_computed_target(tmp_path: Path):
         '<marimo-output render="scene.py"></marimo-output>',
         {
             "scene.py": (
-                "from marimo_manim import output\n"
+                "from manim_marimo import output\n"
                 'name = "chart"\n'
                 "figure = output(name)\n"
             )
@@ -169,7 +169,7 @@ def test_inspection_reads_scene_source_and_reports_syntax_location(tmp_path: Pat
 def test_starter_files_of_a_compiled_install_exclude_bytecode(tmp_path: Path):
     # `uv run --compile-bytecode`, which Studio runs for a notebook's
     # dependencies, compiles the starter's scene.py in site-packages.
-    files = Path(marimo_manim.starters.default.__file__).parent / "files"
+    files = Path(manim_marimo.starters.default.__file__).parent / "files"
     compileall.compile_dir(files, quiet=1)
     try:
         (starter,) = provider.starters()
@@ -192,8 +192,8 @@ def test_starter_files_of_a_compiled_install_exclude_bytecode(tmp_path: Path):
 def test_availability_reports_a_worker_from_another_release(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ):
-    worker = tmp_path / "marimo-manim-worker"
-    worker.write_text("#!/bin/sh\necho 'marimo-manim 0.0.1 with manimgl 1.7.2'\n")
+    worker = tmp_path / "manim-marimo-worker"
+    worker.write_text("#!/bin/sh\necho 'manim-marimo 0.0.1 with manimgl 1.7.2'\n")
     worker.chmod(0o755)
     monkeypatch.setenv("PATH", f"{tmp_path}{os.pathsep}{os.environ['PATH']}")
 
@@ -202,8 +202,8 @@ def test_availability_reports_a_worker_from_another_release(
     assert not availability.available
     assert availability.version == "0.0.1"
     assert availability.reason == (
-        f"Scenes render with marimo-manim 0.0.1, and Studio runs marimo-manim "
-        f"{version('marimo-manim')}."
+        f"Scenes render with manim-marimo 0.0.1, and Studio runs manim-marimo "
+        f"{version('manim-marimo')}."
     )
 
 
@@ -211,12 +211,12 @@ def test_availability_reports_the_release_that_renders_scenes():
     availability = provider.availability()
 
     assert availability.available
-    assert availability.version == version("marimo-manim")
+    assert availability.version == version("manim-marimo")
 
 
 @pytest.mark.render
 def test_installed_starter_publishes_its_page_and_renders_the_scene():
-    (view,) = check_provider("marimo-manim/manim", options={"quality": "draft"})
+    (view,) = check_provider("manim-marimo/manim", options={"quality": "draft"})
     assert set(view.published) == {
         PurePosixPath("index.html"),
         PurePosixPath("player.js"),
@@ -248,7 +248,7 @@ def test_build_sizes_outputs_placed_at_a_literal_height_in_points(tmp_path: Path
         {
             "scene.py": (
                 "from manimlib import Scene\n"
-                "from marimo_manim import output\n"
+                "from manim_marimo import output\n"
                 "\n"
                 "class Animation(Scene):\n"
                 "    def construct(self):\n"
@@ -258,7 +258,7 @@ def test_build_sizes_outputs_placed_at_a_literal_height_in_points(tmp_path: Path
             )
         },
     )
-    project = ViewProject("test", root, root / "view.toml", "marimo-manim/manim", {})
+    project = ViewProject("test", root, root / "view.toml", "manim-marimo/manim", {})
     roots = {name: tmp_path / name for name in ("staging", "template", "work", "cache")}
     for folder in roots.values():
         folder.mkdir()

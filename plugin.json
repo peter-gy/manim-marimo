@@ -1,12 +1,12 @@
 {
   "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
-  "name": "marimo-manim",
+  "name": "manim-marimo",
   "description": "Author Manim animation views of marimo notebooks with marimo-studio.",
   "author": {
     "name": "Péter Ferenc Gyarmati",
     "email": "dev.petergy@gmail.com"
   },
   "license": "Apache-2.0",
-  "repository": "https://github.com/peter-gy/marimo-manim",
+  "repository": "https://github.com/peter-gy/manim-marimo",
   "keywords": ["marimo", "manim", "notebooks", "animation", "agent-skills"]
 }

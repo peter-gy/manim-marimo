@@ -3,7 +3,7 @@
 A view project holds a page, ``index.html`` with its styles and scripts, and
 scene files. Each ``<marimo-output render="scene.py">`` host on the page
 declares a render of that scene file. A scene reads notebook results with
-``marimo_manim.value()``, ``output()``, and ``cell()``, and inspection finds
+``manim_marimo.value()``, ``output()``, and ``cell()``, and inspection finds
 those calls in the scene and the project modules it imports, without running
 them.
 
@@ -70,7 +70,7 @@ from marimo_studio.view_providers import (
     project_path,
 )
 
-from marimo_manim._render import (
+from manim_marimo._render import (
     RenderFailure,
     SceneJob,
     VideoFormat,
@@ -79,13 +79,13 @@ from marimo_manim._render import (
 )
 
 _INSTALL = (
-    "Add marimo-manim[render] to the notebook's dependencies and open it with "
-    "marimo edit --sandbox=pixi, or install marimo-manim[render] where Studio runs."
+    "Add manim-marimo[render] to the notebook's dependencies and open it with "
+    "marimo edit --sandbox=pixi, or install manim-marimo[render] where Studio runs."
 )
 
 _PAGE = PurePosixPath("index.html")
-_VIDEO = PurePosixPath(".marimo-manim/video.json")
-_READS = PurePosixPath(".marimo-manim/reads")
+_VIDEO = PurePosixPath(".manim-marimo/video.json")
+_READS = PurePosixPath(".manim-marimo/reads")
 _MOVIE = PurePosixPath("animation.mp4")
 _POSTER = PurePosixPath("poster.png")
 _METADATA = PurePosixPath("metadata.json")
@@ -136,7 +136,7 @@ _STARTERS = (
             summary="A Manim scene, a video player, and native notebook context.",
             documents=(_PAGE, PurePosixPath("scene.py")),
         ),
-        package="marimo_manim.starters.default",
+        package="manim_marimo.starters.default",
         markers=_markers,
     ),
 )
@@ -193,16 +193,16 @@ def _module_name(path: PurePosixPath) -> str:
 def _module(
     path: PurePosixPath, tree: ast.Module
 ) -> tuple[_Module, list[ProjectDiagnostic]]:
-    """Return the imports and literal ``marimo_manim`` reads of one module."""
+    """Return the imports and literal ``manim_marimo`` reads of one module."""
     reads = {"value", "output", "cell"}
-    functions = {f"marimo_manim.{read}": read for read in reads}
+    functions = {f"manim_marimo.{read}": read for read in reads}
     modules: set[str] = set()
     found = _Module()
     for node in ast.walk(tree):
         if isinstance(node, ast.ImportFrom) and node.level == 0 and node.module:
             found.imports.add(node.module)
             found.imports.update(f"{node.module}.{alias.name}" for alias in node.names)
-            if node.module == "marimo_manim":
+            if node.module == "manim_marimo":
                 functions.update(
                     (alias.asname or alias.name, alias.name)
                     for alias in node.names
@@ -213,7 +213,7 @@ def _module(
             modules.update(
                 alias.asname or alias.name
                 for alias in node.names
-                if alias.name == "marimo_manim"
+                if alias.name == "manim_marimo"
             )
     diagnostics: list[ProjectDiagnostic] = []
     for node in ast.walk(tree):
@@ -350,9 +350,9 @@ class ManimProvider:
     )
 
     def availability(self) -> ProviderAvailability:
-        # The worker renders with its own marimo-manim, which reads the jobs
+        # The worker renders with its own manim-marimo, which reads the jobs
         # this provider writes, so both come from one release.
-        provider = version("marimo-manim")
+        provider = version("manim-marimo")
         found = probe_tool(
             [*worker(), "--version"],
             minimum="0",
@@ -362,9 +362,9 @@ class ManimProvider:
             return ProviderAvailability(
                 False,
                 version=found.version,
-                reason=f"Scenes render with marimo-manim {found.version}, "
-                f"and Studio runs marimo-manim {provider}.",
-                action="Install one marimo-manim release in the notebook's "
+                reason=f"Scenes render with manim-marimo {found.version}, "
+                f"and Studio runs manim-marimo {provider}.",
+                action="Install one manim-marimo release in the notebook's "
                 "environment and where Studio runs.",
             )
         return found
@@ -494,7 +494,7 @@ class ManimProvider:
             str(root),
             request.source.as_posix(),
             video,
-            str(root / ".marimo-manim" / "work"),
+            str(root / ".manim-marimo" / "work"),
             str(request.output_root),
             values=str(values),
             outputs=_write_reads(root, "outputs", request.outputs),

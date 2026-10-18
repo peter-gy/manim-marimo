@@ -12,8 +12,8 @@ from collections.abc import Callable
 from pathlib import Path
 from typing import Any, cast
 
-from marimo_manim._lineage import SceneLineage
-from marimo_manim._reads import SceneReads, scene_reads
+from manim_marimo._lineage import SceneLineage
+from manim_marimo._reads import SceneReads, scene_reads
 
 
 def _scene_type(module: Any, scene: type) -> type:
@@ -247,9 +247,9 @@ def _version() -> int:
 
         imageio_ffmpeg.get_ffmpeg_exe()
     except (PackageNotFoundError, RuntimeError, ImportError) as error:
-        print(f"marimo-manim cannot render: {error}", file=sys.stderr)
+        print(f"manim-marimo cannot render: {error}", file=sys.stderr)
         return 1
-    print(f"marimo-manim {version('marimo-manim')} with manimgl {manimgl}")
+    print(f"manim-marimo {version('manim-marimo')} with manimgl {manimgl}")
     return 0
 
 

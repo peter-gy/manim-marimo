@@ -1,20 +1,20 @@
 ---
 title: Getting started
-description: Install marimo-manim, add an Animation view to a notebook, and watch it render from notebook values.
+description: Install manim-marimo, add an Animation view to a notebook, and watch it render from notebook values.
 ---
 
 # Getting started
 
-marimo-manim adds a **Manim animation** starter to
+manim-marimo adds a **Manim animation** starter to
 [marimo-studio](https://marimo-team.github.io/marimo-studio/). Studio builds
-named views of a [marimo](https://marimo.io/) notebook, and marimo-manim's
+named views of a [marimo](https://marimo.io/) notebook, and manim-marimo's
 views render [ManimGL](https://github.com/3b1b/manim) scenes from the
 notebook's values.
 
 ## Install
 
 ManimGL renders with OpenGL, draws text with Pango, and encodes video with
-FFmpeg. marimo-manim renders scenes in the notebook's
+FFmpeg. manim-marimo renders scenes in the notebook's
 [pixi](https://pixi.sh/) environment, where conda-forge provides those
 libraries on macOS and Linux. Declare the environment in the notebook's script
 metadata, the `# /// script` block at the top of `analysis.py`:
@@ -23,7 +23,7 @@ metadata, the `# /// script` block at the top of `analysis.py`:
 # /// script
 # requires-python = ">=3.10,<3.15"
 # dependencies = [
-#     "marimo-manim[render] @ git+https://github.com/peter-gy/marimo-manim",
+#     "manim-marimo[render] @ git+https://github.com/peter-gy/manim-marimo",
 # ]
 #
 # [tool.pixi.workspace]
@@ -43,25 +43,25 @@ metadata, the `# /// script` block at the top of `analysis.py`:
 
 | Table                                 | Installs                                                                     |
 | ------------------------------------- | ---------------------------------------------------------------------------- |
-| `dependencies`                        | marimo-manim, and through its `render` extra ManimGL and FFmpeg              |
+| `dependencies`                        | manim-marimo, and through its `render` extra ManimGL and FFmpeg              |
 | `tool.pixi.workspace`                 | conda-forge as the channel, and the platforms pixi solves for                |
 | `tool.pixi.dependencies`              | manimpango, ManimGL's text renderer, built against Pango                     |
 | `tool.pixi.target.linux.dependencies` | [Mesa](https://mesa3d.org/)'s software OpenGL and fonts                      |
 
-macOS provides OpenGL itself. On Linux, marimo-manim renders through Mesa's EGL
+macOS provides OpenGL itself. On Linux, manim-marimo renders through Mesa's EGL
 driver when no display is set, so scenes render on servers without a GPU.
 
 ## Add an Animation view
 
 Open the notebook in a [pixi sandbox](https://marimo.io/blog/pixi-sandboxes),
-with Studio and marimo-manim in the marimo server:
+with Studio and manim-marimo in the marimo server:
 
 ```sh
-uvx --with "marimo-manim @ git+https://github.com/peter-gy/marimo-manim" \
+uvx --with "manim-marimo @ git+https://github.com/peter-gy/manim-marimo" \
   marimo edit analysis.py --sandbox=pixi --watch
 ```
 
-[uv](https://docs.astral.sh/uv/)'s `uvx` runs marimo with marimo-manim and
+[uv](https://docs.astral.sh/uv/)'s `uvx` runs marimo with manim-marimo and
 Studio, and needs `pixi` on `PATH`. `--sandbox=pixi` installs the notebook's
 environment and runs its kernel there. Studio runs the commands views need from
 the same environment first, so every scene renders with the ManimGL, Pango, and
@@ -72,16 +72,16 @@ Click **Add view**, choose **Manim animation**, and create the view. Or create
 it from a terminal:
 
 ```sh
-uvx --with "marimo-manim @ git+https://github.com/peter-gy/marimo-manim" \
+uvx --with "manim-marimo @ git+https://github.com/peter-gy/manim-marimo" \
   marimo-studio view create animation --target analysis.py \
-  --starter marimo-manim/manim:default
+  --starter manim-marimo/manim:default
 ```
 
 Studio writes the view project beside the notebook:
 
 ```text
 studio/analysis/animation/
-  view.toml     provider = "marimo-manim/manim"
+  view.toml     provider = "manim-marimo/manim"
   scene.py      the Manim scene
   index.html    the page that plays the movie
   style.css
@@ -109,7 +109,7 @@ Read it in `scene.py` with `value()`:
 ```python
 import numpy as np
 from manimlib import Scene, ShowCreation, VMobject
-from marimo_manim import value
+from manim_marimo import value
 
 
 class Animation(Scene):

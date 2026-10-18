@@ -6,7 +6,7 @@ aside: false
 
 # Convolution of dice
 
-[`examples/convolution.py`](https://github.com/peter-gy/marimo-manim/blob/main/examples/convolution.py)
+[`examples/convolution.py`](https://github.com/peter-gy/manim-marimo/blob/main/examples/convolution.py)
 computes the joint probability table of a fair die and a die biased toward six,
 the distribution of their sum, and a matplotlib chart of that distribution.
 Its Animation view turns the table into that distribution.
@@ -29,7 +29,7 @@ pixi run edit convolution
 
 ## Values and a figure
 
-[`scene.py`](https://github.com/peter-gy/marimo-manim/blob/main/examples/studio/convolution/animation/scene.py)
+[`scene.py`](https://github.com/peter-gy/manim-marimo/blob/main/examples/studio/convolution/animation/scene.py)
 reads the table and the sums as values, and the chart as a figure:
 
 ```python
@@ -52,7 +52,7 @@ reader sees that both describe the same distribution.
 ## Static export
 
 The view's
-[`states.yaml`](https://github.com/peter-gy/marimo-manim/blob/main/examples/studio/convolution/animation/states.yaml)
+[`states.yaml`](https://github.com/peter-gy/manim-marimo/blob/main/examples/studio/convolution/animation/states.yaml)
 prepares every value of the bias slider. A `zero-python` export renders one
 movie per value, and the exported page swaps movies as the reader moves the
 slider. The **Page** stage above is this export:

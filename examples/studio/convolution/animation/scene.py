@@ -15,7 +15,7 @@ from manimlib import (
     VGroup,
 )
 
-from marimo_manim import output, value
+from manim_marimo import output, value
 
 FAIR = np.full(6, 1 / 6)
 

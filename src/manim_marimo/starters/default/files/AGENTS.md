@@ -3,7 +3,7 @@
 `scene.py` owns animation layout and choreography. `index.html`, `style.css`,
 and `player.js` own the surrounding page.
 
-Read notebook results in the scene with `marimo_manim`:
+Read notebook results in the scene with `manim_marimo`:
 
 - `value("spectrum.radii", default=[])` returns a value in its JSON form.
 - `output("figure", height=3)` places a notebook value, such as a matplotlib

@@ -1,14 +1,14 @@
 ---
-name: marimo-manim
+name: manim-marimo
 description: >-
   Author Manim animation views of a marimo notebook with marimo-studio. Use
   when a view should animate notebook values, place notebook figures in a
-  scene, or add, debug, render, or export a marimo-manim scene.
+  scene, or add, debug, render, or export a manim-marimo scene.
 ---
 
 # Author Manim views
 
-marimo-manim is a marimo-studio view provider. The notebook computes values
+manim-marimo is a marimo-studio view provider. The notebook computes values
 and figures. A view project holds Manim scenes that read them and a page that
 plays each rendered movie beside native notebook cells. Studio renders a scene
 again whenever a result it reads changes.
@@ -17,7 +17,7 @@ Read the marimo-studio skill first. It owns connecting to the notebook,
 creating and editing views, building, and browser verification:
 
 ```console
-uvx --with "marimo-manim @ git+https://github.com/peter-gy/marimo-manim" agent-plugins read marimo-studio
+uvx --with "manim-marimo @ git+https://github.com/peter-gy/manim-marimo" agent-plugins read marimo-studio
 ```
 
 This skill adds what is specific to Manim views.
@@ -25,7 +25,7 @@ This skill adds what is specific to Manim views.
 ## Create the view
 
 Scenes render in the notebook's [pixi](https://pixi.sh/) environment. Declare
-it in the notebook's `# /// script` block: `marimo-manim[render]` under
+it in the notebook's `# /// script` block: `manim-marimo[render]` under
 `dependencies`, `manimpango` from conda-forge under `[tool.pixi.dependencies]`,
 and on Linux Mesa's OpenGL under `[tool.pixi.target.linux.dependencies]`:
 
@@ -33,7 +33,7 @@ and on Linux Mesa's OpenGL under `[tool.pixi.target.linux.dependencies]`:
 # /// script
 # requires-python = ">=3.10,<3.15"
 # dependencies = [
-#     "marimo-manim[render] @ git+https://github.com/peter-gy/marimo-manim",
+#     "manim-marimo[render] @ git+https://github.com/peter-gy/manim-marimo",
 # ]
 #
 # [tool.pixi.workspace]
@@ -52,10 +52,10 @@ and on Linux Mesa's OpenGL under `[tool.pixi.target.linux.dependencies]`:
 ```
 
 Start Studio with the pixi sandbox. Studio renders every scene with the
-`marimo-manim-worker` command from that environment:
+`manim-marimo-worker` command from that environment:
 
 ```console
-uvx --with "marimo-manim @ git+https://github.com/peter-gy/marimo-manim" marimo edit notebook.py --sandbox=pixi --watch
+uvx --with "manim-marimo @ git+https://github.com/peter-gy/manim-marimo" marimo edit notebook.py --sandbox=pixi --watch
 ```
 
 `marimo-studio starters --target notebook.py` reports whether the Manim starter
@@ -64,7 +64,7 @@ can render for that notebook, and why not.
 Create the view from the provider's starter:
 
 ```python
-view = await workspace.create_view("animation", starter="marimo-manim/manim:default")
+view = await workspace.create_view("animation", starter="manim-marimo/manim:default")
 await view.build()
 ```
 
@@ -84,7 +84,7 @@ such as a `[frames, points, 2]` array of positions.
 ```python
 import numpy as np
 from manimlib import FadeIn, Scene, ShowCreation, VMobject
-from marimo_manim import output, value
+from manim_marimo import output, value
 
 
 class Animation(Scene):

@@ -1,8 +1,8 @@
 import { defineConfig } from "vitepress";
 import llmstxt from "vitepress-plugin-llms";
 
-const repository = "https://github.com/peter-gy/marimo-manim";
-const site = new URL("https://peter-gy.github.io/marimo-manim/");
+const repository = "https://github.com/peter-gy/manim-marimo";
+const site = new URL("https://peter-gy.github.io/manim-marimo/");
 const description =
   "Manim animations of marimo notebook results, rendered as marimo-studio views.";
 
@@ -32,7 +32,7 @@ const marimoLight = {
 };
 
 export default defineConfig({
-  title: "marimo-manim",
+  title: "manim-marimo",
   description,
   base,
   lang: "en-US",
@@ -41,7 +41,7 @@ export default defineConfig({
   sitemap: { hostname: site.href },
   head: [
     ["meta", { property: "og:type", content: "website" }],
-    ["meta", { property: "og:title", content: "marimo-manim" }],
+    ["meta", { property: "og:title", content: "manim-marimo" }],
     ["meta", { property: "og:description", content: description }],
     ["meta", { property: "og:image", content: new URL("media/fourier.png", site).href }],
   ],

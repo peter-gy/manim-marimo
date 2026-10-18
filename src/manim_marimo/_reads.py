@@ -26,7 +26,7 @@ class SceneReads:
     cells: Mapping[str, Path] = field(default_factory=dict)
 
 
-_current: ContextVar[SceneReads | None] = ContextVar("marimo_manim_reads", default=None)
+_current: ContextVar[SceneReads | None] = ContextVar("manim_marimo_reads", default=None)
 
 
 def value(selector: str, /, *, default: Any = None) -> Any:

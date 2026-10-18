@@ -1,27 +1,27 @@
 ---
 title: Author with agents
-description: Let a coding agent write the notebook, the scenes, and the page, using the skills marimo-studio and marimo-manim ship.
+description: Let a coding agent write the notebook, the scenes, and the page, using the skills marimo-studio and manim-marimo ship.
 ---
 
 # Author with agents
 
-marimo-manim ships an agent skill beside marimo-studio's. A coding agent reads
+manim-marimo ships an agent skill beside marimo-studio's. A coding agent reads
 both, writes the notebook's computation in marimo cells, writes the scenes and
 the page, renders them in Studio, and checks the movies.
 
 Paste this request into Claude Code, Codex, or another terminal agent, from the
-folder of a notebook [set up for marimo-manim](./getting-started.md#install):
+folder of a notebook [set up for manim-marimo](./getting-started.md#install):
 
 ```text
-Read the marimo-studio and marimo-manim skills with
-`uvx --with "marimo-manim @ git+https://github.com/peter-gy/marimo-manim" agent-plugins read <name>`,
+Read the marimo-studio and manim-marimo skills with
+`uvx --with "manim-marimo @ git+https://github.com/peter-gy/manim-marimo" agent-plugins read <name>`,
 then create a notebook that explains Fourier series and an Animation view
 that draws a square wave from rotating vectors.
 ```
 
 [agent-plugins](https://agent-plugins.org/) prints a skill that a Python
 package ships. marimo-studio's skill covers connecting to the running
-notebook, creating views, building, and browser checks. marimo-manim's skill
+notebook, creating views, building, and browser checks. manim-marimo's skill
 adds the scene contract: literal reads, renderable defaults, one scene per
 file, and how to verify a rendered movie.
 
@@ -30,7 +30,7 @@ file, and how to verify a rendered movie.
 | Source                                  | Teaches                                                                 |
 | --------------------------------------- | ----------------------------------------------------------------------- |
 | `agent-plugins read marimo-studio`      | Notebook pairing, view creation, builds, preview URLs, browser checks   |
-| `agent-plugins read marimo-manim`       | Scene reads, defaults, render hosts, quality, render diagnostics        |
+| `agent-plugins read manim-marimo`       | Scene reads, defaults, render hosts, quality, render diagnostics        |
 | `AGENTS.md` in the view project         | The files of this view and who owns what                                |
 
 Studio shows `AGENTS.md` in Source, so the agent and the author read the same
@@ -44,7 +44,7 @@ dependencies, then restart Studio:
 
 ```python
 # dependencies = [
-#     "marimo-manim[render] @ git+https://github.com/peter-gy/marimo-manim",
+#     "manim-marimo[render] @ git+https://github.com/peter-gy/manim-marimo",
 #     "marimo-lens>=0.2.4",
 # ]
 ```
@@ -70,7 +70,7 @@ starter:
 import marimo_studio
 
 workspace = marimo_studio.agent.current_workspace()
-view = await workspace.create_view("animation", starter="marimo-manim/manim:default")
+view = await workspace.create_view("animation", starter="manim-marimo/manim:default")
 await view.build()
 print(await view.preview_url(runtime="server"))
 ```

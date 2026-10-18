@@ -1,13 +1,13 @@
 ---
 title: View provider
-description: The marimo-manim/manim provider's starter, options, project files, renders, and diagnostics.
+description: The manim-marimo/manim provider's starter, options, project files, renders, and diagnostics.
 ---
 
 # View provider
 
-marimo-manim registers one marimo-studio
+manim-marimo registers one marimo-studio
 [view provider](https://marimo-team.github.io/marimo-studio/guide/view-providers)
-under the key `marimo-manim/manim`, through the `marimo_studio.view_provider`
+under the key `manim-marimo/manim`, through the `marimo_studio.view_provider`
 entry point. Studio discovers it in the environment of the marimo server when
 Studio starts.
 
@@ -15,7 +15,7 @@ Studio starts.
 
 | Starter ID                     | Title           | Files                                                           |
 | ------------------------------ | --------------- | --------------------------------------------------------------- |
-| `marimo-manim/manim:default`   | Manim animation | `scene.py`, `index.html`, `style.css`, `player.js`, `AGENTS.md` |
+| `manim-marimo/manim:default`   | Manim animation | `scene.py`, `index.html`, `style.css`, `player.js`, `AGENTS.md` |
 
 `index.html` lists the notebook's output cells as `<marimo-cell>` hosts beside
 the player.
@@ -24,7 +24,7 @@ the player.
 
 ```toml
 schema = 1
-provider = "marimo-manim/manim"
+provider = "manim-marimo/manim"
 
 [options]
 quality = "preview"
@@ -135,7 +135,7 @@ shape stops being watched after its first run.
 
 ## Availability
 
-Scenes render with the `marimo-manim-worker` command, which the `render` extra
+Scenes render with the `manim-marimo-worker` command, which the `render` extra
 installs. Studio looks for it in the notebook's pixi environment first, when
 the notebook declares `[tool.pixi]` metadata and runs with `--sandbox=pixi` or
 a `marimo-studio` command targets it, and then on `PATH`. Without the command,
@@ -143,13 +143,13 @@ scenes render in the Python that runs Studio.
 
 The provider reports itself available when the worker's ManimGL imports and
 imageio-ffmpeg locates an FFmpeg binary. The worker and Studio's provider read
-and write the same render jobs, so both install one marimo-manim release.
+and write the same render jobs, so both install one manim-marimo release.
 Otherwise the starter is unavailable with a reason that names both versions.
 `marimo-studio starters --target analysis.py` shows the availability for one
 notebook:
 
 ```text
-available 0.1.0 marimo-manim/manim:default
+available 0.1.0 manim-marimo/manim:default
   A Manim scene, a video player, and native notebook context.
-  provider marimo-manim/manim
+  provider manim-marimo/manim
 ```

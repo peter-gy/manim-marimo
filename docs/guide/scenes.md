@@ -7,11 +7,11 @@ description: Read notebook values, figures, and cell outputs in a Manim scene, a
 
 A scene is a Python file in the view project that defines one
 `manimlib.Scene` subclass. It reads notebook results through three functions
-from `marimo_manim`:
+from `manim_marimo`:
 
 ```python
 from manimlib import DOWN, FadeIn, Scene, Text
-from marimo_manim import output, value
+from manim_marimo import output, value
 
 
 class Summary(Scene):

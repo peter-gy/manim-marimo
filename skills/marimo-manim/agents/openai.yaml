@@ -1,4 +1,0 @@
-interface:
-  display_name: "marimo-manim"
-  short_description: "Animate marimo notebook results with Manim scenes"
-  default_prompt: "Use $marimo-manim to build or refine a Manim animation view of the notebook, keeping computation in the notebook and verifying every rendered movie."

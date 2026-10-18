@@ -1,6 +1,6 @@
 # Releasing
 
-marimo-manim publishes two kinds of builds from `.github/workflows/publish.yml`.
+manim-marimo publishes two kinds of builds from `.github/workflows/publish.yml`.
 
 | Channel | Trigger                             | Version                    | Destination                                    |
 | ------- | ----------------------------------- | -------------------------- | ---------------------------------------------- |
@@ -13,12 +13,12 @@ and in the marimo server, so the provider and the worker share one release:
 
 ```python
 # dependencies = [
-#     "marimo-manim[render] @ https://github.com/peter-gy/marimo-manim/releases/download/preview/marimo_manim-0.1.1.dev3-py3-none-any.whl",
+#     "manim-marimo[render] @ https://github.com/peter-gy/manim-marimo/releases/download/preview/manim_marimo-0.1.1.dev3-py3-none-any.whl",
 # ]
 ```
 
 ```sh
-uvx --with "marimo-manim @ https://github.com/peter-gy/marimo-manim/releases/download/preview/marimo_manim-0.1.1.dev3-py3-none-any.whl" \
+uvx --with "manim-marimo @ https://github.com/peter-gy/manim-marimo/releases/download/preview/manim_marimo-0.1.1.dev3-py3-none-any.whl" \
   marimo edit analysis.py --sandbox=pixi --watch
 ```
 
@@ -31,26 +31,26 @@ uvx --with "marimo-manim @ https://github.com/peter-gy/marimo-manim/releases/dow
 3. Tag the merged commit and push the tag:
 
    ```sh
-   git tag -a v0.1.0 -m "marimo-manim 0.1.0"
+   git tag -a v0.1.0 -m "manim-marimo 0.1.0"
    git push origin v0.1.0
    ```
 
 The workflow checks that the tag matches `pyproject.toml`, builds the wheel and
 sdist, attaches them to a GitHub release with generated notes, and publishes
 them to PyPI through [trusted publishing](https://docs.pypi.org/trusted-publishers/).
-Register `peter-gy/marimo-manim`, workflow `publish.yml`, environment `pypi`
+Register `peter-gy/manim-marimo`, workflow `publish.yml`, environment `pypi`
 as a trusted publisher on PyPI before the first release.
 
 ## What a build contains
 
 `uv build` runs the `agent_plugins.build.uv_build` backend. The wheel holds the
-`marimo_manim` package with its starter files, and
-`marimo_manim-<version>.agent-plugin/` with `plugin.json` and
-`skills/marimo-manim/`. Check both after changing the build configuration:
+`manim_marimo` package with its starter files, and
+`manim_marimo-<version>.agent-plugin/` with `plugin.json` and
+`skills/manim-marimo/`. Check both after changing the build configuration:
 
 ```sh
 pixi run build
-unzip -l dist/marimo_manim-*.whl
+unzip -l dist/manim_marimo-*.whl
 ```
 
 ## Documentation

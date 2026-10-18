@@ -90,7 +90,7 @@ jobs:
           path: dist
       - name: Upload the wheel to the preview release
         run: |
-          wheel="marimo_manim-$VERSION-py3-none-any.whl"
+          wheel="manim_marimo-$VERSION-py3-none-any.whl"
           url="https://github.com/$GH_REPO/releases/download/preview/$wheel"
           if ! gh release view preview >/dev/null 2>&1; then
             gh release create preview --prerelease --title "Preview builds" \
@@ -103,12 +103,12 @@ jobs:
 
           \`\`\`python
           # dependencies = [
-          #     "marimo-manim[render] @ $url",
+          #     "manim-marimo[render] @ $url",
           # ]
           \`\`\`
 
           \`\`\`sh
-          uvx --with "marimo-manim @ $url" marimo edit analysis.py --sandbox=pixi --watch
+          uvx --with "manim-marimo @ $url" marimo edit analysis.py --sandbox=pixi --watch
           \`\`\`
           NOTES
           gh release edit preview --notes-file notes.md
@@ -136,7 +136,7 @@ jobs:
     runs-on: ubuntu-latest
     environment:
       name: pypi
-      url: https://pypi.org/project/marimo-manim/
+      url: https://pypi.org/project/manim-marimo/
     permissions:
       id-token: write
     steps:

@@ -7,7 +7,7 @@ import pytest
 from marimo_studio.view_providers import ProviderCommandResult
 from PIL import Image
 
-from marimo_manim._render import RenderFailure, SceneJob, VideoFormat, run_scene
+from manim_marimo._render import RenderFailure, SceneJob, VideoFormat, run_scene
 
 pytestmark = pytest.mark.render
 
@@ -66,7 +66,7 @@ def test_scene_reads_render_values_and_uses_owned_cache(tmp_path: Path):
 from pathlib import Path
 from manimlib import Circle, Scene
 from manimlib.utils.cache import _cache
-from marimo_manim import value
+from manim_marimo import value
 assert Path(_cache.directory) == Path({str(tmp_path / "work" / "manim-cache")!r})
 class Animation(Scene):
     def construct(self):
@@ -88,7 +88,7 @@ def test_scene_places_a_notebook_figure(tmp_path: Path):
         tmp_path,
         """
 from manimlib import FRAME_HEIGHT, Scene
-from marimo_manim import output
+from manim_marimo import output
 class Animation(Scene):
     def construct(self):
         self.add(output("figure", height=FRAME_HEIGHT))
@@ -105,7 +105,7 @@ def test_check_constructs_the_scene_at_its_defaults_without_encoding(tmp_path: P
         tmp_path,
         """
 from manimlib import Circle, Scene
-from marimo_manim import output, value
+from manim_marimo import output, value
 class Animation(Scene):
     def construct(self):
         assert value("radius", default=1) == 1 and output("figure") is None

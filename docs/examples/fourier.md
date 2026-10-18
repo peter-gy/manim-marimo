@@ -5,7 +5,7 @@ description: Rotating vectors and a spectrum, rendered from Fourier coefficients
 
 # Fourier drawing
 
-[`examples/fourier.py`](https://github.com/peter-gy/marimo-manim/blob/main/examples/fourier.py)
+[`examples/fourier.py`](https://github.com/peter-gy/manim-marimo/blob/main/examples/fourier.py)
 samples a closed path, computes its Fourier coefficients, and reconstructs the
 path from a chosen number of frequency pairs. The view's page shows two scenes
 beside the notebook's controls and comparison chart.
@@ -16,7 +16,7 @@ pixi run edit fourier
 
 ## Rotating vectors
 
-[`scene.py`](https://github.com/peter-gy/marimo-manim/blob/main/examples/studio/fourier/animation/scene.py)
+[`scene.py`](https://github.com/peter-gy/manim-marimo/blob/main/examples/studio/fourier/animation/scene.py)
 reads the vector chain the notebook samples, `chain`, with shape
 `[frames, vectors + 1, 2]`, and the circle radii:
 
@@ -35,7 +35,7 @@ from 3Blue1Brown's videos.
 
 ## Spectrum
 
-[`spectrum.py`](https://github.com/peter-gy/marimo-manim/blob/main/examples/studio/fourier/animation/spectrum.py)
+[`spectrum.py`](https://github.com/peter-gy/manim-marimo/blob/main/examples/studio/fourier/animation/spectrum.py)
 grows one bar per frequency, with the radius as its height:
 
 <video class="movie" src="/media/spectrum.mp4" poster="/media/spectrum.png" controls muted playsinline></video>
@@ -54,6 +54,6 @@ both movies again.
 </div>
 ```
 
-[`index.html`](https://github.com/peter-gy/marimo-manim/blob/main/examples/studio/fourier/animation/index.html)
+[`index.html`](https://github.com/peter-gy/manim-marimo/blob/main/examples/studio/fourier/animation/index.html)
 places the notebook's `controls` and `comparison` cells, so the reader changes
 the path and the frequency count beside the movies.

@@ -1,5 +1,5 @@
 [project]
-name = "marimo-manim"
+name = "manim-marimo"
 version = "0.1.0"
 description = "Manim animations of marimo notebook results, as marimo-studio views"
 readme = "README.md"
@@ -26,7 +26,7 @@ dependencies = [
 ]
 
 # The provider runs in the marimo server's environment. Scenes render in the
-# environment of the `marimo-manim-worker` command, normally the notebook's
+# environment of the `manim-marimo-worker` command, normally the notebook's
 # pixi environment, which installs this extra.
 [project.optional-dependencies]
 render = [
@@ -39,23 +39,23 @@ render = [
 ]
 
 [project.scripts]
-marimo-manim-worker = "marimo_manim._worker:main"
+manim-marimo-worker = "manim_marimo._worker:main"
 
 [project.urls]
-Homepage = "https://peter-gy.github.io/marimo-manim/"
-Documentation = "https://peter-gy.github.io/marimo-manim/"
-Repository = "https://github.com/peter-gy/marimo-manim"
-Issues = "https://github.com/peter-gy/marimo-manim/issues"
+Homepage = "https://peter-gy.github.io/manim-marimo/"
+Documentation = "https://peter-gy.github.io/manim-marimo/"
+Repository = "https://github.com/peter-gy/manim-marimo"
+Issues = "https://github.com/peter-gy/manim-marimo/issues"
 
 [project.entry-points."marimo_studio.view_provider"]
-manim = "marimo_manim._provider:provider"
+manim = "manim_marimo._provider:provider"
 
 [build-system]
 requires = ["agent-plugins>=0.2.4,<0.3", "uv_build>=0.13.1,<0.14"]
 build-backend = "agent_plugins.build.uv_build"
 
 # The wheel ships plugin.json and skills/ as an Agent Plugin, which
-# `agent-plugins read marimo-manim` prints for coding agents.
+# `agent-plugins read manim-marimo` prints for coding agents.
 [tool.agent-plugins]
 root = "."
 

@@ -6,7 +6,7 @@ aside: false
 
 # Simulating an epidemic
 
-[`examples/epidemic.py`](https://github.com/peter-gy/marimo-manim/blob/main/examples/epidemic.py)
+[`examples/epidemic.py`](https://github.com/peter-gy/manim-marimo/blob/main/examples/epidemic.py)
 simulates two hundred people in a city, after 3Blue1Brown's
 [*Simulating an epidemic*](https://www.youtube.com/watch?v=gxAaO2rsdIs). Each
 person wanders, infects susceptible neighbours within an infection radius, and
@@ -93,7 +93,7 @@ tracer follows reads.
 ## Static export
 
 The view's
-[`states.yaml`](https://github.com/peter-gy/marimo-manim/blob/main/examples/studio/epidemic/animation/states.yaml)
+[`states.yaml`](https://github.com/peter-gy/manim-marimo/blob/main/examples/studio/epidemic/animation/states.yaml)
 prepares every value of the distancing slider. A `zero-python` export renders
 one movie per value, and the exported page swaps movies as the reader moves the
 slider. The **Page** stage above is this export:

@@ -3,7 +3,7 @@
 // Usage: pixi run hero-capture
 //
 // The capture copies examples/convolution.py and its view into a scratch
-// workspace inside the repository, where Studio finds marimo-manim in the
+// workspace inside the repository, where Studio finds manim-marimo in the
 // project dependencies. It exports one movie per state through `marimo-studio view export`,
 // and drives the slider in the marimo editor. render.ts composes the shots.
 import { $, type Subprocess } from "bun";

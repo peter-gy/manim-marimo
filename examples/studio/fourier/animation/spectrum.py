@@ -14,7 +14,7 @@ from manimlib import (
     VGroup,
 )
 
-from marimo_manim import value
+from manim_marimo import value
 
 
 class Spectrum(Scene):

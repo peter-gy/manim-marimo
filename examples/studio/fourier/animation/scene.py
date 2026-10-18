@@ -21,7 +21,7 @@ from manimlib import (
     linear,
 )
 
-from marimo_manim import value
+from manim_marimo import value
 
 
 class Animation(Scene):

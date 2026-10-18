@@ -1,9 +1,9 @@
-# marimo-manim
+# manim-marimo
 
-marimo-manim is a marimo-studio view provider that renders ManimGL scenes from
+manim-marimo is a marimo-studio view provider that renders ManimGL scenes from
 marimo notebook results. Studio owns notebooks, view projects, builds,
 sessions, and delivery. This package owns scene reads, the render worker, the
-`marimo-manim/manim:default` starter, and the agent skill for authoring Manim
+`manim-marimo/manim:default` starter, and the agent skill for authoring Manim
 views.
 
 ## Boundaries
@@ -14,7 +14,7 @@ views.
   `request.runner`, so Studio's deadlines and cancellation stop it.
 - The provider runs in the marimo server with the base package. ManimGL and
   FFmpeg belong to the `render` extra, and Studio's `find_tool` resolves the
-  `marimo-manim-worker` command in the notebook's pixi environment.
+  `manim-marimo-worker` command in the notebook's pixi environment.
 - Inspection reads source with `ast` and never runs project code.
 - The build publishes the page and its assets, and keeps scenes private in the
   render template.
@@ -36,8 +36,8 @@ Rendering behavior needs evidence from a real render: a test through
 ## Keep in step
 
 Behavior visible to view authors is described in `docs/`, in
-`src/marimo_manim/starters/default/files/AGENTS.md`, and in
-`skills/marimo-manim/SKILL.md`. Change all three together.
+`src/manim_marimo/starters/default/files/AGENTS.md`, and in
+`skills/manim-marimo/SKILL.md`. Change all three together.
 
 ## Guides
 

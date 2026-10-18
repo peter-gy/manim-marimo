@@ -1,8 +1,8 @@
 from pathlib import Path
 from typing import Any
 
-from marimo_manim import cell, output, value
-from marimo_manim._reads import SceneReads, scene_reads
+from manim_marimo import cell, output, value
+from manim_marimo._reads import SceneReads, scene_reads
 
 
 def test_value_reads_the_render_values_by_selector():

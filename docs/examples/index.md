@@ -6,7 +6,7 @@ description: Three marimo notebooks whose Animation views render Manim scenes fr
 # Examples
 
 Each example is a marimo notebook in
-[`examples/`](https://github.com/peter-gy/marimo-manim/tree/main/examples) with
+[`examples/`](https://github.com/peter-gy/manim-marimo/tree/main/examples) with
 an Animation view beside it. Open one from a clone of the repository:
 
 ```sh

@@ -1,6 +1,6 @@
-# marimo-manim
+# manim-marimo
 
-marimo-manim brings [Manim](https://github.com/3b1b/manim) animations to
+manim-marimo brings [Manim](https://github.com/3b1b/manim) animations to
 [marimo](https://marimo.io/) notebooks through
 [marimo-studio](https://marimo-team.github.io/marimo-studio/). The notebook
 computes the values. A Manim scene in a Studio view animates them, and Studio
@@ -14,7 +14,7 @@ renders the movie again whenever a value changes.
 ```python
 import numpy as np
 from manimlib import Scene, ShowCreation, VMobject
-from marimo_manim import value
+from manim_marimo import value
 
 
 class Animation(Scene):
@@ -31,7 +31,7 @@ figures inside the scene.
 
 ## Get started
 
-marimo-manim renders scenes in the notebook's [pixi](https://pixi.sh/)
+manim-marimo renders scenes in the notebook's [pixi](https://pixi.sh/)
 environment, which installs the OpenGL and Pango libraries ManimGL renders with
 from conda-forge. Declare it in the notebook's script metadata:
 
@@ -39,7 +39,7 @@ from conda-forge. Declare it in the notebook's script metadata:
 # /// script
 # requires-python = ">=3.10,<3.15"
 # dependencies = [
-#     "marimo-manim[render] @ git+https://github.com/peter-gy/marimo-manim",
+#     "manim-marimo[render] @ git+https://github.com/peter-gy/manim-marimo",
 # ]
 #
 # [tool.pixi.workspace]
@@ -51,38 +51,38 @@ from conda-forge. Declare it in the notebook's script metadata:
 ```
 
 ```sh
-uvx --with "marimo-manim @ git+https://github.com/peter-gy/marimo-manim" \
+uvx --with "manim-marimo @ git+https://github.com/peter-gy/manim-marimo" \
   marimo edit analysis.py --sandbox=pixi --watch
 ```
 
 In Studio, click **Add view** and choose **Manim animation**.
-[Getting started](https://peter-gy.github.io/marimo-manim/guide/getting-started)
+[Getting started](https://peter-gy.github.io/manim-marimo/guide/getting-started)
 shows the complete metadata, including the Mesa tables that render on Linux
 servers without a display.
 
 ## Author with a coding agent
 
-marimo-manim ships an agent skill beside marimo-studio's. Paste this into
+manim-marimo ships an agent skill beside marimo-studio's. Paste this into
 Claude Code, Codex, or another terminal agent:
 
 ```text
-Read the marimo-studio and marimo-manim skills with
-`uvx --with "marimo-manim @ git+https://github.com/peter-gy/marimo-manim" agent-plugins read <name>`,
+Read the marimo-studio and manim-marimo skills with
+`uvx --with "manim-marimo @ git+https://github.com/peter-gy/manim-marimo" agent-plugins read <name>`,
 then create a notebook that explains Fourier series and an Animation view
 that draws a square wave from rotating vectors.
 ```
 
 ## Examples
 
-[![Two hundred simulated people at the peak of an epidemic, with infection rings around the infectious, beside the stacked shares of susceptible, infectious, and recovered people](docs/public/media/epidemic.webp)](https://peter-gy.github.io/marimo-manim/examples/epidemic)
+[![Two hundred simulated people at the peak of an epidemic, with infection rings around the infectious, beside the stacked shares of susceptible, infectious, and recovered people](docs/public/media/epidemic.webp)](https://peter-gy.github.io/manim-marimo/examples/epidemic)
 
-- [Simulating an epidemic](https://peter-gy.github.io/marimo-manim/examples/epidemic):
+- [Simulating an epidemic](https://peter-gy.github.io/manim-marimo/examples/epidemic):
   two hundred people simulated in the notebook, after 3Blue1Brown's
   *Simulating an epidemic*. Pause the movie and point at anyone to trace them
   to the notebook row that simulated them.
-- [Fourier drawing](https://peter-gy.github.io/marimo-manim/examples/fourier):
+- [Fourier drawing](https://peter-gy.github.io/manim-marimo/examples/fourier):
   rotating vectors and a spectrum from Fourier coefficients.
-- [Convolution of dice](https://peter-gy.github.io/marimo-manim/examples/convolution):
+- [Convolution of dice](https://peter-gy.github.io/manim-marimo/examples/convolution):
   a joint probability table folding into the distribution of a sum, ending on
   the notebook's own chart.
 
@@ -92,9 +92,9 @@ pixi run edit epidemic
 
 ## Documentation
 
-[Guide](https://peter-gy.github.io/marimo-manim/guide/getting-started) ·
-[Examples](https://peter-gy.github.io/marimo-manim/examples/) ·
-[Reference](https://peter-gy.github.io/marimo-manim/reference/python-api) ·
+[Guide](https://peter-gy.github.io/manim-marimo/guide/getting-started) ·
+[Examples](https://peter-gy.github.io/manim-marimo/examples/) ·
+[Reference](https://peter-gy.github.io/manim-marimo/reference/python-api) ·
 [Contributing](CONTRIBUTING.md)
 
 ## License

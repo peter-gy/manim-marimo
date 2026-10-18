@@ -100,7 +100,7 @@ Set `quality` in `view.toml`:
 
 ```toml
 schema = 1
-provider = "marimo-manim/manim"
+provider = "manim-marimo/manim"
 
 [options]
 quality = "draft"

@@ -12,7 +12,7 @@ compares the options.
 ## Run a live view
 
 ```sh
-uvx --with "marimo-manim @ git+https://github.com/peter-gy/marimo-manim" \
+uvx --with "manim-marimo @ git+https://github.com/peter-gy/manim-marimo" \
   marimo run analysis.py --sandbox=pixi
 ```
 
@@ -27,7 +27,7 @@ for each combination of control values the view lists, and renders every
 scene once per state:
 
 ```sh
-uvx --with "marimo-manim @ git+https://github.com/peter-gy/marimo-manim" \
+uvx --with "manim-marimo @ git+https://github.com/peter-gy/manim-marimo" \
   marimo-studio view export animation --target analysis.py \
   --output dist/animation --runtime zero-python
 ```
@@ -63,7 +63,7 @@ for each control whose values the states skip, with the count and the first
 skipped values:
 
 ```sh
-uvx --with "marimo-manim @ git+https://github.com/peter-gy/marimo-manim" \
+uvx --with "manim-marimo @ git+https://github.com/peter-gy/manim-marimo" \
   marimo-studio view preflight animation --target analysis.py
 ```
 
@@ -79,13 +79,13 @@ npx serve dist/animation
 The [Getting started metadata](./getting-started.md#install) renders on Linux
 servers without a display or a GPU. Its `tool.pixi.target.linux.dependencies`
 table installs [Mesa](https://mesa3d.org/)'s software OpenGL into the
-notebook's pixi environment, and marimo-manim renders through Mesa's EGL driver
+notebook's pixi environment, and manim-marimo renders through Mesa's EGL driver
 when no `DISPLAY` is set:
 
 ```sh
-uvx --with "marimo-manim @ git+https://github.com/peter-gy/marimo-manim" \
+uvx --with "manim-marimo @ git+https://github.com/peter-gy/manim-marimo" \
   marimo run analysis.py --sandbox=pixi --host 0.0.0.0
 ```
 
-marimo-manim's CI renders every test scene through Mesa's EGL driver on Ubuntu. With a
+manim-marimo's CI renders every test scene through Mesa's EGL driver on Ubuntu. With a
 `DISPLAY` set, ManimGL opens its usual X11 context instead.

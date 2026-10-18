@@ -135,7 +135,7 @@ def _index_parts(node: ast.expr) -> list[ast.expr | None]:
 class _Readers:
     """The names a project file reads notebook results through.
 
-    ``functions`` holds names imported from ``marimo_manim``, such as ``value``
+    ``functions`` holds names imported from ``manim_marimo``, such as ``value``
     or an alias of it, and ``modules`` holds names bound to the module itself.
     """
 
@@ -147,7 +147,7 @@ class _Readers:
         functions: set[str] = set()
         modules: set[str] = set()
         for node in ast.walk(tree):
-            if isinstance(node, ast.ImportFrom) and node.module == "marimo_manim":
+            if isinstance(node, ast.ImportFrom) and node.module == "manim_marimo":
                 functions |= {
                     alias.asname or alias.name
                     for alias in node.names
@@ -157,7 +157,7 @@ class _Readers:
                 modules |= {
                     alias.asname or alias.name
                     for alias in node.names
-                    if alias.name == "marimo_manim"
+                    if alias.name == "manim_marimo"
                 }
         return cls(frozenset(functions), frozenset(modules))
 
@@ -1374,7 +1374,7 @@ class SceneLineage:
             self._at.pop(frame, None)
             self._bound.pop(frame, None)
 
-        monitoring.use_tool_id(tool, "marimo-manim lineage")
+        monitoring.use_tool_id(tool, "manim-marimo lineage")
         monitoring.register_callback(tool, events.PY_START, started)
         monitoring.register_callback(tool, events.LINE, line)
         monitoring.register_callback(tool, events.PY_RETURN, returned)

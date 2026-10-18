@@ -19,7 +19,7 @@ from manimlib import (
 
 class Animation(Scene):
     def construct(self):
-        # Read notebook results with marimo_manim.value(), output(), and
+        # Read notebook results with manim_marimo.value(), output(), and
         # cell(), such as value("trajectory", default=[]), and Studio renders
         # the scene again whenever they change.
         points = np.array([[-2, 0], [-1, 1.5], [0, 0], [1, -1.5], [2, 0]], dtype=float)

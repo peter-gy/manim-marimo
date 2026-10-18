@@ -31,7 +31,7 @@ from manimlib import (
     linear,
 )
 
-from marimo_manim import output, value
+from manim_marimo import output, value
 
 SUSCEPTIBLE, INFECTIOUS, RECOVERED = "#58C4DD", "#FC6255", "#4f5661"
 PALETTE = (SUSCEPTIBLE, INFECTIOUS, RECOVERED)
