@@ -28,6 +28,7 @@ from collections.abc import Mapping
 from contextlib import suppress
 from dataclasses import asdict, dataclass, field
 from html.parser import HTMLParser
+from importlib import resources
 from importlib.metadata import version
 from pathlib import Path, PurePosixPath
 from typing import Any
@@ -129,6 +130,7 @@ def _markers(context: StarterContext) -> StarterMarkers:
     )
 
 
+_STARTER = resources.files("manim_marimo.starters.default")
 _STARTERS = (
     PackagedStarter(
         ProviderStarter(
@@ -136,6 +138,10 @@ _STARTERS = (
             title="Manim animation",
             summary="A Manim scene, a video player, and native notebook context.",
             documents=(_PAGE, PurePosixPath("scene.py")),
+            format="Video",
+            icon=_STARTER.joinpath("icon.svg").read_text("utf-8"),
+            preview=_STARTER.joinpath("preview.webp").read_bytes(),
+            homepage="https://3b1b.github.io/manim/",
         ),
         package="manim_marimo.starters.default",
         markers=_markers,
@@ -348,6 +354,7 @@ class ManimProvider:
         title="Manim",
         summary="Renders ManimGL scenes from notebook results beside a page.",
         options=frozenset({"quality"}),
+        requirement="manim-marimo[render]",
     )
 
     def availability(self) -> ProviderAvailability:

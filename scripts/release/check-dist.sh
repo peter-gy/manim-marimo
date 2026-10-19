@@ -16,6 +16,8 @@ contents="$(unzip -Z1 "$wheel")"
 for path in \
 	'manim_marimo/_provider.py' \
 	'manim_marimo/starters/default/files/scene.py' \
+	'manim_marimo/starters/default/icon\.svg' \
+	'manim_marimo/starters/default/preview\.webp' \
 	'manim_marimo-.*\.agent-plugin/plugin\.json' \
 	'manim_marimo-.*\.agent-plugin/skills/manim-marimo/SKILL\.md'; do
 	if ! grep -qx "$path" <<<"$contents"; then

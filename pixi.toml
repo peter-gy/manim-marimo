@@ -53,6 +53,7 @@ hero-render = { cmd = "bun render.ts", cwd = "scripts/hero", depends-on = ["hero
 hero = { cmd = "bun capture.ts && bun render.ts", cwd = "scripts/hero", depends-on = ["hero-install"], description = "Capture and compose the README hero" }
 design-install = { cmd = "bun install --frozen-lockfile && bunx playwright install chromium", cwd = "scripts/design", description = "Install the brand scripts and Chromium" }
 design = { cmd = "bun brand.ts", cwd = "scripts/design", depends-on = ["design-install"], description = "Generate the brand assets and the examples' fonts" }
+starter-preview = { cmd = "bun starter.ts", cwd = "scripts/design", depends-on = ["design-install"], description = "Capture the starter's preview for Studio's New view dialog" }
 
 [feature.py310.dependencies]
 python = "3.10.*"

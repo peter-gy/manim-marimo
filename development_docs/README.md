@@ -33,6 +33,7 @@ pixi run check
 | `docs-dev`, `docs-build` | Serves or builds the VitePress site in `docs/`      |
 | `hero`                | Captures and renders the README hero                   |
 | `design`              | Generates the brand assets and the examples' fonts     |
+| `starter-preview`     | Captures the starter's preview for Studio's New view dialog |
 
 ## Where things live
 
@@ -99,10 +100,16 @@ notebook and writes, beside the wordmark set in CMU Serif:
 | `docs/public/brand/`                     | Marks, icons, wordmarks, and lockups as SVG and PNG, the Open Graph image, and the brand board |
 | `docs/public/favicon.svg`, `apple-touch-icon.png` | The icon on the scene's plate                         |
 | `docs/.vitepress/theme/brand.ts`         | The mark's vectors and the wordmark's contours, which the home page's hero draws |
+| `src/manim_marimo/starters/default/icon.svg` | The one-color icon Studio's New view dialog paints in its text color |
 | `examples/studio/*/animation/fonts/`     | CMU faces the scenes register with manimpango                 |
 | `examples/studio/*/animation/assets/fonts/` | CMU faces the example pages load                           |
 
 Change the mark in the notebook's `mark_vectors`, then run `pixi run design`.
+
+`pixi run starter-preview` creates a view from the starter in a scratch
+workspace, exports it, and writes the page at 1280 by 800 to
+`src/manim_marimo/starters/default/preview.webp`, which the New view dialog
+shows beside the starter. Run it after changing the starter's files.
 
 ## Guides
 

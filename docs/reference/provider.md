@@ -18,7 +18,10 @@ Studio starts.
 | `manim-marimo/manim:default`   | Manim animation | `scene.py`, `index.html`, `style.css`, `player.js`, `AGENTS.md` |
 
 `index.html` takes the view's title as its heading and lists the notebook's
-output cells as `<marimo-cell>` hosts beside the player.
+output cells as `<marimo-cell>` hosts beside the player. Studio's **New view**
+dialog shows the starter as a Video with the manim-marimo mark and a preview of
+the page. While Studio finds no worker, the dialog shows that the starter
+needs `manim-marimo[render]`, as [Availability](#availability) describes.
 
 ## Options
 

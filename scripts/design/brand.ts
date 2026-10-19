@@ -10,6 +10,8 @@
 //   docs/public/apple-touch-icon.png
 //   docs/.vitepress/theme/brand.ts  the mark's vectors and the wordmark's
 //                                   contours, which the home page's hero draws
+//   src/manim_marimo/starters/default/icon.svg  the one-color icon Studio's
+//                                               New view dialog paints
 //   examples/studio/*/animation/fonts/         CMU faces the scenes register
 //   examples/studio/*/animation/assets/fonts/  CMU faces the pages load
 import { $ } from "bun";
@@ -31,6 +33,7 @@ export const themes = {
   light: { page: "#ffffff", ink: "#16191d", muted: "#69717a", ring: "#4f7a3a", vector: "#16191d", pen: "#b8860b" },
 } as const;
 type Theme = keyof typeof themes;
+type Palette = { ring: string; vector: string; pen: string };
 
 // [frequency, real, imaginary] rows, the longest vector first. The path they
 // draw is one unit wide.
@@ -52,13 +55,16 @@ const pen = (t: number, unit: number): [number, number] => {
   return [x * unit, -y * unit];
 };
 
-// Strokes scale with the mark: hairlines for display and lockups, and a bolder
-// icon for favicons, where the loops merge into one ring. The head is
+// Strokes scale with the mark: hairlines for display and lockups, a bolder
+// icon for favicons, where the loops merge into one ring, and a heavy one for
+// the starter icon. The head is
 // `head` stroke widths long and `wing` of its length wide on each side.
 const weights = {
   fine: { ring: 0.011, vector: 0.012, pen: 0.036, head: 5.5, wing: 0.34 },
   medium: { ring: 0.022, vector: 0.022, pen: 0.05, head: 4.6, wing: 0.38 },
   bold: { ring: 0.04, vector: 0.042, pen: 0.075, head: 3.6, wing: 0.44 },
+  // Studio's New view dialog paints starter icons about 16 pixels across.
+  heavy: { ring: 0.1, vector: 0.095, pen: 0.15, head: 2.6, wing: 0.5 },
 };
 type Weight = keyof typeof weights;
 // The ring's bounding box in path units, so the mark centers on what it draws
@@ -75,14 +81,12 @@ const margin = 0.11;
 
 // The mark centered on (x, y), `side` across: the ring the vectors draw, the
 // vector from the center to the pen as it closes the path, and the pen.
-// Without a theme, the parts take their colors from a style sheet.
-const markBody = (theme: Theme | null, weight: Weight, side: number, cx: number, cy: number, inset = margin) => {
+const markBody = (palette: Palette, weight: Weight, side: number, cx: number, cy: number, inset = margin) => {
   const unit = (side * (1 - 2 * inset)) / box.size;
   const x = cx - box.x * unit;
   const y = cy - box.y * unit;
   const w = weights[weight];
-  const paint = (attribute: "fill" | "stroke", part: "ring" | "vector" | "pen") =>
-    theme ? ` ${attribute}="${themes[theme][part]}"` : "";
+  const paint = (attribute: "fill" | "stroke", part: keyof Palette) => ` ${attribute}="${palette[part]}"`;
   const at = ([px, py]: [number, number]) => `${(px + x).toFixed(2)} ${(py + y).toFixed(2)}`;
   const ring = Array.from({ length: 721 }, (_, i) => `${i ? "L" : "M"}${at(pen(i / 720, unit))}`).join("");
   const [px, py] = pen(0, unit);
@@ -118,8 +122,8 @@ const pad = 0.12 * size;
 const square = 512;
 
 const build: Record<string, (theme: Theme) => string> = {
-  mark: (theme) => svg(square, square, markBody(theme, "fine", square, square / 2, square / 2)),
-  icon: (theme) => svg(square, square, markBody(theme, "bold", square, square / 2, square / 2)),
+  mark: (theme) => svg(square, square, markBody(themes[theme], "fine", square, square / 2, square / 2)),
+  icon: (theme) => svg(square, square, markBody(themes[theme], "bold", square, square / 2, square / 2)),
   wordmark: (theme) => svg(wordWidth + 2 * pad, wordHeight + 2 * pad, draw(wordmark, pad, pad, wordScale, themes[theme].ink)),
   "lockup-horizontal": (theme) => {
     // The mark centers on the wordmark's x-height.
@@ -133,7 +137,7 @@ const build: Record<string, (theme: Theme) => string> = {
     return svg(
       pad + side + gap + wordWidth + pad,
       bottom - top + 2 * pad,
-      markBody(theme, "medium", side, pad + side / 2, center + shift, 0) +
+      markBody(themes[theme], "medium", side, pad + side / 2, center + shift, 0) +
         draw(wordmark, pad + side + gap, shift, wordScale, themes[theme].ink),
     );
   },
@@ -145,7 +149,7 @@ const build: Record<string, (theme: Theme) => string> = {
     return svg(
       width,
       margin + side + gap + wordHeight + margin,
-      markBody(theme, "medium", side, width / 2, margin + side / 2, 0) +
+      markBody(themes[theme], "medium", side, width / 2, margin + side / 2, 0) +
         draw(wordmark, (width - wordWidth) / 2, margin + side + gap, wordScale, themes[theme].ink),
     );
   },
@@ -158,10 +162,10 @@ const plated = (side: number) =>
     side,
     side,
     `  <rect width="${side}" height="${side}" rx="${side * 0.18}" fill="${themes.dark.page}"/>\n` +
-      markBody("dark", "bold", side, side / 2, side / 2),
+      markBody(themes.dark, "bold", side, side / 2, side / 2),
   );
 const favicon = plated(square);
-const touchIcon = svg(180, 180, `  <rect width="180" height="180" fill="${themes.dark.page}"/>\n` + markBody("dark", "bold", 150, 90, 90));
+const touchIcon = svg(180, 180, `  <rect width="180" height="180" fill="${themes.dark.page}"/>\n` + markBody(themes.dark, "bold", 150, 90, 90));
 
 await mkdir(brand, { recursive: true });
 const assets: { file: string; width: number }[] = [];
@@ -173,6 +177,10 @@ for (const [name, make] of Object.entries(build)) {
   }
 }
 await writeFile(join(root, "docs/public/favicon.svg"), favicon);
+// Studio paints a starter's icon as a mask in the theme's text color, so only
+// its shapes count.
+const ink = { ring: "#000", vector: "#000", pen: "#000" };
+await writeFile(join(root, "src/manim_marimo/starters/default/icon.svg"), svg(square, square, markBody(ink, "heavy", square, square / 2, square / 2, 0.06)));
 // The hero draws the mark, then writes the wordmark one closed contour at a
 // time, in reading order.
 // opentype.js starts each contour with a moveto and leaves it implicitly closed.
@@ -253,4 +261,4 @@ for (const [example, faces] of Object.entries(scenes)) {
     }
   }
 }
-console.log(`wrote ${assets.length * 2 + 3} brand files and the fonts of ${Object.keys(scenes).length} examples`);
+console.log(`wrote ${assets.length * 2 + 4} brand files and the fonts of ${Object.keys(scenes).length} examples`);
