@@ -175,7 +175,8 @@ def test_starter_files_of_a_compiled_install_exclude_bytecode(tmp_path: Path):
         (starter,) = provider.starters()
         notebook = NotebookSpec(tmp_path / "analysis.py", "1", (), {})
         plan = provider.create(
-            starter, StarterContext("animation", "analysis", notebook, {})
+            starter,
+            StarterContext("animation", "analysis", notebook, {}, title="Animation"),
         )
     finally:
         shutil.rmtree(files / "__pycache__")

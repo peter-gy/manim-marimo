@@ -26,7 +26,7 @@ import html
 import json
 from collections.abc import Mapping
 from contextlib import suppress
-from dataclasses import asdict, dataclass, field, replace
+from dataclasses import asdict, dataclass, field
 from html.parser import HTMLParser
 from importlib.metadata import version
 from pathlib import Path, PurePosixPath
@@ -118,7 +118,8 @@ def _markers(context: StarterContext) -> StarterMarkers:
     targets = context.output_cells
     return StarterMarkers(
         {
-            "__CELLS__": "\n".join(
+            # index.html indents the marker inside <section class="context">.
+            "__CELLS__": "\n      ".join(
                 f'<marimo-cell name="{html.escape(target.target, quote=True)}">'
                 "</marimo-cell>"
                 for target in targets
@@ -373,15 +374,7 @@ class ManimProvider:
         return tuple(starter.info for starter in _STARTERS)
 
     def create(self, starter: ProviderStarter, context: StarterContext) -> StarterPlan:
-        plan = create_starter(_STARTERS, starter, context)
-        # Installers such as `uv --compile-bytecode`, which Studio runs for a
-        # notebook's dependencies, write bytecode beside the starter's scene.
-        files = {
-            path: data
-            for path, data in plan.files.items()
-            if "__pycache__" not in path.parts
-        }
-        return replace(plan, files=files)
+        return create_starter(_STARTERS, starter, context)
 
     def inspect(self, request: InspectionRequest) -> ProjectInspection:
         project = request.project

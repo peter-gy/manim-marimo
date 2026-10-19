@@ -23,7 +23,7 @@ class Animation(Scene):
         # cell(), such as value("trajectory", default=[]), and Studio renders
         # the scene again whenever they change.
         points = np.array([[-2, 0], [-1, 1.5], [0, 0], [1, -1.5], [2, 0]], dtype=float)
-        title = Text("From data to motion", font="Arial", font_size=38)
+        title = Text("A smooth curve through the points", font="Arial", font_size=38)
         title.to_edge(UP, buff=0.7)
         curve = VMobject(stroke_color=BLUE, stroke_width=4)
         curve.set_points_smoothly(np.column_stack((points, np.zeros(len(points)))))

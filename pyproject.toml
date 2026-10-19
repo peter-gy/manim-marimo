@@ -22,7 +22,7 @@ classifiers = [
 ]
 requires-python = ">=3.10,<3.15"
 dependencies = [
-  "marimo-studio @ https://github.com/marimo-team/marimo-studio/releases/download/preview/marimo_studio-0.3.1.dev31-py3-none-any.whl",
+  "marimo-studio>=0.4,<0.5",
 ]
 
 # The provider runs in the marimo server's environment. Scenes render in the

@@ -67,13 +67,13 @@ the same environment first, so every scene renders with the ManimGL, Pango, and
 Mesa the metadata declares. The first start downloads Python and those
 libraries.
 
-Click **Add view**, choose **Manim animation**, and create the view. Or create
-it from a terminal:
+Click **Add view**, choose **Manim animation** in the New view dialog, give the
+view a title, and create it. Or create it from a terminal:
 
 ```sh
 uvx --with manim-marimo \
   marimo-studio view create animation --target analysis.py \
-  --starter manim-marimo/manim:default
+  --starter manim-marimo/manim:default --title "Random walk"
 ```
 
 Studio writes the view project beside the notebook:
@@ -82,7 +82,7 @@ Studio writes the view project beside the notebook:
 studio/analysis/animation/
   view.toml     provider = "manim-marimo/manim"
   scene.py      the Manim scene
-  index.html    the page that plays the movie
+  index.html    the page that plays the movie, headed by the title
   style.css
   player.js
   AGENTS.md     instructions for coding agents

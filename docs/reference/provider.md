@@ -17,8 +17,8 @@ Studio starts.
 | ------------------------------ | --------------- | --------------------------------------------------------------- |
 | `manim-marimo/manim:default`   | Manim animation | `scene.py`, `index.html`, `style.css`, `player.js`, `AGENTS.md` |
 
-`index.html` lists the notebook's output cells as `<marimo-cell>` hosts beside
-the player.
+`index.html` takes the view's title as its heading and lists the notebook's
+output cells as `<marimo-cell>` hosts beside the player.
 
 ## Options
 
@@ -149,7 +149,7 @@ Otherwise the starter is unavailable with a reason that names both versions.
 notebook:
 
 ```text
-available 0.1.0 manim-marimo/manim:default
+available 0.0.1 manim-marimo/manim:default
   A Manim scene, a video player, and native notebook context.
   provider manim-marimo/manim
 ```
