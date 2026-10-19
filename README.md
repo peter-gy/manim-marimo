@@ -1,7 +1,7 @@
 <h1>
   <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="docs/public/brand/manim-marimo-lockup-horizontal-dark.svg">
-    <img alt="manim-marimo" src="docs/public/brand/manim-marimo-lockup-horizontal-light.svg" width="340">
+    <source media="(prefers-color-scheme: dark)" srcset="https://peter-gy.github.io/manim-marimo/brand/manim-marimo-lockup-horizontal-dark.svg">
+    <img alt="manim-marimo" src="https://peter-gy.github.io/manim-marimo/brand/manim-marimo-lockup-horizontal-light.svg" width="340">
   </picture>
 </h1>
 
@@ -12,8 +12,8 @@ computes the values. A Manim scene in a Studio view animates them, and Studio
 renders the movie again whenever a value changes.
 
 <picture>
-  <source media="(prefers-color-scheme: dark)" srcset="docs/public/media/hero-dark.webp">
-  <img alt="A marimo notebook beside its Animation view. The notebook analyzes a small notebook's dataflow graph, and the Manim movie sorts its cells and lights up the ones a slider reruns. Choosing another slider in the notebook renders the movie again for its cascade." src="docs/public/media/hero-light.webp" width="100%">
+  <source media="(prefers-color-scheme: dark)" srcset="https://peter-gy.github.io/manim-marimo/media/hero-dark.webp">
+  <img alt="A marimo notebook beside its Animation view. The notebook analyzes a small notebook's dataflow graph, and the Manim movie sorts its cells and lights up the ones a slider reruns. Choosing another slider in the notebook renders the movie again for its cascade." src="https://peter-gy.github.io/manim-marimo/media/hero-light.webp" width="100%">
 </picture>
 
 ```python

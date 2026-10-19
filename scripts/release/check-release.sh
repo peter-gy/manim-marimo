@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Check that a tag push may publish a release: the tag is an annotated vX.Y.Z
-# on main, it matches the package version, CI passed for its commit, and the
-# built wheel declares only dependencies PyPI accepts.
+# on main, it matches the package version, its release notes exist, CI passed
+# for its commit, and the built wheel declares only dependencies PyPI accepts.
 # Usage: check-release.sh, with GITHUB_REF, GITHUB_REF_NAME, GITHUB_SHA, and
 # GH_REPO set as in a GitHub Actions tag push, and the wheel built in dist/.
 set -euo pipefail
@@ -27,6 +27,9 @@ done
 version="$(grep -m1 '^version = ' pyproject.toml | cut -d'"' -f2)"
 [[ "v$version" == "$GITHUB_REF_NAME" ]] ||
 	fail "Tag $GITHUB_REF_NAME does not match version $version in pyproject.toml."
+
+notes=".github/release-notes/$GITHUB_REF_NAME.md"
+[[ -s "$notes" ]] || fail "Release notes are missing or empty: $notes"
 
 git merge-base --is-ancestor "$GITHUB_SHA" origin/main ||
 	fail "Commit $GITHUB_SHA of $GITHUB_REF_NAME is not on main."
