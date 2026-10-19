@@ -24,10 +24,11 @@ uvx --with "manim-marimo @ https://github.com/peter-gy/manim-marimo/releases/dow
 
 ## Cut a release
 
-1. On `main`, set `version` in `pyproject.toml`, and pin `marimo-studio` and
-   every other dependency to releases on PyPI, which rejects dependencies that
-   name a URL. Wait for CI to pass.
-2. Tag that commit and push the tag:
+1. In a pull request, set `version` in `pyproject.toml`, pin `marimo-studio`
+   and every other dependency to releases on PyPI, which rejects dependencies
+   that name a URL, and write the release notes in
+   `.github/release-notes/vX.Y.Z.md`. Merge it and wait for CI on `main`.
+2. Tag the merge commit on `main` and push the tag:
 
    ```sh
    git tag -a v0.0.1 -m "manim-marimo 0.0.1"
@@ -41,11 +42,11 @@ The tag runs these jobs of `publish.yml`, each after the one before succeeds:
 | Build          | Builds the wheel and sdist, then `scripts/release/check-dist.sh` and `scripts/release/check-release.sh` |
 | PyPI           | Uploads both to the [`manim-marimo`](https://pypi.org/project/manim-marimo/) project through [trusted publishing](https://docs.pypi.org/trusted-publishers/) |
 | Verify PyPI    | `scripts/release/verify-pypi.sh` installs the release from PyPI and loads the provider and its skill |
-| GitHub release | Creates the `vX.Y.Z` release with both files and generated notes         |
+| GitHub release | Creates the `vX.Y.Z` release with both files and its release notes       |
 
 `check-release.sh` stops the release unless the tag is annotated, names the
-version in `pyproject.toml`, and points at a commit on `main` whose CI passed,
-and unless the wheel declares no URL dependencies. The PyPI project trusts
+version in `pyproject.toml`, has release notes, and points at a commit on
+`main` whose CI passed, and unless the wheel declares no URL dependencies. The PyPI project trusts
 `peter-gy/manim-marimo`, workflow `publish.yml`, and environment `pypi`.
 
 ## What a build contains
